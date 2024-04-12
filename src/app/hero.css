@@ -1,0 +1,44 @@
+@keyframes slide {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) rotateX(120deg);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-20%) rotateX(-120deg);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+
+.animate-slide {
+  animation-name: slide;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-origin: top;
+  animation-duration: 3s;
+}
