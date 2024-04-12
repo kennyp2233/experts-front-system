@@ -7,7 +7,7 @@ import { MTLLoader, OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
 
-function Model() {
+function Model({ posx, posy, posz, dir }: { posx: number, posy: number, posz: number, dir: number }) {
     const materials = useLoader(MTLLoader, '/obj/rose2/PUSHILIN_Rose_Bush.mtl');
     const obj = useLoader(OBJLoader, '/obj/rose2/PUSHILIN_Rose_Bush.obj', loader => {
         materials.preload();
@@ -22,9 +22,11 @@ function Model() {
         if (obj) {
             obj.scale.set(scale, scale, scale);
             ref.current = obj;
-            ref.current.position.x = -20;
+            obj.position.x = posx;
+
         }
     }, [obj]);
+
 
     let targetX = 0;
     let targetY = 0;
@@ -34,9 +36,9 @@ function Model() {
         const handleScroll = () => {
             if (ref.current) {
                 const scrollY = window.scrollY;
-                targetX = -20 + scrollY * 0.01;
-                targetY = scrollY * 0.01;
-                targetZ = scrollY * 0.01;
+                targetX = dir > 0 ? Math.max(0, posx + scrollY * 2) : Math.min(0, posx + scrollY * 2);
+                targetY = posy + scrollY * 0.01;
+                targetZ = posz + scrollY * 0.01;
             }
         };
 
@@ -91,14 +93,26 @@ export default function Rosa3() {
                 />
 
                 <Suspense fallback={null}>
-                    <Model />
+                    <Model
+                        posx={-600}
+                        posy={0}
+                        posz={0}
+                        dir={-1}
+                    />
+
+                    <Model
+                        posx={100}
+                        posy={0}
+                        posz={0}
+                        dir={1}
+                    />
                 </Suspense>
 
-                <ambientLight />
-                <pointLight position={[10, 10, 10]} color="red" />
-                <pointLight position={[-10, -10, -10]} color="green" />
-                <pointLight position={[10, -10, 10]} color="blue" />
-                <pointLight position={[-10, 10, -10]} color="yellow" />
+                <ambientLight intensity={3} />
+                <pointLight position={[1000, 1000, 1000]} color="red" intensity={200} />
+                <pointLight position={[-1000, -1000, -1000]} color="green" intensity={200} />
+                <pointLight position={[1000, -1000, 1000]} color="blue" intensity={200} />
+                <pointLight position={[-1000, 1000, -1000]} color="yellow" intensity={200} />
             </Canvas>
         </div>
     );
