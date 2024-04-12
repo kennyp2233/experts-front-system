@@ -5,7 +5,7 @@ export default function About() {
 
     return (
         <>
-            <section className="max-w-screen-lg m-auto py-24 px-10 relative">
+            <section className="max-w-screen-lg m-auto pb-24 px-10 relative">
                 <Rosa3D />
                 <h1 className="text-6xl text-center tracking-tighter font-light" style={{ lineHeight: "1.1" }}>
                     Sobre nosotros
