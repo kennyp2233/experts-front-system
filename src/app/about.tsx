@@ -51,7 +51,7 @@ export default function About() {
 
 
                         return (
-                            <div className="block max-w-sm p-6 bg-transparent backdrop-blur-[75px] border border-gray-200 rounded-lg shadow hover:bg-gray-100 max-md: w-full">
+                            <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[75px] border border-gray-200 rounded-lg shadow hover:bg-gray-100 max-md: w-full">
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{div.title}</h5>
                                 <p className="font-normal text-gray-700 dark:text-gray-400">{div.description}</p>
                             </div>

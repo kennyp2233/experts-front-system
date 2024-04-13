@@ -11,6 +11,7 @@ function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, po
     const ref = useRef<Group>(); // Define the ref to be of type Group
     const { camera, size } = useThree();
 
+
     const materials = useLoader(MTLLoader, '/obj/rose2/PUSHILIN_Rose_Bush.mtl');
     const obj = useLoader(OBJLoader, '/obj/rose2/PUSHILIN_Rose_Bush.obj', loader => {
         materials.preload();
@@ -46,9 +47,11 @@ function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, po
     }
 
 
-    let targetX = posx;
-    let targetYRot = roty;
-    let targetZRot = rotz;
+    let [targetX, setTargetX] = useState(posx);
+    let [targetYRot, setTargetYRot] = useState(roty);
+    let [targetZRot, setTargetZRot] = useState(rotz);
+
+
 
     useEffect(() => {
         const handleScroll = () => {
