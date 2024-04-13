@@ -47,19 +47,18 @@ function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, po
     }
 
 
-    let targetX = posx;
-    let targetYRot = roty;
-    let targetZRot = rotz;
-
-
+    // Dentro de tu componente
+    let targetX = useRef(0);
+    let targetYRot = useRef(0);
+    let targetZRot = useRef(0);
 
     useEffect(() => {
         const handleScroll = () => {
             if (ref.current) {
                 const scrollY = window.scrollY;
-                targetX = posx >= 0 ? Math.max(500, posx - scrollY * 2) : Math.min(-400, posx + scrollY * 2);
-                targetYRot = roty + scrollY * 0.01;
-                targetZRot = rotz + scrollY * 0.01;
+                targetX.current = posx >= 0 ? Math.max(500, posx - scrollY * 2) : Math.min(-400, posx + scrollY * 2);
+                targetYRot.current = roty + scrollY * 0.01;
+                targetZRot.current = rotz + scrollY * 0.01;
             }
         };
 
@@ -67,12 +66,11 @@ function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, po
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-
     useFrame(() => {
         if (ref.current) {
-            ref.current.position.x += (targetX - ref.current.position.x) * 0.05;
-            ref.current.rotation.y += (targetYRot - ref.current.rotation.y) * 0.05;
-            ref.current.rotation.z += (targetZRot - ref.current.rotation.z) * 0.05;
+            ref.current.position.x += (targetX.current - ref.current.position.x) * 0.05;
+            ref.current.rotation.y += (targetYRot.current - ref.current.rotation.y) * 0.05;
+            ref.current.rotation.z += (targetZRot.current - ref.current.rotation.z) * 0.05;
         }
     });
 
