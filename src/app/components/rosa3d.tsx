@@ -47,9 +47,9 @@ function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, po
     }
 
 
-    let [targetX, setTargetX] = useState(posx);
-    let [targetYRot, setTargetYRot] = useState(roty);
-    let [targetZRot, setTargetZRot] = useState(rotz);
+    let targetX = posx;
+    let targetYRot = roty;
+    let targetZRot = rotz;
 
 
 
