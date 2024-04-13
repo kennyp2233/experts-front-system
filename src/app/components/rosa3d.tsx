@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useLoader, useThree, extend, useFrame } from 'react-three-fiber';
 import { OrthographicCamera } from '@react-three/drei';
 
@@ -7,38 +7,56 @@ import { MTLLoader, OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
 
-function Model({ posx, posy, posz, dir }: { posx: number, posy: number, posz: number, dir: number }) {
+function Model({ posx, posy, posz, rotx, roty, rotz, scale }: { posx: number, posy: number, posz: number, rotx: number, roty: number, rotz: number, scale: number }) {
+    const ref = useRef<Group>(); // Define the ref to be of type Group
+    const { camera, size } = useThree();
+
     const materials = useLoader(MTLLoader, '/obj/rose2/PUSHILIN_Rose_Bush.mtl');
     const obj = useLoader(OBJLoader, '/obj/rose2/PUSHILIN_Rose_Bush.obj', loader => {
         materials.preload();
         loader.setMaterials(materials);
     });
 
-    const ref = useRef<Group>(); // Define the ref to be of type Group
-
-    const scale = 50;
-
-    useEffect(() => {
-        if (obj) {
-            obj.scale.set(scale, scale, scale);
-            ref.current = obj;
-            obj.position.x = posx;
-
-        }
-    }, [obj]);
 
 
-    let targetX = 0;
-    let targetY = 0;
-    let targetZ = 0;
+
+    if (obj) {
+        obj.position.set(posx, posy, posz);
+        obj.scale.set(scale, scale, scale);
+        ref.current = obj;
+
+        ref.current.position.x = posx;
+        ref.current.position.y = posy;
+        ref.current.position.z = posz;
+
+        ref.current.rotation.x = rotx;
+        ref.current.rotation.y = roty;
+        ref.current.rotation.z = rotz;
+        // Cambiar el material de cada malla a un material de wireframe
+        /*
+        obj.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                child.material = new THREE.MeshBasicMaterial({
+                    wireframe: true,
+                    color: 'hotpink'
+                });
+            }
+        });
+        */
+    }
+
+
+    let targetX = posx;
+    let targetYRot = roty;
+    let targetZRot = rotz;
 
     useEffect(() => {
         const handleScroll = () => {
             if (ref.current) {
                 const scrollY = window.scrollY;
-                targetX = dir > 0 ? Math.max(0, posx + scrollY * 2) : Math.min(0, posx + scrollY * 2);
-                targetY = posy + scrollY * 0.01;
-                targetZ = posz + scrollY * 0.01;
+                targetX = posx >= 0 ? Math.max(500, posx - scrollY * 2) : Math.min(-400, posx + scrollY * 2);
+                targetYRot = roty + scrollY * 0.01;
+                targetZRot = rotz + scrollY * 0.01;
             }
         };
 
@@ -46,16 +64,18 @@ function Model({ posx, posy, posz, dir }: { posx: number, posy: number, posz: nu
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+
     useFrame(() => {
         if (ref.current) {
             ref.current.position.x += (targetX - ref.current.position.x) * 0.05;
-            ref.current.rotation.y += (targetY - ref.current.rotation.y) * 0.05;
-            ref.current.rotation.z += (targetZ - ref.current.rotation.z) * 0.05;
+            ref.current.rotation.y += (targetYRot - ref.current.rotation.y) * 0.05;
+            ref.current.rotation.z += (targetZRot - ref.current.rotation.z) * 0.05;
         }
     });
 
 
-    return <primitive object={obj} />;
+
+    return <primitive ref={ref} object={obj.clone(true)} />;
 }
 /**
 
@@ -79,7 +99,7 @@ export default function Rosa3() {
     }, [ref]);
 
     return (
-        <div ref={ref}>
+        <div ref={ref} className='h-80 w-full absolute'>
             <Canvas>
                 <OrthographicCamera
                     position={[0, 0, 100]}
@@ -94,22 +114,29 @@ export default function Rosa3() {
 
                 <Suspense fallback={null}>
                     <Model
-                        posx={-600}
-                        posy={0}
+                        posx={-800}
+                        posy={80}
                         posz={0}
-                        dir={-1}
+                        rotx={0}
+                        roty={0}
+                        rotz={0}
+                        scale={80}
                     />
 
                     <Model
-                        posx={100}
-                        posy={0}
+                        posx={800}
+                        posy={-80}
                         posz={0}
-                        dir={1}
+                        rotx={5}
+                        roty={5}
+                        rotz={5}
+                        scale={80}
                     />
+
                 </Suspense>
 
                 <ambientLight intensity={3} />
-                <pointLight position={[1000, 1000, 1000]} color="red" intensity={200} />
+                <pointLight position={[0, 0, 20]} color="red" intensity={200} />
                 <pointLight position={[-1000, -1000, -1000]} color="green" intensity={200} />
                 <pointLight position={[1000, -1000, 1000]} color="blue" intensity={200} />
                 <pointLight position={[-1000, 1000, -1000]} color="yellow" intensity={200} />

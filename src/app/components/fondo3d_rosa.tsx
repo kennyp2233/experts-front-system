@@ -162,5 +162,5 @@ export default function Fondo3D() {
         }
     }, []);
 
-    return <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[-1] w-[100vw]  h-[200%]' ref={ref} />;
+    return <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[-1] w-[100vw]  h-[100vh]' ref={ref} />;
 }
