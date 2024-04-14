@@ -68,7 +68,7 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
                 }
             });
         }
-    }, [posx, posy, posz, rotx, roty, rotz, scale, anchorX, anchorY, scrollType]);
+    }, [posx, posy, posz, rotxInDegrees, rotyInDegrees, rotzInDegrees, scale, anchorX]);
 
 
 
