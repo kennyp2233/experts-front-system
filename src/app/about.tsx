@@ -45,7 +45,7 @@ export default function About() {
                 <h1 className="text-6xl text-center tracking-tighter font-light" >
                     Sobre nosotros
                 </h1>
-                <p className="pt-10 text-2xl text-center tracking-tighter font-light text-gray-200 max-md:text-base"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
+                <p className="pt-10 text-2xl text-center tracking-tighter font-light text-gray-200 max-md:text-xl"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
                 <div className='flex items-center justify-center gap-3 mt-6  pt-5 max-[929px]:flex-wrap'>
                     {divs.map((div, index) => {
 
