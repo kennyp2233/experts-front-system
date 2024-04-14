@@ -51,6 +51,13 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
     const rotxInDegrees = rotx * (Math.PI / 180);
     const rotyInDegrees = roty * (Math.PI / 180);
     const rotzInDegrees = rotz * (Math.PI / 180);
+
+    const targetX = useRef(posx);
+    const targetY = useRef(posy);
+    const targetYRot = useRef(rotyInDegrees);
+    const targetZRot = useRef(rotzInDegrees);
+    const lastScrollY = useRef(0);
+
     useEffect(() => {
         if (ref.current) {
             ref.current.position.set(posx, posy, posz);
@@ -72,11 +79,6 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
 
 
 
-    const targetX = useRef(posx);
-    const targetY = useRef(posy);
-    const targetYRot = useRef(rotyInDegrees);
-    const targetZRot = useRef(rotzInDegrees);
-    const lastScrollY = useRef(0);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -110,7 +112,7 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [posx]);
+    }, [anchorMaxX, anchorY, posx, posy, scrollType]);
 
     useFrame(() => {
         if (ref.current) {
@@ -146,72 +148,7 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
     );
 }
 
-function ModelObj({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, scale = 0, rutaMtl = '/obj/rose2/PUSHILIN_Rose_Bush.mtl', rutaObj = '/obj/rose2/PUSHILIN_Rose_Bush.obj' }: ModelProps) {
-    const ref = useRef<Group>(); // Define the ref to be of type Group
-    const materials = useLoader(MTLLoader, rutaMtl);
-    const obj = useLoader(OBJLoader, rutaObj, loader => {
-        materials.preload();
-        loader.setMaterials(materials);
-    });
 
-    if (obj) {
-        obj.position.set(posx, posy, posz);
-        obj.scale.set(scale, scale, scale);
-        ref.current = obj;
-
-        ref.current.position.x = posx;
-        ref.current.position.y = posy;
-        ref.current.position.z = posz;
-
-        ref.current.rotation.x = rotx;
-        ref.current.rotation.y = roty;
-        ref.current.rotation.z = rotz;
-        // Cambiar el material de cada malla a un material de wireframe
-        /*
-        obj.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-                child.material = new THREE.MeshBasicMaterial({
-                    wireframe: true,
-                    color: 'hotpink'
-                });
-            }
-        });
-        */
-    }
-
-    if (!ref.current) return null;
-
-
-    // Dentro de tu componente
-    const targetX = useRef(posx);
-    const targetYRot = useRef(roty);
-    const targetZRot = useRef(rotz);
-    const lastScrollY = useRef(window.scrollY);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (ref.current) {
-                const scrollY = window.scrollY;
-                const deltaY = scrollY - lastScrollY.current;
-                targetX.current = posx >= 0 ? Math.max(500, targetX.current - deltaY * 2) : Math.min(-400, targetX.current + deltaY * 2);
-
-                lastScrollY.current = scrollY;
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []); // No dependencias aquí
-
-    useFrame(() => {
-        if (ref.current) {
-            ref.current.position.x += (targetX.current - ref.current.position.x) * 0.05;
-            ref.current.rotation.y += (targetYRot.current - ref.current.rotation.y) * 0.05;
-            ref.current.rotation.z += (targetZRot.current - ref.current.rotation.z) * 0.05;
-        }
-    });
-    return <primitive ref={ref} object={obj.clone(true)} receiveShadow castShadow />;
-}
 
 export default function Rosa3() {
     const ref = useRef<HTMLDivElement>(null);
