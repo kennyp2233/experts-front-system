@@ -39,7 +39,7 @@ export default function Hero() {
             <Suspense>
                 <Escena3D />
             </Suspense>
-            <section className="max-w-screen-lg m-auto pt-24 px-10 relative" style={{ height: "calc(100vh - 96px)" }}>
+            <section className="w-full m-auto pt-24 px-10 relative" style={{ height: "calc(100vh - 96px)", background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
 
                 <h1 className="text-7xl text-center tracking-tighter font-light max-md:text-5xl" style={{ lineHeight: "1.1" }}>
                     Nuestra empresa ecuatoriana  <br />

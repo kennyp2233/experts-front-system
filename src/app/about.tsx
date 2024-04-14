@@ -45,20 +45,20 @@ export default function About() {
                 <h1 className="text-6xl text-center tracking-tighter font-light" >
                     Sobre nosotros
                 </h1>
-                <p className="pt-10 text-2xl text-center tracking-tighter font-light"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
-                <div className='flex items-center justify-center gap-3 mt-6 max-md:flex-col'>
+                <p className="pt-10 text-2xl text-center tracking-tighter font-light text-gray-200 max-md:text-base"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
+                <div className='flex items-center justify-center gap-3 mt-6  pt-5 max-[929px]:flex-wrap'>
                     {divs.map((div, index) => {
 
 
                         return (
-                            <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[75px] border border-gray-200 rounded-lg shadow hover:bg-gray-100 max-md: w-full">
+                            <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md: w-full max-[929px]:min-h-36">
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{div.title}</h5>
-                                <p className="font-normal text-gray-700 dark:text-gray-400">{div.description}</p>
+                                <p className="font-normal text-gray-400 ">{div.description}</p>
                             </div>
                         );
                     })}
                 </div>
-            </section>
+            </section >
         </>
     );
 }

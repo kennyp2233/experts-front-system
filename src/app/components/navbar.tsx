@@ -72,7 +72,7 @@ export default function Navbar() {
                                         </div>
                                     </div>
 
-                                    <BotonLlamativo colorBase='#F42A2A'>
+                                    <BotonLlamativo className='max-md:hidden' colorBase='#F42A2A'>
                                         Lanzar Sistema
                                     </BotonLlamativo>
 
