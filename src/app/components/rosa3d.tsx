@@ -156,11 +156,17 @@ function ModelGlb({
     return (
         <group>
             <primitive ref={ref} object={gltf.scene.clone(true)} material={gltf.materials.default} receiveShadow castShadow />
-            <pointLight position={[posx, posy + 200, posz]} intensity={10000} castShadow /> {/* Luz puntual para este modelo */}
+            <pointLight position={[posx, posy + 200, posz + 150]} intensity={10000} castShadow /> {/* Luz puntual para este modelo */}
         </group>
     );
 }
-
+/**
+ *   <pointLight position={[10, 10, 100]} intensity={10000} castShadow />
+                <pointLight position={[-100, 10, 10]} intensity={10000} castShadow /> 
+                <pointLight position={[250, 0, -120]} intensity={10000} castShadow /> 
+                <pointLight position={[10, -100, 10]} intensity={10000} castShadow /> 
+                <pointLight position={[10, 10, -100]} intensity={10000} castShadow /> 
+ */
 
 
 export default function Rosa3() {
@@ -191,11 +197,7 @@ export default function Rosa3() {
                     far={10000}
                 />
                 <ambientLight intensity={9} />
-                <pointLight position={[10, 10, 100]} intensity={10000} castShadow />
-                <pointLight position={[-100, 10, 10]} intensity={10000} castShadow /> {/* Nueva luz */}
-                <pointLight position={[250, 0, -120]} intensity={10000} castShadow /> {/* Nueva luz */}
-                <pointLight position={[10, -100, 10]} intensity={10000} castShadow /> {/* Nueva luz */}
-                <pointLight position={[10, 10, -100]} intensity={10000} castShadow /> {/* Nueva luz */}
+
 
                 <ModelGlb
                     posx={-800}

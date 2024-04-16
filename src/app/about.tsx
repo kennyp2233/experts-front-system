@@ -41,18 +41,18 @@ const About = React.forwardRef((props, ref) => {
     return (
         <>
             <Rosa3D />
-            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] max-h-[100vh] max-[862px]:overflow-y-scroll max-md:px-8 max-[862]:w-[100vw]">
+            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] max-h-[100vh] max-md:px-8 max-md:overflow-y-scroll max-md:w-[100vw]">
 
                 <h1 className="text-6xl text-center tracking-tighter font-light" >
                     Sobre nosotros
                 </h1>
                 <p className="pt-10 text-2xl text-center tracking-tighter font-light text-gray-200 max-md:text-xl"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
-                <div className='flex items-center justify-center gap-3 mt-6  pt-5 max-[929px]:flex-wrap'>
+                <div className='flex items-center justify-center gap-3 mt-6  pt-5 max-lg:flex-wrap'>
                     {divs.map((div, index) => {
 
 
                         return (
-                            <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md: w-full max-[929px]:min-h-36">
+                            <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{div.title}</h5>
                                 <p className="font-normal text-gray-400 ">{div.description}</p>
                             </div>
