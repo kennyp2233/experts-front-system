@@ -38,10 +38,10 @@ const Hero = React.forwardRef((props, ref) => {
     //mb-52
     return (
         <>
-            <Escena3D />
-            <section ref={ref as RefObject<HTMLElement> | null} className="w-full m-auto px-10 relative pt-48" style={{ height: "calc(100vh)", background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
 
-                <h1 className="text-7xl text-center tracking-tighter font-light max-md:text-5xl" style={{ lineHeight: "1.1" }}>
+            <section ref={ref as RefObject<HTMLElement> | null} className="w-full m-auto px-10 relative max-md:px-8 pt-48 h-[100vh]" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
+                <Escena3D />
+                <motion.h1 className="text-7xl text-center tracking-tighter font-light max-md:text-5xl" style={{ lineHeight: "1.1" }}>
                     Nuestra empresa ecuatoriana  <br />
                     <div
                         ref={refAnim}
@@ -58,7 +58,7 @@ const Hero = React.forwardRef((props, ref) => {
                     </div>
                     <span className="bg-transparent">para alegrar al mundo.</span>
 
-                </h1>
+                </motion.h1>
                 <p className="pt-10 text-2xl text-center tracking-tighter font-light max-md:text-xl">Servicios logísticos integrales para la exportación de flores frescas y de la más alta calidad.</p>
 
             </section>

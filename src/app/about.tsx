@@ -41,7 +41,7 @@ const About = React.forwardRef((props, ref) => {
     return (
         <>
             <Rosa3D />
-            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px]">
+            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] max-h-[100vh] overflow-y-scroll max-md:px-8 ">
 
                 <h1 className="text-6xl text-center tracking-tighter font-light" >
                     Sobre nosotros

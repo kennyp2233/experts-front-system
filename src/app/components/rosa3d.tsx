@@ -62,32 +62,6 @@ function ModelGlb({
     const targetZRot = useRef(rotzInDegrees);
     const lastScrollY = useRef(0);
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth <= 929) {
-                switch (anchorElement) {
-                    case 1:
-                        setAnchorMaxX((posx >= 0 ? 1 : -1) * window.innerWidth / 2.5);
-                        break;
-                    case 2:
-                        setAnchorMaxX(anchorY + (posy >= 0 ? -1 : 1) * 100);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                setAnchorMaxX(anchorX);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        // Call the function once to set the initial state
-        handleResize();
-
-        // Clean up the event listener when the component unmounts
-        return () => window.removeEventListener('resize', handleResize);
-    }, [posx, anchorX, anchorY, anchorElement, posy]);
 
 
 
@@ -108,8 +82,33 @@ function ModelGlb({
                 }
             });
         }
-    }, [posx, posy, posz, rotxInDegrees, rotyInDegrees, rotzInDegrees, scale, anchorX, anchorMaxX]);
+        const handleResize = () => {
+            if (window.innerWidth <= 929) {
+                switch (anchorElement) {
+                    case 1:
+                        setAnchorMaxX((posx >= 0 ? 1 : -1) * window.innerWidth / 2.5);
+                        targetY.current = (anchorY !== 0 ? anchorY : posy) - 100;
+                        break;
+                    case 2:
+                        targetY.current = (anchorY !== 0 ? anchorY : posy) - 150;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                setAnchorMaxX(anchorX);
+            }
+        };
 
+        window.addEventListener('resize', handleResize);
+
+        // Call the function once to set the initial state
+        handleResize();
+
+        // Clean up the event listener when the component unmounts
+        return () => window.removeEventListener('resize', handleResize);
+
+    }, [posx, posy, posz, rotxInDegrees, rotyInDegrees, rotzInDegrees, scale, anchorX, anchorMaxX, anchorElement]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -178,7 +177,7 @@ export default function Rosa3() {
     }, [ref]);
 
     return (
-        <div ref={ref} className='h-[100vh] w-full absolute'>
+        <div ref={ref} className='h-[100vh] w-full absolute max-[929px]:h-full'>
             <Canvas>
                 <Setup />
                 <OrthographicCamera
@@ -234,6 +233,7 @@ export default function Rosa3() {
                     anchorX={-190}
                     anchorY={-300}
                     scrollType={2}
+                    anchorElement={2}
                 />
                 <ModelGlb
                     posx={800}
@@ -246,6 +246,7 @@ export default function Rosa3() {
                     rutaGlb='/obj/truck.glb'
                     anchorX={250}
                     scrollType={3}
+                    anchorElement={2}
                 />
             </Canvas>
         </div>
