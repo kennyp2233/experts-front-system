@@ -183,7 +183,7 @@ export default function Rosa3() {
     }, [ref]);
 
     return (
-        <div ref={ref} className='h-[100vh] w-full absolute max-[929px]:h-full'>
+        <div ref={ref} className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[100vh] z-[-1] w-[100vw] max-lg:h-full'>
             <Canvas>
                 <Setup />
                 <OrthographicCamera
