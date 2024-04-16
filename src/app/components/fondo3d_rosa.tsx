@@ -44,14 +44,13 @@ export default function Fondo3D() {
             const renderer = new THREE.WebGLRenderer({ antialias: false });
             renderer.setSize(node.clientWidth, node.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio / 2); // Reduce la resolución de renderizado
-            console.log("ANTES DE FOR")
             for (let i = num; i--;) {
                 const eGeometry = new THREE.EdgesGeometry(geometry);
                 const edges = new THREE.LineSegments(eGeometry, eMaterial);
                 scene.add(edges);
                 cubes.push(edges);
             }
-            console.log("DESPUES DE FOR")
+
             /*
                         console.log("ANTES DE FOR")
                         for (let i = num; i--;) {

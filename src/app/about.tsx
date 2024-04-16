@@ -1,15 +1,16 @@
 'use client'
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import Contenedor from './components/contenedor';
 import Rosa3D from './components/rosa3d';
 import { useInView } from 'react-intersection-observer';
+import React from 'react';
 const divs = [
     { title: 'Fidelidad', description: 'Comprometidos con nuestros clientes a largo plazo.' },
     { title: 'Excelencia', description: 'Brindamos un servicio de máxima calidad.' },
     { title: 'Creatividad', description: 'Soluciones innovadoras para cada reto logístico.' }
 ];
 
-export default function About() {
+const About = React.forwardRef((props, ref) => {
     /*
     const { ref: paragraphRef, inView: paragraphInView } = useInView({
         triggerOnce: false,
@@ -40,7 +41,7 @@ export default function About() {
     return (
         <>
             <Rosa3D />
-            <section className="max-w-screen-lg m-auto py-24 px-10 relative">
+            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px]">
 
                 <h1 className="text-6xl text-center tracking-tighter font-light" >
                     Sobre nosotros
@@ -61,4 +62,6 @@ export default function About() {
             </section >
         </>
     );
-}
+});
+
+export default About;

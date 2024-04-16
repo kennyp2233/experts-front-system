@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { MenuIcon, BellIcon, XIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
@@ -21,7 +21,36 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar({ sections }: { sections?: any[] }) {
+    const [refSelected, setRefSelected] = useState(0);
+
+    const handleClick = (sectionRef: any) => {
+
+        if (sectionRef.current) {
+            sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            let maxTop = -Infinity;
+            let selected = 0;
+            sections?.forEach((section, index) => {
+                const rect = section.current?.getBoundingClientRect();
+                if (rect?.top <= 0 && rect?.top > maxTop) {
+                    maxTop = rect.top;
+                    selected = index;
+                }
+            });
+            setRefSelected(selected);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [sections]);
+
     const path = usePathname();
     return (
         <>
@@ -33,8 +62,8 @@ export default function Navbar() {
             <body class="h-full">
             ```
           */}
-            <div>
-                <Disclosure as="nav" className="bg-black text-left relative z-[9999] bg-offpurple/20 backdrop-blur-[75px] bg-transparent">
+            <div className='fixed w-full backdrop-blur-[75px] z-20 max-md:bg-black'>
+                <Disclosure as="nav" className="bg-black text-left relative bg-offpurple/20 bg-transparent max-md:pr-2">
                     {({ open }) => (
                         <>
                             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -47,7 +76,7 @@ export default function Navbar() {
                                         >
                                             <ExpertsIcon
                                                 fill="#000000"
-                                                className='transition duration-300 ease-in-out md:hover:scale-110'
+                                                className='transition duration-300 ease-in-out md:hover:scale-110 max-md:scale-[0.8]'
                                             />
                                         </Link>
 
@@ -56,18 +85,18 @@ export default function Navbar() {
                                     <div className="hidden md:flex md:justify-center md:items-center md:absolute md:inset-0">
                                         <div className="flex items-baseline space-x-4">
                                             {link.map((item) => (
-                                                <Link
+                                                <button
                                                     key={item.label}
-                                                    href={item.href}
+                                                    onClick={() => handleClick(sections?.[link.indexOf(item)])}
                                                     className={classNames(
-                                                        item.href === path
+                                                        refSelected === link.indexOf(item)
                                                             ? 'text-opacity-70 scale-105'
                                                             : '',
-                                                        'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-300 ease-in-out hover:scale-105'
+                                                        'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-100 ease-in-out hover:scale-105'
                                                     )}
                                                 >
                                                     {item.label}
-                                                </Link>
+                                                </button>
                                             ))}
                                         </div>
                                     </div>
@@ -79,7 +108,7 @@ export default function Navbar() {
 
                                     <div className="-mr-2 flex md:hidden">
                                         {/* Mobile menu button */}
-                                        <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                        <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-white  border-white hover:bg-orange-700 hover:text-white focus:border-none focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-800">
                                             <span className="absolute -inset-0.5" />
                                             <span className="sr-only">Open main menu</span>
                                             {open ? (
@@ -110,11 +139,10 @@ export default function Navbar() {
 
                                             <Disclosure.Button
                                                 key={item.label}
-                                                as="a"
-                                                href={item.href}
+                                                onClick={() => handleClick(sections?.[link.indexOf(item)])}
                                                 className={classNames(
-                                                    path === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                                    'block rounded-md px-3 py-2 text-base font-medium'
+                                                    refSelected === link.indexOf(item) ? 'bg-orange-900 text-white' : 'text-gray-300 hover:bg-orange-700 hover:text-white',
+                                                    'w-full block rounded-md px-3 py-2 text-base font-medium'
                                                 )}
 
                                             >

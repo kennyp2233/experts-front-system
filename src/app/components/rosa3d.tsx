@@ -6,17 +6,6 @@ import { Group, Mesh, Vector3 } from 'three';
 import { MTLLoader, OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
-interface ModelProps {
-    posx?: number;
-    posy?: number;
-    posz?: number;
-    rotx?: number;
-    roty?: number;
-    rotz?: number;
-    scale?: number;
-    rutaMtl?: string;
-    rutaObj?: string;
-}
 
 interface ModelGlbProps {
     posx?: number;
@@ -30,6 +19,7 @@ interface ModelGlbProps {
     anchorX?: number;
     anchorY?: number;
     scrollType?: number;
+    anchorElement?: number;
 }
 function Setup() {
     const { gl } = useThree();
@@ -41,7 +31,21 @@ function Setup() {
 
 
 
-function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, scale = 1, rutaGlb = "/obj/rose2/rose2.glb", anchorX = 0, anchorY = 0, scrollType = 1 }: ModelGlbProps) {
+function ModelGlb({
+    posx = 0,
+    posy = 0,
+    posz = 0,
+    rotx = 0,
+    roty = 0,
+    rotz = 0,
+    scale = 1,
+    rutaGlb = "/obj/rose2/rose2.glb",
+    anchorX = 0,
+    anchorY = 0,
+    scrollType = 1,
+    anchorElement = 0
+}: ModelGlbProps) {
+
     const ref = useRef<THREE.Group>();
     const gltf = useGLTF(rutaGlb);
     console.log(gltf);
@@ -59,11 +63,40 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
     const lastScrollY = useRef(0);
 
     useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 929) {
+                switch (anchorElement) {
+                    case 1:
+                        setAnchorMaxX((posx >= 0 ? 1 : -1) * window.innerWidth / 2.5);
+                        break;
+                    case 2:
+                        setAnchorMaxX(anchorY + (posy >= 0 ? -1 : 1) * 100);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                setAnchorMaxX(anchorX);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Call the function once to set the initial state
+        handleResize();
+
+        // Clean up the event listener when the component unmounts
+        return () => window.removeEventListener('resize', handleResize);
+    }, [posx, anchorX, anchorY]);
+
+
+
+    useEffect(() => {
         if (ref.current) {
             ref.current.position.set(posx, posy, posz);
             ref.current.rotation.set(rotxInDegrees, rotyInDegrees, rotzInDegrees);
             ref.current.scale.set(scale, scale, scale);
-            setAnchorMaxX(anchorX);
+            //setAnchorMaxX(anchorX);
             ref.current.traverse((node) => {
                 if (node instanceof THREE.Mesh) {
                     // Ensure the material is a MeshStandardMaterial
@@ -75,9 +108,7 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
                 }
             });
         }
-    }, [posx, posy, posz, rotxInDegrees, rotyInDegrees, rotzInDegrees, scale, anchorX]);
-
-
+    }, [posx, posy, posz, rotxInDegrees, rotyInDegrees, rotzInDegrees, scale, anchorX, anchorMaxX]);
 
 
     useEffect(() => {
@@ -122,23 +153,6 @@ function ModelGlb({ posx = 0, posy = 0, posz = 0, rotx = 0, roty = 0, rotz = 0, 
             ref.current.rotation.z += (targetZRot.current - ref.current.rotation.z) * 0.05;
         }
     });
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth <= 929) {
-                setAnchorMaxX(anchorX + (posx >= 0 ? -10 : 10));
-            } else {
-                setAnchorMaxX(anchorX);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        // Call the function once to set the initial state
-        handleResize();
-
-        // Clean up the event listener when the component unmounts
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     return (
         <group>
@@ -164,7 +178,7 @@ export default function Rosa3() {
     }, [ref]);
 
     return (
-        <div ref={ref} className='h-full w-full absolute'>
+        <div ref={ref} className='h-[100vh] w-full absolute'>
             <Canvas>
                 <Setup />
                 <OrthographicCamera
@@ -184,56 +198,55 @@ export default function Rosa3() {
                 <pointLight position={[10, -100, 10]} intensity={10000} castShadow /> {/* Nueva luz */}
                 <pointLight position={[10, 10, -100]} intensity={10000} castShadow /> {/* Nueva luz */}
 
-                <Suspense fallback={null}>
-                    <ModelGlb
-                        posx={-800}
-                        posy={280}
-                        posz={0}
-                        rotx={0}
-                        roty={0}
-                        rotz={0}
-                        scale={80}
-                        anchorX={-500}
-                    />
+                <ModelGlb
+                    posx={-800}
+                    posy={180}
+                    posz={0}
+                    rotx={0}
+                    roty={0}
+                    rotz={0}
+                    scale={80}
+                    anchorX={-500}
+                    anchorElement={1}
+                />
 
-                    <ModelGlb
-                        posx={800}
-                        posy={120}
-                        posz={-500}
-                        rotx={25}
-                        roty={10}
-                        rotz={50}
-                        scale={80}
-                        anchorX={400}
-                    />
+                <ModelGlb
+                    posx={800}
+                    posy={20}
+                    posz={-500}
+                    rotx={25}
+                    roty={10}
+                    rotz={50}
+                    scale={80}
+                    anchorX={400}
+                    anchorElement={1}
+                />
 
-                    <ModelGlb
-                        posx={-800}
-                        posy={500}
-                        posz={-100}
-                        rotx={30}
-                        roty={70}
-                        rotz={0}
-                        scale={5}
-                        rutaGlb='/obj/airplane.glb'
-                        anchorX={-190}
-                        anchorY={-200}
-                        scrollType={2}
-                    />
-                    <ModelGlb
-                        posx={800}
-                        posy={-150}
-                        posz={-120}
-                        rotx={30}
-                        roty={10}
-                        rotz={0}
-                        scale={25}
-                        rutaGlb='/obj/truck.glb'
-                        anchorX={250}
-                        scrollType={3}
-                    />
-                </Suspense>
-
+                <ModelGlb
+                    posx={-800}
+                    posy={500}
+                    posz={-100}
+                    rotx={30}
+                    roty={70}
+                    rotz={0}
+                    scale={5}
+                    rutaGlb='/obj/airplane.glb'
+                    anchorX={-190}
+                    anchorY={-300}
+                    scrollType={2}
+                />
+                <ModelGlb
+                    posx={800}
+                    posy={-250}
+                    posz={-120}
+                    rotx={30}
+                    roty={10}
+                    rotz={0}
+                    scale={25}
+                    rutaGlb='/obj/truck.glb'
+                    anchorX={250}
+                    scrollType={3}
+                />
             </Canvas>
         </div>
     );

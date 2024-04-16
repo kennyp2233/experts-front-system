@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import Escena3D from './components/fondo3d_rosa';
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense, RefObject } from 'react';
 import "./hero.css";
+import React from "react";
 const opcionesHero = [
     "esparce pasión",
     "cultiva sueños",
@@ -12,17 +13,18 @@ const opcionesHero = [
     "siembra emociones"
 
 ];
-export default function Hero() {
+
+const Hero = React.forwardRef((props, ref) => {
     const [currentOption, setCurrentOption] = useState(0);
     const currentOptionRef = useRef(currentOption);
-    const ref = useRef(null);
+    const refAnim = useRef(null);
 
     useEffect(() => {
         currentOptionRef.current = currentOption;
     }, [currentOption]);
 
     useEffect(() => {
-        const node = ref.current;
+        const node = refAnim.current;
         if (node) {
             const handleAnimationIteration = () => {
                 setCurrentOption((currentOptionRef.current + 1) % opcionesHero.length);
@@ -36,15 +38,13 @@ export default function Hero() {
     //mb-52
     return (
         <>
-            <Suspense>
-                <Escena3D />
-            </Suspense>
-            <section className="w-full m-auto pt-24 px-10 relative" style={{ height: "calc(100vh - 96px)", background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
+            <Escena3D />
+            <section ref={ref as RefObject<HTMLElement> | null} className="w-full m-auto px-10 relative pt-48" style={{ height: "calc(100vh)", background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
 
                 <h1 className="text-7xl text-center tracking-tighter font-light max-md:text-5xl" style={{ lineHeight: "1.1" }}>
                     Nuestra empresa ecuatoriana  <br />
                     <div
-                        ref={ref}
+                        ref={refAnim}
                         className="animate-slide w-fit m-auto"
                         style={{
                             background: "linear-gradient(45deg, rgba(167,4,4,1) 0%, rgba(242,126,2,1) 89%, rgba(247,218,208,1) 100%)",
@@ -66,4 +66,7 @@ export default function Hero() {
 
     )
 
-}
+});
+
+
+export default Hero;
