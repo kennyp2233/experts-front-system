@@ -87,7 +87,7 @@ function ModelGlb({
 
         // Clean up the event listener when the component unmounts
         return () => window.removeEventListener('resize', handleResize);
-    }, [posx, anchorX, anchorY]);
+    }, [posx, anchorX, anchorY, anchorElement, posy]);
 
 
 
