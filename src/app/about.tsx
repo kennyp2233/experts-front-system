@@ -1,8 +1,7 @@
 'use client'
 import { RefObject, useEffect, useRef } from 'react';
-import Contenedor from './components/contenedor';
-import Rosa3D from './components/rosa3d';
-import { useInView } from 'react-intersection-observer';
+import Rosa3D from './components/landing/rosa3d';
+
 import React from 'react';
 const divs = [
     { title: 'Fidelidad', description: 'Comprometidos con nuestros clientes a largo plazo.' },
@@ -41,9 +40,9 @@ const About = React.forwardRef((props, ref) => {
     return (
         <>
 
-            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] min-h-[100vh] max-md:px-8 max-md:w-[100vw]">
+            <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] min-h-[100vh] max-md:px-4 max-md:pt-28">
                 <Rosa3D />
-                <h1 className="text-6xl text-center tracking-tighter font-light" >
+                <h1 className="text-6xl text-center tracking-tighter font-bold max-md:text-4xl" >
                     Sobre nosotros
                 </h1>
                 <p className="pt-10 text-2xl text-center tracking-tighter font-light text-gray-200 max-md:text-xl"> Somos una empresa de planeación logística en la exportación de flores al mundo, contribuyendo a la mejora de la competitividad exportadora e importadora. Trabajamos con aliados de negocios reconocidos en el mercado y con amplio conocimiento en el campo de la logística integral.</p>
@@ -53,8 +52,8 @@ const About = React.forwardRef((props, ref) => {
 
                         return (
                             <div key={index} className="block max-w-sm p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{div.title}</h5>
-                                <p className="font-normal text-gray-400 ">{div.description}</p>
+                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">{div.title}</h5>
+                                <p className="text-gray-400 ">{div.description}</p>
                             </div>
                         );
                     })}

@@ -21,6 +21,7 @@ interface ModelGlbProps {
     scrollType?: number;
     anchorElement?: number;
 }
+
 function Setup() {
     const { gl } = useThree();
     gl.shadowMap.enabled = true;
@@ -47,6 +48,8 @@ function ModelGlb({
 }: ModelGlbProps) {
 
     const ref = useRef<THREE.Group>();
+    const lightRef = useRef<THREE.PointLight | null>(null);
+
     const gltf = useGLTF(rutaGlb);
     console.log(gltf);
 
@@ -112,51 +115,52 @@ function ModelGlb({
 
     useEffect(() => {
         const handleScroll = () => {
-            if (ref.current) {
+            const canvas = document.getElementById('myCanvas');
+            if (canvas) {
                 const scrollY = window.scrollY;
-                const deltaY = scrollY - lastScrollY.current;
+                const deltaY = scrollY / 100;
                 switch (scrollType) {
                     case 1:
                         targetX.current = posx >= 0 ? Math.max(anchorMaxX, targetX.current - deltaY * 2) : Math.min(anchorMaxX, targetX.current + deltaY * 2);
                         targetYRot.current += deltaY * 0.01;
                         targetZRot.current += deltaY * 0.01;
-
                         break;
                     case 2:
                         targetX.current = posx >= 0 ? Math.max(anchorMaxX, targetX.current - deltaY * 2) : Math.min(anchorMaxX, targetX.current + deltaY * 2);
                         targetY.current = posy >= 0 ? Math.max(anchorY, targetY.current - deltaY * 2) : Math.min(anchorY, targetY.current + deltaY * 2);
                         break;
-
                     case 3:
                         targetX.current = posx >= 0 ? Math.max(anchorMaxX, targetX.current - deltaY * 2) : Math.min(anchorMaxX, targetX.current + deltaY * 2);
-
                         break;
                     default:
                         break;
                 }
-                lastScrollY.current = scrollY;
-
-
+                // lastScrollY.current = scrollY;
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [anchorMaxX, anchorY, posx, posy, scrollType]);
-
     useFrame(() => {
         if (ref.current) {
             ref.current.position.x += (targetX.current - ref.current.position.x) * 0.05;
             ref.current.position.y += (targetY.current - ref.current.position.y) * 0.05;
             ref.current.rotation.y += (targetYRot.current - ref.current.rotation.y) * 0.05;
             ref.current.rotation.z += (targetZRot.current - ref.current.rotation.z) * 0.05;
+            if (lightRef.current) {
+                lightRef.current.position.y = ref.current.position.y + 200;
+                lightRef.current.position.x = ref.current.position.x;
+                lightRef.current.position.z = ref.current.position.z + 150;
+            }
         }
+
     });
 
     return (
         <group>
             <primitive ref={ref} object={gltf.scene.clone(true)} material={gltf.materials.default} receiveShadow castShadow />
-            <pointLight position={[posx, posy + 200, posz + 150]} intensity={10000} castShadow /> {/* Luz puntual para este modelo */}
+            <pointLight ref={lightRef} position={[posx, posy + 200, posz + 150]} intensity={100000} castShadow /> {/* Luz puntual para este modelo */}
         </group>
     );
 }
@@ -183,7 +187,7 @@ export default function Rosa3() {
     }, [ref]);
 
     return (
-        <div ref={ref} className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[100vh] z-[-1] w-[100vw] max-lg:h-full'>
+        <div ref={ref} id="myCanvas" className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[100vh] z-[-1] w-[100vw] max-lg:h-full'>
             <Canvas>
                 <Setup />
                 <OrthographicCamera

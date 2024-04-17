@@ -1,12 +1,13 @@
 'use client'
 import Hero from "./hero";
 import About from "./about";
+import Contact from "./contact";
 import NavBar from "./components/navbar";
 import { useRef } from "react";
 import React from "react";
 
 export default function Page() {
-  const sectionRefs = [React.createRef(), React.createRef()];
+  const sectionRefs = [React.createRef(), React.createRef(), React.createRef()];
 
   return (
     <>
@@ -14,6 +15,7 @@ export default function Page() {
       <div className="overflow-x-hidden">
         <Hero ref={sectionRefs[0]} />
         <About ref={sectionRefs[1]} />
+        <Contact ref={sectionRefs[2]} />
       </div>
     </>
   );

@@ -33,13 +33,16 @@ export default function Navbar({ sections }: { sections?: any[] }) {
 
     useEffect(() => {
         const handleScroll = () => {
-            let maxTop = -Infinity;
+            let minTop = Infinity;
             let selected = 0;
             sections?.forEach((section, index) => {
                 const rect = section.current?.getBoundingClientRect();
-                if (rect?.top <= 0 && rect?.top > maxTop) {
-                    maxTop = rect.top;
-                    selected = index;
+                if (rect) {
+                    const top = Math.abs(rect.top);
+                    if (top < minTop) {
+                        minTop = top;
+                        selected = index;
+                    }
                 }
             });
             setRefSelected(selected);
@@ -90,10 +93,11 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                                     onClick={() => handleClick(sections?.[link.indexOf(item)])}
                                                     className={classNames(
                                                         refSelected === link.indexOf(item)
-                                                            ? 'text-opacity-70 scale-105'
+                                                            ? 'scale-105 font-semibold'
                                                             : '',
                                                         'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-100 ease-in-out hover:scale-105'
                                                     )}
+                                                    style={refSelected === link.indexOf(item) ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
                                                 >
                                                     {item.label}
                                                 </button>

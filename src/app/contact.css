@@ -1,0 +1,40 @@
+.container-grid {
+    display: grid;
+    grid-template-areas:
+        "direccion correo telefono";
+    grid-gap: 10px;
+
+}
+
+.direccion {
+    grid-area: direccion;
+}
+
+.telefono {
+    grid-area: telefono;
+}
+
+.correo {
+    grid-area: correo;
+}
+
+@media not all and (min-width: 1024px) {
+    .container-grid {
+        display: grid;
+        grid-template-areas:
+            "direccion  direccion"
+            "telefono correo";
+    }
+
+}
+
+@media not all and (min-width: 549px) {
+    .container-grid {
+        display: grid;
+        grid-template-areas:
+            "direccion"
+            "telefono"
+            "correo";
+    }
+
+}
