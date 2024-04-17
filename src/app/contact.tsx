@@ -45,35 +45,34 @@ const Contact = React.forwardRef((props, ref) => {
                     Contacto
                 </h1>
                 <div className="container-grid w-full mt-12">
-                    <div className="direccion block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out transform hover:-translate-y-2">
-                        <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-900 max-md:text-xl">
-                            <span className="mr-2 text-blue-500 animate-bounce">🏠</span>
-                            Dirección
+                    <div className="direccion block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+                            <span className="mr-2 text-blue-500 animate-bounce">🏠</span> Dirección
                         </h5>
-                        <p className="font-normal text-gray-700 max-md:text-sm">
+                        <p className="text-gray-400">
                             10 DE DICIEMBRE Y CHILLANES CONJUNTO MI PASEO CASA 31, SANGOLQUI ECUADOR
                         </p>
                     </div>
-                    <div className="telefono block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out transform hover:-translate-y-2">
-                        <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-900 max-md:text-xl">
-                            <span className="mr-2 text-blue-500 animate-bounce">📞</span>
-                            Teléfono
+                    <div className="telefono block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+                            <span className="mr-2 text-blue-500 animate-bounce">📞</span> Teléfono
                         </h5>
-                        <p className="font-normal text-gray-700  max-md:text-sm">023526170</p>
-                        <p className="font-normal text-gray-700  max-md:text-sm">0960058635</p>
+                        <p className="text-gray-400">023526170</p>
+                        <p className="text-gray-400">0960058635</p>
                     </div>
-                    <div className="correo block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out transform hover:-translate-y-2">
-                        <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-900 max-md:text-xl">
-                            <span className="mr-2 text-blue-500 animate-bounce">✉️</span>
-                            Correo
+                    <div className="correo block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+                            <span className="mr-2 text-blue-500 animate-bounce">✉️</span> Correo
                         </h5>
-                        <p className="font-normal text-gray-700 max-md:text-sm">
+                        <p className="text-gray-400">
                             <a href="mailto:manager@expertshcargo.com">manager@expertshcargo.com</a>
                         </p>
-                        <p className="font-normal text-gray-700 max-md:text-sm">
-                            <a href="mailto:coordination@expertshcargo.com">coordination@expertshcargo.com</a>
+                        <p className="text-gray-400">
+                            <a href="mailto:coordination@expertshcargo.com">
+                                coordination@expertshcargo.com
+                            </a>
                         </p>
-                        <p className="font-normal text-gray-700 max-md:text-sm">
+                        <p className="text-gray-400">
                             <a href="mailto:expertshcargosa@gmail.com">expertshcargosa@gmail.com</a>
                         </p>
                     </div>
