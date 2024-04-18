@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Escena3D from './components/landing/fondo3d_rosa';
 import { useState, useEffect, useRef, Suspense, RefObject } from 'react';
-import "./hero.css";
+import "./styles/hero.css";
 import React from "react";
 import Colaboraciones from "./colaboraciones";
 const opcionesHero = [

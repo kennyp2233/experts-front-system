@@ -11,6 +11,7 @@ import BotonLlamativo from './botonLlamativo';
 
 
 const link = [
+    { href: '/sistema', label: 'Sistema' },
     { href: '/', label: 'Nuestra Empresa' },
     { href: '/about', label: 'Servicios' },
     { href: '/contact', label: 'Contacto' },
@@ -55,6 +56,11 @@ export default function Navbar({ sections }: { sections?: any[] }) {
     }, [sections]);
 
     const path = usePathname();
+    const handleBtnClick = () => {
+        if (path !== '/sistema') {
+            window.location.href = '/sistema';
+        }
+    }
     return (
         <>
             {/*
@@ -88,24 +94,28 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                     <div className="hidden md:flex md:justify-center md:items-center md:absolute md:inset-0">
                                         <div className="flex items-baseline space-x-4">
                                             {link.map((item) => (
-                                                <button
-                                                    key={item.label}
-                                                    onClick={() => handleClick(sections?.[link.indexOf(item)])}
-                                                    className={classNames(
-                                                        refSelected === link.indexOf(item)
-                                                            ? 'scale-105 font-semibold'
-                                                            : '',
-                                                        'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-100 ease-in-out hover:scale-105'
-                                                    )}
-                                                    style={refSelected === link.indexOf(item) ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
-                                                >
-                                                    {item.label}
-                                                </button>
+                                                (item.label !== 'Sistema' &&
+                                                    <button
+                                                        key={item.label}
+                                                        onClick={() => handleClick(sections?.[link.indexOf(item)])}
+                                                        className={classNames(
+                                                            refSelected === link.indexOf(item)
+                                                                ? 'scale-105 font-semibold'
+                                                                : '',
+                                                            'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-100 ease-in-out hover:scale-105'
+                                                        )}
+                                                        style={refSelected === link.indexOf(item) ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
+                                                    >
+                                                        {item.label}
+                                                    </button>
+                                                )
                                             ))}
                                         </div>
                                     </div>
 
-                                    <BotonLlamativo className='max-md:hidden' colorBase='#F42A2A'>
+
+
+                                    <BotonLlamativo className='max-md:hidden' colorBase='#F42A2A' onClick={handleBtnClick}>
                                         Lanzar Sistema
                                     </BotonLlamativo>
 
@@ -143,7 +153,7 @@ export default function Navbar({ sections }: { sections?: any[] }) {
 
                                             <Disclosure.Button
                                                 key={item.label}
-                                                onClick={() => handleClick(sections?.[link.indexOf(item)])}
+                                                onClick={() => item.label === 'Sistema' ? handleBtnClick() : handleClick(sections?.[link.indexOf(item)])}
                                                 className={classNames(
                                                     refSelected === link.indexOf(item) ? 'bg-orange-900 text-white' : 'text-gray-300 hover:bg-orange-700 hover:text-white',
                                                     'w-full block rounded-md px-3 py-2 text-base font-medium'

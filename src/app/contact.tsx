@@ -1,7 +1,7 @@
 'use client'
 import { RefObject, useEffect, useRef } from 'react';
 import Rosa3D from './components/landing/rosa3d';
-import "./contact.css"
+import "./styles/contact.css"
 import React from 'react';
 const divs = [
     { title: 'Fidelidad', description: 'Comprometidos con nuestros clientes a largo plazo.' },
@@ -45,7 +45,7 @@ const Contact = React.forwardRef((props, ref) => {
                     Contacto
                 </h1>
                 <div className="container-grid w-full mt-12">
-                    <div className="direccion block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                    <div className="direccion min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
                             <span className="mr-2 text-blue-500 animate-bounce">🏠</span> Dirección
                         </h5>
@@ -53,26 +53,26 @@ const Contact = React.forwardRef((props, ref) => {
                             10 DE DICIEMBRE Y CHILLANES CONJUNTO MI PASEO CASA 31, SANGOLQUI ECUADOR
                         </p>
                     </div>
-                    <div className="telefono block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                    <div className="telefono min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
                             <span className="mr-2 text-blue-500 animate-bounce">📞</span> Teléfono
                         </h5>
                         <p className="text-gray-400">023526170</p>
                         <p className="text-gray-400">0960058635</p>
                     </div>
-                    <div className="correo block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
+                    <div className="correo min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
                             <span className="mr-2 text-blue-500 animate-bounce">✉️</span> Correo
                         </h5>
-                        <p className="text-gray-400">
+                        <p className="text-gray-400 break-words">
                             <a href="mailto:manager@expertshcargo.com">manager@expertshcargo.com</a>
                         </p>
-                        <p className="text-gray-400">
+                        <p className="text-gray-400 break-words">
                             <a href="mailto:coordination@expertshcargo.com">
                                 coordination@expertshcargo.com
                             </a>
                         </p>
-                        <p className="text-gray-400">
+                        <p className="text-gray-400 break-words">
                             <a href="mailto:expertshcargosa@gmail.com">expertshcargosa@gmail.com</a>
                         </p>
                     </div>
