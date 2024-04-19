@@ -9,7 +9,7 @@ export default function Register({ handleClick }: { handleClick: (n: number) => 
                 </button>
 
 
-                <div className="hero-content flex-col lg:flex-row-reverse">
+                <div className="hero-content min-w-0 w-full flex-col lg:flex-row-reverse">
 
                     <div className="text-left lg:text-center">
                         <h1 className="text-5xl font-bold py-6 px-10 max-md:pt-14 max-sm:pt-20">Regístrate</h1>
