@@ -97,14 +97,14 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                                 (item.label !== 'Sistema' &&
                                                     <button
                                                         key={item.label}
-                                                        onClick={() => handleClick(sections?.[link.indexOf(item)])}
+                                                        onClick={() => handleClick(sections?.[link.indexOf(item) - 1])}
                                                         className={classNames(
-                                                            refSelected === link.indexOf(item)
+                                                            refSelected === link.indexOf(item) - 1
                                                                 ? 'scale-105 font-semibold'
                                                                 : '',
                                                             'text-white bg-transparent text-sm flex justify-center px-2 xl:px-4 border-0 relative z-10 hover:text-opacity-70 transition duration-100 ease-in-out hover:scale-105'
                                                         )}
-                                                        style={refSelected === link.indexOf(item) ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
+                                                        style={refSelected === link.indexOf(item) - 1 ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
                                                     >
                                                         {item.label}
                                                     </button>

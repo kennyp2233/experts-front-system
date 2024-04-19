@@ -1,38 +1,33 @@
-
+'use client';
+import { useState } from 'react';
+import Hero from './components/hero';
+import Login from './components/login';
+import Register from './components/register';
 export default function Page() {
+  const [sistemState, setSistemState] = useState(0);
+  const [initialState, setInitialState] = useState(0);
 
+  const handleSistemState = (n: number) => {
+    setSistemState(n);
+  };
+
+  const handleInitialState = (n: number) => {
+    setInitialState(n);
+  }
   return (
     <>
-      <ul className="menu fixed bottom-0 left-0 menu-horizontal bg-base-200 rounded-box">
-        <li>
-          <a>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-          </a>
-        </li>
-        <li>
-          <a>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          </a>
-        </li>
-        <li>
-          <a>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-          </a>
-        </li>
-      </ul>
-
-      <div className="hero min-h-screen bg-base-200">
-        <div className="hero-content text-center">
-          <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Sistema de Coordinacion</h1>
-            <p className="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-            <button className="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-      </div>
-
-
-
+      {
+        sistemState === 0 ?
+          (initialState === 0 ? <Hero handleClick={handleInitialState} /> :
+            initialState === 1 ? <Login handleClick={handleInitialState} /> :
+              initialState === 2 ? <Register handleClick={handleInitialState} /> :
+                initialState === 3 ? <div>Forgot Password</div> :
+                  <div>Error</div>) :
+          sistemState === 1 ? <div>Dashboard</div> :
+            sistemState === 2 ? <div>Profile</div> :
+              sistemState === 3 ? <div>Settings</div> :
+                <div>Error</div>
+      }
     </>
   );
 }

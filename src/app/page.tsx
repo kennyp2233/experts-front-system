@@ -1,7 +1,7 @@
 'use client'
-import Hero from "./hero";
-import About from "./about";
-import Contact from "./contact";
+import Hero from "./components/landing/sections/hero";
+import About from "./components/landing/sections/about";
+import Contact from "./components/landing/sections/contact";
 import NavBar from "./components/navbar";
 import { useRef } from "react";
 import React from "react";

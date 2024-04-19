@@ -1,6 +1,6 @@
 'use client'
 import { RefObject, useEffect, useRef } from 'react';
-import Rosa3D from './components/landing/rosa3d';
+import Rosa3D from '../rosa3d';
 import "./styles/contact.css"
 import React from 'react';
 const divs = [

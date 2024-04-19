@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import Escena3D from './components/landing/fondo3d_rosa';
+import Escena3D from '../fondo3d_rosa';
 import { useState, useEffect, useRef, Suspense, RefObject } from 'react';
 import "./styles/hero.css";
 import React from "react";

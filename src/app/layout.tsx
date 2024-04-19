@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./styles/globals.css";
+import "./globals.css";
 
 
 
@@ -21,7 +21,7 @@ export default function RootLayout({
 
   return (
     <html lang="es">
-      <body className={inter.className}>
+      <body className={inter.className} style={{ background: "transparent" }}>
         {children}
       </body>
     </html>
