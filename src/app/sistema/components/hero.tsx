@@ -3,9 +3,9 @@ export default function Hero({ handleClick }: { handleClick: (n: number) => void
 
     return (
         <>
-            <div className="hero min-h-screen bg-base-200" style={{ backgroundImage: 'url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg)' }}>
-                <div className="hero-overlay bg-opacity-60"></div>
-                <div className="hero-content max-w-lg text-center">
+            <div className="hero min-h-screen bg-base-200" style={{ backgroundImage: 'url(img/descarga.jpeg)' }}>
+                <div className="hero-overlay bg-opacity-70"></div>
+                <div className="hero-content text-center text-neutral-content">
 
                     <div className="flex flex-col text-center justify-center">
 
