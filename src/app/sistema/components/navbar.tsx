@@ -35,11 +35,11 @@ export default function NavBar() {
                             <li><a>Item 3</a></li>
                         </ul>
                     </div>
-                    <a className="btn btn-ghost text-xl">
+                    <a className="btn btn-ghost text-xl max-md:px-2">
                         ExpertGuide
                         <div className="indicator h-3/4">
-                            <span className="indicator-item indicator-bottom badge badge-primary">BETA</span>
-
+                            <span className="hidden indicator-item indicator-bottom badge badge-primary md:inline-block">BETA</span>
+                            <span className="indicator-item indicator-bottom badge badge-primary md:hidden">B</span>
                         </div>
                     </a>
 
