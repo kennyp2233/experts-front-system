@@ -1,12 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Hero from './hero';
 import Login from './login';
 import Register from './register';
+import { useAuth } from '../../authProvider';
+import { useSistemState } from '../../sistemStateContext';
+
 export default function AllInitial() {
     const [initialState, setInitialState] = useState(0);
+    const { isLoggedIn, setIsLoggedIn, verifyAdmin } = useAuth();
+    const { sistemState, handleSistemState } = useSistemState();
+
     const handleInitialState = (n: number) => {
         setInitialState(n);
     }
+    const handleClickLogo = () => {
+        console.log('clickLogo');
+        setInitialState(0);
+        handleSistemState(0);
+    };
+
+    window.addEventListener('clickLogo', handleClickLogo);
+
+    /*
+    useEffect(() => {
+        
+        return () => {
+            window.removeEventListener('clickLogo', handleClickLogo);
+        };
+    }, []);
+*/
     return (
         <>
             {
@@ -14,7 +36,7 @@ export default function AllInitial() {
                     initialState === 1 ? <Login handleClick={handleInitialState} /> :
                         initialState === 2 ? <Register handleClick={handleInitialState} /> :
                             initialState === 3 ? <div>Forgot Password</div> :
-                                <div>Error</div>
+                                <div className='text-primary min-h-screen'>Error</div>
             }
         </>
     );

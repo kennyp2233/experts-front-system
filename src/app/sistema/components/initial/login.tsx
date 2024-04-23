@@ -1,25 +1,52 @@
 import { login } from "@api/auth.api";
 import { useState } from "react";
 import { useSistemState } from "../../sistemStateContext";
+import toast, { resolveValue, Toaster } from 'react-hot-toast';
+import { useAuth } from "../../authProvider";
+
 export default function Login({ handleClick }: { handleClick: (n: number) => void }) {
     const [usuario, setUsuario] = useState('');
     const [password, setPassword] = useState('');
+
     const [recordar, setRecordar] = useState(false);
+
     const { sistemState, handleSistemState } = useSistemState();
+    const { checkToken } = useAuth();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Si el formulario ya se está enviando, salimos de la función
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+
         const res = await login(usuario, password, recordar);
+        let timer: NodeJS.Timeout;
         if (res.ok) {
+            const event = new CustomEvent('success', { detail: 'Sesión iniciada correctamente' });
+            window.dispatchEvent(event);
+            localStorage.setItem('jwt', res.token);
+            checkToken();
             handleSistemState(1);
         } else {
-            alert(res.msg);
+            const event = new CustomEvent('fail', { detail: res.msg || 'Error desconocido' });
+            window.dispatchEvent(event);
+
         }
+
+        setIsSubmitting(false);
+
+        return () => clearTimeout(timer);
     };
+
     return (
         <>
-            <div className="hero min-h-screen bg-base-200">
-                <div className="hero-content min-w-0 w-full flex-col lg:flex-row-reverse">
 
+            <div className="relative hero min-h-screen bg-base-200">
+
+                <div className="hero-content min-w-0 w-full flex-col lg:flex-row-reverse">
 
                     <h1 className=" text-5xl font-bold pb-6 lg:hidden max-md:text-center">
                         Iniciar Sesión

@@ -8,7 +8,7 @@ export default function Colaboraciones({ className }: { className?: string }) {
     useEffect(() => {
         const timer = setInterval(() => {
             setHighlight(prevHighlight => (prevHighlight + 1) % 2);
-        }, 4000); // Cambia el resaltado cada 3 segundos
+        }, 5000); // Cambia el resaltado cada 3 segundos
 
         return () => clearInterval(timer); // Limpia el intervalo cuando el componente se desmonta
     }, []);
@@ -21,7 +21,7 @@ export default function Colaboraciones({ className }: { className?: string }) {
                     <div className='relative inline-block' style={{ transition: 'color 3s, font-weight 3s', color: `${highlight === 0 ? 'white' : 'inherit'}`, fontWeight: `${highlight === 0 ? 'bold' : 'normal'}` }}>
                         compañias de carga
                         <div className="h-[0.7px] bg-gray-500 absolute bottom-0 left-0 right-0">
-                            <div style={{ transition: 'width 3s', width: `${highlight === 0 ? '100%' : '0%'}` }} className="h-fullF bg-white"></div>
+                            <div style={{ transition: 'width 3s', width: `${highlight === 0 ? '100%' : '0%'}` }} className="h-full bg-white"></div>
                         </div>
                     </div>
                     {" "}

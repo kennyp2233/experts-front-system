@@ -1,7 +1,10 @@
+import { useAuth } from "../../authProvider";
+import { useSistemState } from "../../sistemStateContext";
 import Stats from "./stats";
 import Image from "next/image";
 export default function Hero({ handleClick }: { handleClick: (n: number) => void }) {
-
+    const { isLoggedIn, setIsLoggedIn, verifyAdmin, isAdministrator } = useAuth();
+    const { sistemState, handleSistemState, } = useSistemState();
     return (
         <>
             <div className="relative hero min-h-screen bg-base-200 bg-opacity-0" >
@@ -23,7 +26,7 @@ export default function Hero({ handleClick }: { handleClick: (n: number) => void
                         <p className="py-6">Gestiona tus Guías de Manera Eficiente.</p>
                         <Stats />
 
-                        <button className="btn btn-primary max-w-xs w-full mx-auto mt-4" onClick={() => handleClick(1)}>Ingresar</button>
+                        <button className="btn btn-primary max-w-xs w-full mx-auto mt-4" onClick={() => isLoggedIn ? handleSistemState(1) : handleClick(1)}>Ingresar</button>
                     </div>
                 </div>
             </div>

@@ -9,25 +9,42 @@ export default function Stats() {
 
     const percentageChange = ((users - lastUsers) / lastUsers) * 100;
     // Para los usuarios
-
     // Para los usuarios
     useEffect(() => {
-        if (users < targetUsers) {
-            const timer = setTimeout(() => {
-                setUsers(users => users + 1);
-            }, 1); // Ajusta la velocidad de la animación en función de la longitud del número
-            return () => clearTimeout(timer);
-        }
-    }, [users, targetUsers]);
+        const start = performance.now();
+        const speed = 500; // Cambio por segundo
+
+        const animate = (timestamp: number) => {
+            const progress = timestamp - start;
+            const change = (progress / 1000) * speed;
+            const newUsers = Math.floor(Math.min(lastUsers + change, targetUsers));
+            setUsers(newUsers);
+
+            if (newUsers < targetUsers) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }, [lastUsers, targetUsers]);
 
     // Para las visitas
     useEffect(() => {
-        if (lastVisits < targetVisits) {
-            const timer = setTimeout(() => {
-                setLastVisits(lastVisits => lastVisits + 1);
-            }, 1); // Ajusta la velocidad de la animación en función de la longitud del número
-            return () => clearTimeout(timer);
-        }
+        const start = performance.now();
+        const speed = 500; // Cambio por segundo
+
+        const animate = (timestamp: number) => {
+            const progress = timestamp - start;
+            const change = (progress / 1000) * speed;
+            const newVisits = Math.floor(Math.min(lastVisits + change, targetVisits));
+            setLastVisits(newVisits);
+
+            if (newVisits < targetVisits) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
     }, [lastVisits, targetVisits]);
 
     return (
