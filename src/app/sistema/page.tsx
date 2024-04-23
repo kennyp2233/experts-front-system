@@ -12,7 +12,7 @@ import { useSistemState } from './sistemStateContext';
 
 export default function Page() {
   const { sistemState, handleSistemState, } = useSistemState();
-  const { isLoggedIn, setIsLoggedIn, verifyAdmin, isAdministrator } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, isAdministrator } = useAuth();
   const [loading, setLoading] = useState(true);
 
 

@@ -3,8 +3,8 @@ import { useSistemState } from "../../sistemStateContext";
 import Stats from "./stats";
 import Image from "next/image";
 export default function Hero({ handleClick }: { handleClick: (n: number) => void }) {
-    const { isLoggedIn, setIsLoggedIn, verifyAdmin, isAdministrator } = useAuth();
-    const { sistemState, handleSistemState, } = useSistemState();
+    const { isLoggedIn } = useAuth();
+    const { handleSistemState, } = useSistemState();
     return (
         <>
             <div className="relative hero min-h-screen bg-base-200 bg-opacity-0" >

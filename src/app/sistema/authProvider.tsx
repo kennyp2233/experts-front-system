@@ -3,7 +3,7 @@ import { checkJwt, isAdmin } from "@api/auth.api";
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  verifyAdmin: () => Promise<boolean>;
+  //verifyAdmin?: () => Promise<boolean>;
   isAdministrator: boolean;
   setIsAdministrator: (value: boolean) => void;
   checkToken: () => Promise<boolean>;
@@ -65,14 +65,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             window.dispatchEvent(event);
           }
           setIsAdministrator(true);
-          setIsChecking(false);
           return true;
         }
       } catch (error) {
         console.log(error);
       }
     }
-    setIsChecking(false);
+
     setIsAdministrator(false);
     return false;
 
@@ -96,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, verifyAdmin, isAdministrator, setIsAdministrator, checkToken }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdministrator, setIsAdministrator, checkToken }}>
       {children}
     </AuthContext.Provider>
   );

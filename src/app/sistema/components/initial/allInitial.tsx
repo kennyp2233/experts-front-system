@@ -7,7 +7,7 @@ import { useSistemState } from '../../sistemStateContext';
 
 export default function AllInitial() {
     const [initialState, setInitialState] = useState(0);
-    const { isLoggedIn, setIsLoggedIn, verifyAdmin } = useAuth();
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
     const { sistemState, handleSistemState } = useSistemState();
 
     const handleInitialState = (n: number) => {
