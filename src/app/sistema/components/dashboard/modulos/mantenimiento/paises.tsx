@@ -10,93 +10,12 @@ import { getPaisesJoinAcuerdos } from "@/app/api/paises.api";
 import MantenimientoRoute from "./mantenimientoRoute";
 import ReturnButton from "../../../returnButton";
 import Formulario from "./formulario";
+import Tabla from "./tabla";
+import ControlButtons from "./controllButtons";
 import { format } from "path";
 import { useAuth } from "@/app/sistema/authProvider";
 
-function Tabla({ columns, data, className, setSelectedRow, selectedRow }: { columns: string[], data: string[][], className?: string, setSelectedRow: (id: number) => void, selectedRow: number }) {
 
-    return (
-        <>
-            <div className={"card card-body shrink-0 shadow-2xl bg-base-100 " + className}>
-                <div className="overflow-x-auto h-96">
-                    <table className="table table-pin-rows ">
-                        {/* head */}
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {columns.map((column, index) => (
-                                    <th key={index}>{column}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((row, rowIndex) => (
-                                <tr
-                                    key={rowIndex}
-                                    data-id={row[0]}
-                                    onClick={() => setSelectedRow(parseInt(row[0]))} // Convert the value to a number
-                                    className={selectedRow === parseInt(row[0]) ? 'selected' : ''} // Convert the value to a number
-                                >
-                                    <th>{rowIndex + 1}</th>
-                                    {row.slice(1).map((cell, cellIndex) => (
-                                        <td key={cellIndex}>{cell}</td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </>
-    );
-}
-
-function ControlButtons({ handleCrear, handleModificar, handleEliminar }: { handleCrear?: () => void, handleModificar?: () => void, handleEliminar?: () => void }) {
-    return (
-        <>
-            <h2 className="text-3xl self-start max-sm:text-2xl">Acciones:</h2>
-            <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 h-fit ">
-                <button className="btn btn-primary" onClick={handleCrear}>
-                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><defs><mask id="ipSAddOne0"><g fill="none" strokeLinejoin="round" strokeWidth={4}><path fill="#fff" stroke="#fff" d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4S4 12.954 4 24s8.954 20 20 20Z"></path><path stroke="#000" strokeLinecap="round" d="M24 16v16m-8-8h16"></path></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSAddOne0)"></path></svg>
-                    Crear
-                </button>
-                <button className="btn btn-warning" onClick={handleModificar}>
-                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><defs><mask id="ipSModify0"><g fill="none"><path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="m20.07 9.586l-4.242-4.243a2 2 0 0 0-2.828 0L7.343 11a2 2 0 0 0 0 2.829l4.243 4.242m17.343 19.343l4.242 4.243a2 2 0 0 0 2.829 0L41.657 36a2 2 0 0 0 0-2.828l-4.243-4.243"></path><rect width={12} height={42} x={34.606} y={4.908} fill="#fff" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} rx={2} transform="rotate(45 34.606 4.908)"></rect><circle cx={24} cy={24} r={2} fill="#000"></circle><circle cx={20} cy={28} r={2} fill="#000"></circle><circle cx={28} cy={20} r={2} fill="#000"></circle></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSModify0)"></path></svg>
-                    Modificar
-                </button>
-
-                <button className="btn btn-error" onClick={handleEliminar}>
-                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fillRule="evenodd"><path d="M24 0v24H0V0zM12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036c-.01-.003-.019 0-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path><path fill="currentColor" d="M7.823 3.368A2 2 0 0 1 9.721 2h4.558a2 2 0 0 1 1.898 1.368L16.72 5H20a1 1 0 1 1 0 2h-1v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7H4a1 1 0 0 1 0-2h3.28zM9.387 5l.334-1h4.558l.334 1z"></path></g></svg>
-                    Eliminar
-                </button>
-
-                {/*
-                <BotonesMenu
-                    className=""
-                    titulo="Crear"
-                    icono={
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><defs><mask id="ipSAddOne0"><g fill="none" strokeLinejoin="round" strokeWidth={4}><path fill="#fff" stroke="#fff" d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4S4 12.954 4 24s8.954 20 20 20Z"></path><path stroke="#000" strokeLinecap="round" d="M24 16v16m-8-8h16"></path></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSAddOne0)"></path></svg>
-                    }
-                />
-                <BotonesMenu
-                    className=""
-                    titulo="Modificar"
-                    icono={
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><defs><mask id="ipSModify0"><g fill="none"><path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="m20.07 9.586l-4.242-4.243a2 2 0 0 0-2.828 0L7.343 11a2 2 0 0 0 0 2.829l4.243 4.242m17.343 19.343l4.242 4.243a2 2 0 0 0 2.829 0L41.657 36a2 2 0 0 0 0-2.828l-4.243-4.243"></path><rect width={12} height={42} x={34.606} y={4.908} fill="#fff" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} rx={2} transform="rotate(45 34.606 4.908)"></rect><circle cx={24} cy={24} r={2} fill="#000"></circle><circle cx={20} cy={28} r={2} fill="#000"></circle><circle cx={28} cy={20} r={2} fill="#000"></circle></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSModify0)"></path></svg>
-                    }
-                />
-                <BotonesMenu
-                    className=""
-                    titulo="Eliminar"
-                    icono={
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fillRule="evenodd"><path d="M24 0v24H0V0zM12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036c-.01-.003-.019 0-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path><path fill="currentColor" d="M7.823 3.368A2 2 0 0 1 9.721 2h4.558a2 2 0 0 1 1.898 1.368L16.72 5H20a1 1 0 1 1 0 2h-1v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7H4a1 1 0 0 1 0-2h3.28zM9.387 5l.334-1h4.558l.334 1z"></path></g></svg>
-                    }
-                />
-                */}
-            </div>
-        </>
-    );
-}
 
 interface AcuerdoArancelario {
     id_acuerdo: number;
@@ -114,20 +33,34 @@ interface PaisJoinArancel {
 }
 
 
+
+
 export default function Paises() {
     const { sistemState, handleSistemState, } = useSistemState();
     const { adminState, setAdminState } = useAdminModules();
     const { mantenimientoState, setMantenimientoState } = useMantenimiento();
     const { checkToken } = useAuth();
+    const [loading, setLoading] = useState(true);
 
     const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "ver" | "default">("default");
     const [acuerdoArancelario, setAcuerdoArancelario] = useState([]);
     const [paisesJoinAranceles, setPaisesJoinAranceles] = useState([] as PaisJoinArancel[]);
-    const [tableColumns, setTableColumns] = useState([] as string[]);
-    const [tableData, setTableData] = useState([] as string[][]);
-    const [loading, setLoading] = useState(true);
-    const [formFields, setFormFields] = useState([] as any[]);
+
+    const [tableData, setTableData] = useState({} as { [key: string]: any }[]);
+
     const [selectedRow, setSelectedRow] = useState(-1);
+    const [selectedRowData, setSelectedRowData] = useState({} as any);
+
+    const [visibleColumns, setVisibleColumns] = useState({
+        siglas_pais: "Siglas País",
+        nombre: "Nombre País",
+        pais_id: "ID País SESA",
+        acuerdos_arancelario: "Acuerdo Arancelario"
+    } as any);
+
+    const [formFieldsCreation, setFormFieldsCration] = useState([] as any[]);
+
+    const [formFieldsModification, setFormFieldsModification] = useState([] as any[]);
 
     const handleTimeout = () => {
         // Configura el loading a false después de un tiempo específico (5 segundos en este caso)
@@ -154,20 +87,36 @@ export default function Paises() {
 
     useEffect(() => {
         if (paisesJoinAranceles) {
-            setTableColumns(['Siglas País', 'Nombre País', 'ID País SESA', 'Acuerdo Arancelario']);
-            setTableData(paisesJoinAranceles.map(pais => [pais.id_pais.toString(), pais.siglas_pais, pais.nombre, pais.pais_id.toString(), pais.acuerdos_arancelario?.nombre]));
+
+            setTableData(paisesJoinAranceles);
+
             if (tableData.length > 0) {
                 setLoading(false);
             }
-        }
-        setFormFields([
-            { label: 'Siglas País', type: 'text', placeholder: 'Ej: EC' },
-            { label: 'Nombre País', type: 'text', placeholder: 'Ej: Ecuador' },
-            { label: 'ID País SESA', type: 'number', placeholder: 'Ej: 1' },
-            { label: 'Acuerdo Arancelario', type: 'select', options: acuerdoArancelario, displayKey: 'nombre', valueKey: 'id_acuerdo' },
-        ]);
 
-        ///console.log(tableData);
+            const createFormFields = (fields: any, disabledFieldLabel: any, isModification = false) => {
+                return fields.map((field: any) => {
+                    if (isModification && field.label === disabledFieldLabel) {
+                        return { ...field, type: 'number', disabled: true };
+                    }
+                    return { ...field, type: field.label === 'Acuerdo Arancelario' ? 'select' : 'text', placeholder: `Ej: ${field.example}` };
+                });
+            }
+
+            const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
+            const fields = [
+                { label: visibleColumns[keys[0]], key: keys[0], example: 'EC' },
+                { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador' },
+                { label: visibleColumns[keys[2]], key: keys[2], example: '1' },
+                { label: visibleColumns[keys[3]], key: keys[3], options: acuerdoArancelario },
+            ];
+
+            setFormFieldsCration(createFormFields(fields, "ID País"));
+            setFormFieldsModification(createFormFields(fields, true));
+
+            console.log(formFieldsCreation);
+            console.log(formFieldsModification);
+        }
     }, [paisesJoinAranceles]);
 
 
@@ -209,7 +158,7 @@ export default function Paises() {
                                 <Formulario
                                     formType="crear"
                                     controlState={setControlState as (str: string) => void}
-                                    formFields={formFields}
+                                    formFields={formFieldsCreation}
                                     classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
                                     className="w-fit self-center"
 
@@ -222,18 +171,13 @@ export default function Paises() {
                                 <Formulario
                                     formType="modificar"
                                     controlState={setControlState as (str: string) => void}
-                                    formFields={formFields}
+                                    formFields={formFieldsModification}
                                     classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
                                     className="w-fit self-center"
-                                    initialValues={
-                                        {
-                                            "Siglas País": "SV",
-                                            "Nombre": "El Salvador",
-                                            "Pais Id": "1",
-                                            "Acuerdo": "1",
-                                        }
-                                    }
+                                    initialValues={selectedRowData}
                                     setSelectedRow={setSelectedRow}
+                                    selectedRow={selectedRow}
+
                                 />
                             </>
                         }
@@ -245,10 +189,13 @@ export default function Paises() {
 
                         {tableData.length > 0 &&
                             <Tabla
-                                columns={["Siglas País", "Nombre", "Pais Id", "Acuerdo",]}
+                                visibleColumns={visibleColumns}
                                 data={tableData}
                                 selectedRow={selectedRow}
                                 setSelectedRow={setSelectedRow}
+                                selectedRowData={selectedRowData}
+                                setSelectedRowData={setSelectedRowData}
+
                             />
                         }
                         {(tableData.length === 0 && !loading) &&

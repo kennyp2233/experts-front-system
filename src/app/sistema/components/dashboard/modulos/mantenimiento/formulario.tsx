@@ -2,12 +2,13 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 interface FormField {
-    displayKey: any;
-    valueKey: any;
     label: string;
     type: string;
+    key: string;
+    example?: string;
     placeholder?: string;
     options?: string[];
+    disabled?: boolean;
 }
 
 interface FormState {
@@ -22,17 +23,38 @@ interface propsFormulario {
     formType: string;
     initialValues?: any;
     setSelectedRow?: (row: number) => void;
+    selectedRow?: number;
 }
 
-export default function Formulario({ controlState, className, formFields, classNameForm, formType, initialValues, setSelectedRow }: propsFormulario) {
+export default function Formulario(
+    {
+        controlState,
+        className,
+        formFields,
+        classNameForm,
+        formType,
+        initialValues,
+        setSelectedRow,
+        selectedRow
+    }: propsFormulario) {
 
-    const initialState: FormState = formFields.reduce((obj, item) => ({ ...obj, [item.label]: (initialValues && formType === "modificar") ? initialValues[item.label] : '' }), {});
+    const [formState, setFormState] = useState<FormState>({});
 
-    const [formState, setFormState] = useState(initialState);
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>, label: string) => {
-        setFormState({ ...formState, [label]: e.target.value });
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>, key: string) => {
+        setFormState({ ...formState, [key]: e.target.value });
     };
+
+    useEffect(() => {
+        if (formType === "modificar" && selectedRow !== -1) {
+            const newFormState = formFields.reduce((obj, field) => {
+                if (field.key in initialValues) {
+                    obj[field.key] = initialValues[field.key];
+                }
+                return obj;
+            }, {} as any);
+            setFormState(newFormState);
+        }
+    }, [initialValues]);
 
     return (
         <>
@@ -50,29 +72,31 @@ export default function Formulario({ controlState, className, formFields, classN
                                     <select
                                         className="select select-bordered w-full"
                                         value={formState[field.label]}
-                                        onChange={(e) => handleChange(e, field.label)}
+                                        onChange={(e) => handleChange(e, field.key)}
                                         required
                                     >
                                         <option value="" disabled>Seleccionar</option>
-                                        {field.options?.map((option, index) => (
+                                        {field.options?.map((option: any, index: number) => (
                                             <option
                                                 key={index}
-                                                value={option[field.valueKey]}
-                                                selected={formType === "modificar" && formState[field.label] === option[field.valueKey]}
+                                                value={option}
+                                                selected={false}
                                             >
-                                                {option[field.displayKey]}
+                                                {option[Object.keys(option)[1]]}
                                             </option>
                                         ))}
                                     </select>
                                 }
+
                                 {field.type !== 'select' &&
                                     <input
                                         type={field.type}
-                                        placeholder={field.placeholder}
+                                        placeholder={field.example}
                                         className="input input-bordered w-full"
                                         value={formState[field.label]}
-                                        onChange={(e) => handleChange(e, field.label)}
+                                        onChange={(e) => handleChange(e, field.key)}
                                         required
+                                        disabled={field.disabled}
                                     />
                                 }
                             </div>
