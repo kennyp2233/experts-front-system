@@ -36,12 +36,8 @@ interface PaisJoinArancel {
 
 
 export default function Paises() {
-    const { sistemState, handleSistemState, } = useSistemState();
-    const { adminState, setAdminState } = useAdminModules();
-    const { mantenimientoState, setMantenimientoState } = useMantenimiento();
-    const { checkToken } = useAuth();
+    const { setMantenimientoState } = useMantenimiento();
     const [loading, setLoading] = useState(true);
-
     const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "ver" | "default">("default");
     const [acuerdoArancelario, setAcuerdoArancelario] = useState([]);
     const [paisesJoinAranceles, setPaisesJoinAranceles] = useState([] as PaisJoinArancel[]);
@@ -59,8 +55,8 @@ export default function Paises() {
     } as any);
 
     const [formFieldsCreation, setFormFieldsCration] = useState([] as any[]);
-
     const [formFieldsModification, setFormFieldsModification] = useState([] as any[]);
+    const [selectedRows, setSelectedRows] = useState([] as any[]);
 
     const handleTimeout = () => {
         // Configura el loading a false después de un tiempo específico (5 segundos en este caso)
@@ -94,13 +90,16 @@ export default function Paises() {
                 setLoading(false);
             }
 
-            const createFormFields = (fields: any, disabledFieldLabel: any, isModification = false) => {
-                return fields.map((field: any) => {
-                    if (isModification && field.label === disabledFieldLabel) {
-                        return { ...field, type: 'number', disabled: true };
-                    }
+            const createFormFields = (fields: any, idLabel?: string, idKey?: string, isModification = false) => {
+                let newFields = fields.map((field: any) => {
                     return { ...field, type: field.label === 'Acuerdo Arancelario' ? 'select' : 'text', placeholder: `Ej: ${field.example}` };
                 });
+
+                if (isModification && idKey && idLabel) {
+                    newFields.unshift({ label: idLabel, key: idKey, type: 'number', disabled: true });
+                }
+
+                return newFields;
             }
 
             const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
@@ -111,11 +110,11 @@ export default function Paises() {
                 { label: visibleColumns[keys[3]], key: keys[3], options: acuerdoArancelario },
             ];
 
-            setFormFieldsCration(createFormFields(fields, "ID País"));
-            setFormFieldsModification(createFormFields(fields, true));
+            setFormFieldsCration(createFormFields(fields));
+            setFormFieldsModification(createFormFields(fields, "ID País", "id_pais", true));
 
-            console.log(formFieldsCreation);
-            console.log(formFieldsModification);
+            //console.log(formFieldsCreation);
+            //console.log(formFieldsModification);
         }
     }, [paisesJoinAranceles]);
 
@@ -149,6 +148,7 @@ export default function Paises() {
                             <ControlButtons
                                 handleCrear={() => setControlState("crear")}
                                 handleModificar={() => setControlState("modificar")}
+                                handleEliminar={() => setControlState("eliminar")}
                             />
                         }
 
@@ -182,9 +182,68 @@ export default function Paises() {
                             </>
                         }
 
-                        {(constrolState === "modificar" && selectedRow < 0) &&
-                            <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">Seleccione un registro de la tabla</h2>
+                        {(constrolState === "eliminar" && selectedRows.length > 0) &&
+                            <>
+                                <h2 className="text-3xl self-start  max-sm:text-2xl">Datos a eliminar:</h2>
+                                <Formulario
+                                    formType={constrolState}
+                                    controlState={setControlState as (str: string) => void}
+                                    classNameForm=""
+                                    className="w-fit self-center"
+                                    selectedRows={selectedRows}
+                                    setSelectedRows={setSelectedRows}
+                                    TablaEliminados={
+                                        <Tabla
+                                            visibleColumns={{ id_pais: "ID Pais", ...visibleColumns }}
+                                            data={
+                                                tableData?.filter((row: any) => selectedRows.includes(row[Object.keys(row)[0]]))
+                                            }
+                                            selectedRows={selectedRows}
+                                            setSelectedRows={setSelectedRows}
+                                            className="bg-transparent shadow-none p-0"
+                                            controlState="eliminar"
+                                        />
+                                    }
+                                />
+                            </>
                         }
+
+
+                        {(constrolState === "eliminar" && selectedRows.length <= 0) &&
+
+                            <>
+                                <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">Seleccione uno o varios registros de la tabla</h2>
+                                <button className="btn btn-error w-fit self-center" onClick={() => {
+                                    setControlState("default")
+                                    setSelectedRow(-1)
+                                    setSelectedRows([])
+
+                                }}>
+                                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
+                                    Cancelar
+                                </button>
+                            </>
+
+                        }
+
+
+                        {(constrolState === "modificar" && selectedRow < 0) &&
+
+                            <>
+                                <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">Seleccione un registro de la tabla</h2>
+                                <button className="btn btn-error w-fit self-center" onClick={() => {
+                                    setControlState("default")
+                                    setSelectedRow(-1)
+                                    setSelectedRows([])
+
+                                }}>
+                                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
+                                    Cancelar
+                                </button>
+                            </>
+
+                        }
+
                         <h2 className="text-3xl self-start pt-8  max-sm:text-2xl">Paises:</h2>
 
                         {tableData.length > 0 &&
@@ -195,7 +254,9 @@ export default function Paises() {
                                 setSelectedRow={setSelectedRow}
                                 selectedRowData={selectedRowData}
                                 setSelectedRowData={setSelectedRowData}
-
+                                selectedRows={selectedRows}
+                                setSelectedRows={setSelectedRows}
+                                controlState={constrolState}
                             />
                         }
                         {(tableData.length === 0 && !loading) &&
