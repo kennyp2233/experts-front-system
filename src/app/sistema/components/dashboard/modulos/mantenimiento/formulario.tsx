@@ -27,6 +27,8 @@ interface propsFormulario {
     TablaEliminados?: any,
     selectedRows?: any[],
     setSelectedRows?: (data: any) => void,
+    handleSubmit?: (e: any) => void,
+    handleUpdateData?: () => void,
 }
 
 export default function Formulario(
@@ -41,7 +43,9 @@ export default function Formulario(
         selectedRow,
         TablaEliminados,
         selectedRows,
-        setSelectedRows
+        setSelectedRows,
+        handleSubmit,
+        handleUpdateData,
     }: propsFormulario) {
 
     const [formState, setFormState] = useState<FormState>({});
@@ -71,10 +75,19 @@ export default function Formulario(
         setUpdateButtonDisabled(!hasFormStateChanged);
     }, [formState, initialValues]);
 
+
+    const handleOnSubmit = (e: any) => {
+        e.preventDefault();
+        if (handleSubmit && handleUpdateData) {
+            handleSubmit(formState);
+            handleUpdateData();
+        }
+
+    }
     return (
         <>
             <div className={"card shrink-0 shadow-2xl bg-base-100 " + className}>
-                <form className="card-body" onSubmit={() => ""}>
+                <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
                     <div className={"form-control " + classNameForm}>
                         {formFields?.map((field, index) => (
                             <div key={index}>
@@ -94,7 +107,7 @@ export default function Formulario(
                                         {field.options?.map((option: any, index: number) => (
                                             <option
                                                 key={index}
-                                                value={option}
+                                                value={option[Object.keys(option)[0]]}
                                                 selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
                                             >
                                                 {option[Object.keys(option)[1]]}
@@ -106,7 +119,7 @@ export default function Formulario(
                                 {field.type !== 'select' &&
                                     <input
                                         type={field.type}
-                                        placeholder={field.example}
+                                        placeholder={"Ej: " + field.example}
                                         className="input input-bordered w-full"
                                         value={formState[field.key]}
                                         onChange={(e) => handleChange(e, field.key)}
@@ -119,9 +132,9 @@ export default function Formulario(
                         {TablaEliminados && TablaEliminados}
                     </div>
 
-                    <div className="form-control mt-6 gap-2">
+                    <div className={"form-control mt-6 gap-2 "} >
                         {formType !== "eliminar" &&
-                            <button className="btn btn-primary">
+                            <button className={"btn btn-primary " + (isUpdateButtonDisabled && formType == "modificar" ? "btn-disabled" : "")}>
                                 {formType === "crear" &&
                                     <>
                                         <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><defs><mask id="ipSAddOne0"><g fill="none" strokeLinejoin="round" strokeWidth={4}><path fill="#fff" stroke="#fff" d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4S4 12.954 4 24s8.954 20 20 20Z"></path><path stroke="#000" strokeLinecap="round" d="M24 16v16m-8-8h16"></path></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSAddOne0)"></path></svg>
@@ -136,11 +149,34 @@ export default function Formulario(
                                         <span>Modificar</span>
                                     </>
                                 }
-
-
-
                             </button>
+
                         }
+
+                        {formType === "eliminar" &&
+                            <>
+                                <label htmlFor="my_modal_6" className="btn btn-primary">
+                                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 12 12"><path fill="currentColor" d="M5 3h2a1 1 0 0 0-2 0M4 3a2 2 0 1 1 4 0h2.5a.5.5 0 0 1 0 1h-.441l-.443 5.17A2 2 0 0 1 7.623 11H4.377a2 2 0 0 1-1.993-1.83L1.941 4H1.5a.5.5 0 0 1 0-1zm3.5 3a.5.5 0 0 0-1 0v2a.5.5 0 0 0 1 0zM5 5.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 1 0V6a.5.5 0 0 0-.5-.5"></path></svg>
+                                    Eliminar
+                                </label>
+
+                                <input type="checkbox" id="my_modal_6" className="modal-toggle" />
+                                <div className="modal" role="dialog">
+                                    <div className="modal-box">
+                                        <h3 className="font-bold text-lg flex">
+                                            <svg className="text-2xl text-error my-auto mr-2" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}><path strokeDasharray={60} strokeDashoffset={60} d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"></animate></path><path strokeDasharray={6} strokeDashoffset={6} d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"></animate><animate attributeName="stroke-width" begin="1s" dur="3s" keyTimes="0;0.1;0.2;0.3;1" repeatCount="indefinite" values="2;3;3;2;2"></animate></path></g><circle cx={12} cy={17} r={1} fill="currentColor" fillOpacity={0}><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"></animate><animate attributeName="r" begin="1.3s" dur="3s" keyTimes="0;0.1;0.2;0.3;1" repeatCount="indefinite" values="1;2;2;1;1"></animate></circle></svg>
+                                            <span>Advertencia</span>
+                                        </h3>
+                                        <p className="py-4">Desea eliminar los elementos seleccionados?</p>
+                                        <div className="modal-action">
+                                            <button className="btn btn-error">Eliminar</button>
+                                            <label htmlFor="my_modal_6" className="btn">Cerrar</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        }
+
                         <a className="btn btn-error" onClick={() => {
                             controlState("default")
                             if (setSelectedRow) setSelectedRow(-1)

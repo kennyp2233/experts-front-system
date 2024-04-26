@@ -11,12 +11,14 @@ interface TableInterface {
     selectedRows?: any[],
     setSelectedRows?: (data: any) => void,
     controlState?: string,
+    classNameTableContainer?: string
 }
 
 export default function Tabla({
     visibleColumns,
     data,
     className,
+    classNameTableContainer,
     setSelectedRow,
     selectedRow,
     selectedRowData,
@@ -56,7 +58,7 @@ export default function Tabla({
     return (
         <>
             <div className={"card card-body shrink-0 shadow-2xl bg-base-100 " + className}>
-                <div className="overflow-x-auto h-96">
+                <div className={"overflow-x-auto " + classNameTableContainer}>
                     <table className="table table-pin-rows ">
                         {/* head */}
                         <thead>
@@ -75,14 +77,19 @@ export default function Tabla({
                                     onClick={handleSelectedRow}
                                     className={
 
-                                        controlState === "eliminar" ? (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-red-300' : '') :
+                                        controlState === "eliminar" ? (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-error' : '') :
                                             (selectedRow === rowIndex ? 'bg-base-200' : '')
                                     }
                                 >
                                     <th>{rowIndex + 1}</th>
                                     {Object.keys(visibleColumns).map((column, columnIndex) => (
                                         <td key={columnIndex}>
-                                            {typeof row[column] === 'object' && row[column] !== null ? row[column].nombre : row[column].toString()}
+                                            {typeof row[column] === 'object' && row[column] !== null
+                                                ? row[column].nombre
+                                                : row[column] !== null && row[column] !== undefined
+                                                    ? row[column].toString()
+                                                    : row[column]
+                                            }
                                         </td>
                                     ))}
                                 </tr>

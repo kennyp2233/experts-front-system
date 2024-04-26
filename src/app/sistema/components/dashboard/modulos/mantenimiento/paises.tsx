@@ -5,7 +5,7 @@ import { useAdminModules } from "@/app/sistema/adminModulesProvider";
 import { useMantenimiento } from "@/app/sistema/mantenimientoProvider";
 
 import { getAcuerdosArancelarios } from "@/app/api/acuerdos_arancelarios";
-import { getPaisesJoinAcuerdos } from "@/app/api/paises.api";
+import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/app/api/paises.api";
 
 import MantenimientoRoute from "./mantenimientoRoute";
 import ReturnButton from "../../../returnButton";
@@ -14,6 +14,7 @@ import Tabla from "./tabla";
 import ControlButtons from "./controllButtons";
 import { format } from "path";
 import { useAuth } from "@/app/sistema/authProvider";
+import { error } from "console";
 
 
 
@@ -38,7 +39,7 @@ interface PaisJoinArancel {
 export default function Paises() {
     const { setMantenimientoState } = useMantenimiento();
     const [loading, setLoading] = useState(true);
-    const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "ver" | "default">("default");
+    const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "default">("default");
     const [acuerdoArancelario, setAcuerdoArancelario] = useState([]);
     const [paisesJoinAranceles, setPaisesJoinAranceles] = useState([] as PaisJoinArancel[]);
 
@@ -58,6 +59,71 @@ export default function Paises() {
     const [formFieldsModification, setFormFieldsModification] = useState([] as any[]);
     const [selectedRows, setSelectedRows] = useState([] as any[]);
 
+    const handleFormSubmit = (formState: any) => {
+        console.log(formState);
+        /*
+        const newFormState = Object.entries(formState).reduce((newObj: { [key: any]: any }, [key, value]) => {
+            if (typeof value === 'object' && value !== null) {
+                newObj[Object.keys(value)[0]] = value[Object.keys(value)[0]];
+            } else {
+                newObj[key] = value;
+            }
+            return newObj;
+        }, {} as { [key: any]: any });
+        */
+        if (constrolState === "crear") {
+            postPais(formState)
+                .then((response: any) => {
+                    console.log(response);
+                    if (response.ok) {
+                        const event = new CustomEvent('success', { detail: 'Pais creado con exito' });
+                        setControlState("default");
+                        window.dispatchEvent(event);
+                    } else {
+                        const event = new CustomEvent('error', { detail: response.msg });
+                        window.dispatchEvent(event);
+                    }
+                });
+        }
+        if (constrolState === "modificar") {
+            putPais(formState)
+                .then((response: any) => {
+                    console.log(response);
+                    if (response.ok) {
+                        const event = new CustomEvent('success', { detail: 'Pais modificado con exito' });
+                        setControlState("default");
+                        window.dispatchEvent(event);
+                    } else {
+                        const event = new CustomEvent('error', { detail: response.msg });
+                        window.dispatchEvent(event);
+                    }
+                });
+        }
+
+        if (constrolState === "eliminar") {
+
+
+            deletePaises(selectedRows)
+                .then((response: any) => {
+                    if (response.ok) {
+                        const event = new CustomEvent('success', { detail: 'Paises eliminados con exito' });
+                        window.dispatchEvent(event);
+                        setControlState("default");
+                    } else {
+                        const event = new CustomEvent('error', { detail: response.msg });
+                        window.dispatchEvent(event);
+                    }
+                });
+
+        }
+
+    }
+    const handleUpdateData = () => {
+        getPaisesJoinAcuerdos().then(data => {
+            setPaisesJoinAranceles(data);
+        });
+
+    }
     const handleTimeout = () => {
         // Configura el loading a false después de un tiempo específico (5 segundos en este caso)
         setTimeout(() => {
@@ -67,9 +133,7 @@ export default function Paises() {
 
     useEffect(() => {
         handleTimeout();
-    }, []);
 
-    useEffect(() => {
         getAcuerdosArancelarios().then(data => {
             setAcuerdoArancelario(data)
 
@@ -80,6 +144,7 @@ export default function Paises() {
         });
 
     }, []);
+
 
     useEffect(() => {
         if (paisesJoinAranceles) {
@@ -107,7 +172,7 @@ export default function Paises() {
                 { label: visibleColumns[keys[0]], key: keys[0], example: 'EC' },
                 { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: '1' },
-                { label: visibleColumns[keys[3]], key: keys[3], options: acuerdoArancelario },
+                { label: visibleColumns[keys[3]], key: 'id_acuerdo', options: acuerdoArancelario },
             ];
 
             setFormFieldsCration(createFormFields(fields));
@@ -161,7 +226,8 @@ export default function Paises() {
                                     formFields={formFieldsCreation}
                                     classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
                                     className="w-fit self-center"
-
+                                    handleSubmit={handleFormSubmit}
+                                    handleUpdateData={handleUpdateData}
                                 />
                             </>
                         }
@@ -177,7 +243,8 @@ export default function Paises() {
                                     initialValues={selectedRowData}
                                     setSelectedRow={setSelectedRow}
                                     selectedRow={selectedRow}
-
+                                    handleSubmit={handleFormSubmit}
+                                    handleUpdateData={handleUpdateData}
                                 />
                             </>
                         }
@@ -192,6 +259,8 @@ export default function Paises() {
                                     className="w-fit self-center"
                                     selectedRows={selectedRows}
                                     setSelectedRows={setSelectedRows}
+                                    handleSubmit={handleFormSubmit}
+                                    handleUpdateData={handleUpdateData}
                                     TablaEliminados={
                                         <Tabla
                                             visibleColumns={{ id_pais: "ID Pais", ...visibleColumns }}
@@ -201,6 +270,7 @@ export default function Paises() {
                                             selectedRows={selectedRows}
                                             setSelectedRows={setSelectedRows}
                                             className="bg-transparent shadow-none p-0"
+                                            classNameTableContainer="h-fit max-h-96"
                                             controlState="eliminar"
                                         />
                                     }
@@ -246,7 +316,7 @@ export default function Paises() {
 
                         <h2 className="text-3xl self-start pt-8  max-sm:text-2xl">Paises:</h2>
 
-                        {tableData.length > 0 &&
+                        {tableData.length > 0 && !loading &&
                             <Tabla
                                 visibleColumns={visibleColumns}
                                 data={tableData}
@@ -257,8 +327,10 @@ export default function Paises() {
                                 selectedRows={selectedRows}
                                 setSelectedRows={setSelectedRows}
                                 controlState={constrolState}
+                                classNameTableContainer="h-96"
                             />
                         }
+
                         {(tableData.length === 0 && !loading) &&
                             <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">No hay datos</h2>
 
