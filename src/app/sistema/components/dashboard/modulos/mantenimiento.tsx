@@ -4,6 +4,7 @@ import { useAdminModules } from "../../../adminModulesProvider";
 import { useMantenimiento } from "../../../mantenimientoProvider";
 import MantenimientoInit from "./mantenimiento/mantenimientoInit";
 import Paises from "./mantenimiento/paises";
+import CaeAduanas from "./mantenimiento/cae_aduanas";
 
 export default function Mantenimiento() {
     const { sistemState, handleSistemState, } = useSistemState();
@@ -15,8 +16,10 @@ export default function Mantenimiento() {
     return (
         <>
             {mantenimientoState === 0 && <MantenimientoInit />}
-
             {mantenimientoState === 1 && <Paises />}
+            {mantenimientoState === 2 && <CaeAduanas />}
+
+
         </>
     );
 }

@@ -12,7 +12,7 @@ interface FormField {
 }
 
 interface FormState {
-    [key: string]: string;
+    [key: string]: any;
 }
 
 interface propsFormulario {
@@ -50,8 +50,18 @@ export default function Formulario(
 
     const [formState, setFormState] = useState<FormState>({});
     const [isUpdateButtonDisabled, setUpdateButtonDisabled] = useState(true);
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>, key: string) => {
-        setFormState({ ...formState, [key]: e.target.value });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, key: any) => {
+        let value = e.target.value;
+        if ('options' in e.target && e.target.options) {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            try {
+                value = JSON.parse(selectedOption.value);
+            } catch (error) {
+                console.error('Error al convertir el valor de la opción seleccionada:', error);
+            }
+        }
+        setFormState({ ...formState, [key]: value });
     };
 
     useEffect(() => {
@@ -65,6 +75,7 @@ export default function Formulario(
 
             setFormState(newFormState);
         }
+
     }, [initialValues]);
 
     useEffect(() => {
@@ -79,8 +90,9 @@ export default function Formulario(
     const handleOnSubmit = (e: any) => {
         e.preventDefault();
         if (handleSubmit && handleUpdateData) {
+            //console.log("formState", formState);
             handleSubmit(formState);
-            handleUpdateData();
+            //handleUpdateData();
         }
 
     }
@@ -99,7 +111,7 @@ export default function Formulario(
                                 {field.type === 'select' &&
                                     <select
                                         className="select select-bordered w-full"
-                                        value={formState[field.label]}
+                                        value={JSON.stringify(formState[field.key])}
                                         onChange={(e) => handleChange(e, field.key)}
                                         required
                                     >
@@ -107,7 +119,7 @@ export default function Formulario(
                                         {field.options?.map((option: any, index: number) => (
                                             <option
                                                 key={index}
-                                                value={option[Object.keys(option)[0]]}
+                                                value={JSON.stringify(option)}
                                                 selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
                                             >
                                                 {option[Object.keys(option)[1]]}
@@ -129,6 +141,7 @@ export default function Formulario(
                                 }
                             </div>
                         ))}
+                        {TablaEliminados && <h2 className="text-xl self-start  max-sm:text-lg">Datos a eliminar:</h2>}
                         {TablaEliminados && TablaEliminados}
                     </div>
 

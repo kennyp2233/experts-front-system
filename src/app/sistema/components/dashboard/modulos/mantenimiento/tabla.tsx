@@ -77,7 +77,8 @@ export default function Tabla({
                                     onClick={handleSelectedRow}
                                     className={
 
-                                        controlState === "eliminar" ? (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-error' : '') :
+                                        controlState === "eliminar" ?
+                                            (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-secondary text-secondary-content' : '') :
                                             (selectedRow === rowIndex ? 'bg-base-200' : '')
                                     }
                                 >

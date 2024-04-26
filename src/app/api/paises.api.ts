@@ -14,7 +14,7 @@ export function getPaisesJoinAcuerdos() {
             return data;
         })
         .catch((err) => {
-            console.log(err);
+            console.log("ERROR", err);
         });
 }
 
@@ -33,7 +33,7 @@ export function postPais(pais: any) {
             return data;
         })
         .catch((err) => {
-            console.log(err);
+            console.log("ERROR", err);
         });
 }
 
@@ -52,7 +52,7 @@ export function putPais(pais: any) {
             return data;
         })
         .catch((err) => {
-            console.log(err);
+            console.log("ERROR", err);
         });
 }
 
@@ -71,6 +71,6 @@ export function deletePaises(paises: any[]) {
             return data;
         })
         .catch((err) => {
-            console.log(err);
+            console.log("ERROR", err);
         });
 }
