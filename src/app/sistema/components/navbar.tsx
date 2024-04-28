@@ -4,7 +4,7 @@ import { useAuth } from "../authProvider";
 import { log } from "console";
 import { useSistemState } from "../sistemStateContext";
 import Image from 'next/image';
-import { isAdmin } from "@/app/api/auth.api";
+import { isAdmin } from "@/api/auth.api";
 export default function NavBar() {
     const { isLoggedIn, setIsLoggedIn, checkToken, isAdministrator } = useAuth();
 

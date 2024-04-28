@@ -1,4 +1,4 @@
-import { register } from "@/app/api/auth.api";
+import { register } from "@/api/auth.api";
 import { useState } from "react";
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
 export default function Register({ handleClick }: { handleClick: (n: number) => void }) {

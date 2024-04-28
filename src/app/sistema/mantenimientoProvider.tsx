@@ -2,14 +2,14 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './authProvider';
 
 interface MantenimientoProviderProps {
-    mantenimientoState: number;
-    setMantenimientoState: (value: number) => void;
+    mantenimientoState: string;
+    setMantenimientoState: (value: string) => void;
 }
 
 const MantenimientoContext = createContext<MantenimientoProviderProps | undefined>(undefined);
 
 export const MantenimientoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [mantenimientoState, setMantenimientoState] = useState(0);
+    const [mantenimientoState, setMantenimientoState] = useState("");
     const { checkToken } = useAuth();
     useEffect(() => {
         checkToken();

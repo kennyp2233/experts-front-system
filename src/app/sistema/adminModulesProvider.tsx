@@ -9,15 +9,9 @@ const AdminModulesContext = createContext<AdminModulesProviderProps | undefined>
 
 export const AdminModulesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [adminState, setAdminState] = useState(0);
-    
+
     const { checkToken } = useAuth();
-    /*
-        useEffect(() => {
-            if (adminState !== 0) {
-                verifyAdmin();
-            }
-        }, [adminState, verifyAdmin]);
-    */
+
     useEffect(() => {
         checkToken();
     }, [adminState]);

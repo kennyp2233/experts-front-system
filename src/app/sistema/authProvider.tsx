@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { checkJwt, isAdmin } from "@api/auth.api";
+import { checkJwt, isAdmin } from "@/api/auth.api";
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
@@ -26,14 +26,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (response.ok) {
           setIsLoggedIn(true);
-          verifyAdmin();
+          await verifyAdmin();
           setIsChecking(false);
           return true;
         } else {
           setIsLoggedIn(false);
           setIsAdministrator(false);
+
           const event = new CustomEvent('error', { detail: 'Se ha cerrado la sesión' });
           window.dispatchEvent(event);
+
           setIsChecking(false);
           return false;
         }
@@ -41,7 +43,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdministrator(false);
         setIsLoggedIn(false);
         setIsChecking(false);
-        console.log(error);
       }
     }
     const event = new CustomEvent('info', { detail: 'Se ha cerrado la sesión' });
@@ -78,14 +79,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
+
     const token = localStorage.getItem('jwt');
     if (token) {
       const verifyToken = async () => {
         try {
           const response = await checkJwt(token);
           if (response.ok) {
-            checkToken();
-            verifyAdmin();
+            await checkToken();
           }
         } catch (error) {
           console.log(error);
@@ -94,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       verifyToken();
     }
   }, []);
+
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdministrator, setIsAdministrator, checkToken }}>
       {children}

@@ -76,7 +76,7 @@ export default function Formulario(
             setFormState(newFormState);
         }
 
-    }, [initialValues]);
+    }, [initialValues, formFields, selectedRow]);
 
     useEffect(() => {
         // Compara formState con initialValues
@@ -122,7 +122,7 @@ export default function Formulario(
                                                 value={JSON.stringify(option)}
                                                 selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
                                             >
-                                                {option[Object.keys(option)[1]]}
+                                                {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
                                             </option>
                                         ))}
                                     </select>

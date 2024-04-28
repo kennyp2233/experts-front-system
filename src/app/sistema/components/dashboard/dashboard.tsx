@@ -11,7 +11,7 @@ export default function Dashboard() {
     const handleMantenimiento = async () => {
         handleSistemState(2);
         setAdminState(1);
-        setMantenimientoState(0);
+        setMantenimientoState("init");
     }
 
     const handleModulos = async () => {
