@@ -1,5 +1,5 @@
-import { useAuth } from "../../authProvider";
-import { useSistemState } from "../../sistemStateContext";
+import { useAuth } from "../../providers/authProvider";
+import { useSistemState } from "../../providers/sistemStateContext";
 import Stats from "./stats";
 import Image from "next/image";
 export default function Hero({ handleClick }: { handleClick: (n: number) => void }) {

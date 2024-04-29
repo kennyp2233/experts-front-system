@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import Hero from './hero';
 import Login from './login';
 import Register from './register';
-import { useAuth } from '../../authProvider';
-import { useSistemState } from '../../sistemStateContext';
+import { useAuth } from '../../providers/authProvider';
+import { useSistemState } from '../../providers/sistemStateContext';
 
 export default function AllInitial() {
     const [initialState, setInitialState] = useState(0);

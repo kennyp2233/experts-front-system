@@ -1,8 +1,8 @@
 'use client'
 import { use, useState } from "react";
-import { useAuth } from "../authProvider";
+import { useAuth } from "../providers/authProvider";
 import { log } from "console";
-import { useSistemState } from "../sistemStateContext";
+import { useSistemState } from "../providers/sistemStateContext";
 import Image from 'next/image';
 import { isAdmin } from "@/api/usuarios/auth.api";
 export default function NavBar() {

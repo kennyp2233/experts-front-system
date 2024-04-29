@@ -1,9 +1,9 @@
-import { useAdminModules } from "../../adminModulesProvider";
-import { useAuth } from "../../authProvider";
-import { useSistemState } from "../../sistemStateContext";
+import { useAdminModules } from "../../providers/adminModulesProvider";
+import { useAuth } from "../../providers/authProvider";
+import { useSistemState } from "../../providers/sistemStateContext";
 import BotonesMenu from "../botonesMenu";
 import Mantenimiento from "./modulos/mantenimiento";
-import { useMantenimiento } from "../../mantenimientoProvider";
+import { useMantenimiento } from "../../providers/mantenimientoProvider";
 import ReturnButton from "../returnButton";
 
 export default function Modulos() {

@@ -1,8 +1,8 @@
-import { useAdminModules } from "../../adminModulesProvider";
-import { useAuth } from "../../authProvider";
-import { useSistemState } from "../../sistemStateContext";
+import { useAdminModules } from "../../providers/adminModulesProvider";
+import { useAuth } from "../../providers/authProvider";
+import { useSistemState } from "../../providers/sistemStateContext";
 import BotonDashboard from "../botonesMenu";
-import { useMantenimiento } from "../../mantenimientoProvider";
+import { useMantenimiento } from "../../providers/mantenimientoProvider";
 export default function Dashboard() {
     const { sistemState, handleSistemState, } = useSistemState();
     const { adminState, setAdminState } = useAdminModules();

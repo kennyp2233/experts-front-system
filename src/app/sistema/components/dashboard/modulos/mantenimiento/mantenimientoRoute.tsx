@@ -1,6 +1,6 @@
-import { useAdminModules } from "@/app/sistema/adminModulesProvider";
-import { useMantenimiento } from "../../../../mantenimientoProvider";
-import { useSistemState } from "@/app/sistema/sistemStateContext";
+import { useAdminModules } from "@/app/sistema/providers/adminModulesProvider";
+import { useMantenimiento } from "../../../../providers/mantenimientoProvider";
+import { useSistemState } from "@/app/sistema/providers/sistemStateContext";
 
 export default function MantenimientoRoute({ icon, titulo }: { icon: JSX.Element, titulo: string }) {
     const { sistemState, handleSistemState, } = useSistemState();

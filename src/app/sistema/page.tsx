@@ -5,8 +5,8 @@ import Dashboard from './components/dashboard/dashboard';
 import EventAlerts from './components/eventAlerts';
 import Mantenimiento from './components/dashboard/modulos/mantenimiento';
 import Modulos from './components/dashboard/modulos';
-import { useAuth } from './authProvider';
-import { useSistemState } from './sistemStateContext';
+import { useAuth } from './providers/authProvider';
+import { useSistemState } from './providers/sistemStateContext';
 
 
 

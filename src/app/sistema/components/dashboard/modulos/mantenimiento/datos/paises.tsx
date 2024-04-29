@@ -1,8 +1,8 @@
 import { ChangeEvent, use, useEffect, useState } from "react";
 
-import { useSistemState } from "@/app/sistema/sistemStateContext";
-import { useAdminModules } from "@/app/sistema/adminModulesProvider";
-import { useMantenimiento } from "@/app/sistema/mantenimientoProvider";
+import { useSistemState } from "@/app/sistema/providers/sistemStateContext";
+import { useAdminModules } from "@/app/sistema/providers/adminModulesProvider";
+import { useMantenimiento } from "@/app/sistema/providers/mantenimientoProvider";
 
 import { getAcuerdosArancelarios } from "@/api/mantenimiento/acuerdos_arancelarios";
 import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/api/mantenimiento/paises.api";
@@ -13,7 +13,7 @@ import Formulario from "../../formulario";
 import Tabla from "../../tabla";
 import ControlButtons from "../controllButtons";
 import { format } from "path";
-import { useAuth } from "@/app/sistema/authProvider";
+import { useAuth } from "@/app/sistema/providers/authProvider";
 import { error } from "console";
 
 

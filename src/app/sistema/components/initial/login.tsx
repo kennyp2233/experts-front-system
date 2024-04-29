@@ -1,8 +1,8 @@
 import { login } from "@/api/usuarios/auth.api";
 import { useState } from "react";
-import { useSistemState } from "../../sistemStateContext";
+import { useSistemState } from "../../providers/sistemStateContext";
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
-import { useAuth } from "../../authProvider";
+import { useAuth } from "../../providers/authProvider";
 
 export default function Login({ handleClick }: { handleClick: (n: number) => void }) {
     const [usuario, setUsuario] = useState('');

@@ -2,11 +2,11 @@
 import { Poppins } from "next/font/google";
 import "./styles/global.css";
 import NavBar from "./components/navbar";
-import { AuthProvider } from "./authProvider";
+import { AuthProvider } from "./providers/authProvider";
 import { useState } from "react";
-import { SistemStateProvider } from './sistemStateContext';
-import { AdminModulesProvider } from "./adminModulesProvider";
-import { MantenimientoProvider } from "./mantenimientoProvider";
+import { SistemStateProvider } from './providers/sistemStateContext';
+import { AdminModulesProvider } from "./providers/adminModulesProvider";
+import { MantenimientoProvider } from "./providers/mantenimientoProvider";
 
 const inter = Poppins({
   subsets: ["latin"],

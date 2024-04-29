@@ -1,93 +1,79 @@
 import { baseUrl } from "./config.api";
 
-export function getDestinos() {
+export function getAerolineasJoinAll() {
     const token = localStorage.getItem('jwt');
-    return fetch(baseUrl + '/destinos', {
+    return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
         }
     })
         .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
+        .then((data) => { return data })
         .catch((err) => {
             console.log("ERROR", err);
         });
+
 }
 
-export function getDestinosJoinPaisesAduanas() {
+export function getAerolineas() {
     const token = localStorage.getItem('jwt');
-    return fetch(baseUrl + '/destinos/paises', {
+    return fetch(baseUrl + '/aerolineas', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
         }
     })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
         .catch((err) => {
             console.log("ERROR", err);
         });
+
 }
 
-export function postDestino(destino: any) {
+export function postAerolinea(aerolinea: any) {
     const token = localStorage.getItem('jwt');
-    return fetch(baseUrl + '/destinos', {
+    return fetch(baseUrl + '/aerolineas', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(destino)
+        body: JSON.stringify(aerolinea)
     })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
         .catch((err) => {
             console.log("ERROR", err);
         });
+
 }
 
-export function putDestino(destino: any) {
+export function putAerolinea(aerolinea: any) {
     const token = localStorage.getItem('jwt');
-    return fetch(baseUrl + '/destinos', {
+    return fetch(baseUrl + '/aerolineas', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(destino)
+        body: JSON.stringify(aerolinea)
     })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
         .catch((err) => {
             console.log("ERROR", err);
         });
+
 }
 
-export function deleteDestinos(destino: any[]) {
+export function deleteAerolineas(ids: any[]) {
     const token = localStorage.getItem('jwt');
-    return fetch(baseUrl + '/destinos', {
+    return fetch(baseUrl + '/aerolineas', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(destino)
+        body: JSON.stringify(ids)
     })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
         .catch((err) => {
             console.log("ERROR", err);
         });

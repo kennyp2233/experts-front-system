@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/app/sistema/authProvider";
-import { useMantenimiento } from "@/app/sistema/mantenimientoProvider";
+import { useAuth } from "@/app/sistema/providers/authProvider";
+import { useMantenimiento } from "@/app/sistema/providers/mantenimientoProvider";
 
 import { getOrigenesJoinPaisesAduanas, deleteOrigenes, postOrigen, putOrigen } from "@/api/mantenimiento/origenes.api";
 import { getPaises } from "@/api/mantenimiento/paises.api";
