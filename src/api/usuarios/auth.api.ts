@@ -1,4 +1,4 @@
-import { baseUrl } from './config.api';
+import { baseUrl } from '../mantenimiento/config.api';
 export async function login(usuario: string, pass: string, recordar: boolean) {
     const res = await fetch(baseUrl + '/login', {
         method: 'POST',

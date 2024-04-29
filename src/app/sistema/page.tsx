@@ -76,6 +76,7 @@ export default function Page() {
             </>
           ) : (
             <>
+              <div className='text-primary'>NO ES ADMIN</div>
             </>
           )}
           {sistemState === 1 && <Dashboard />}

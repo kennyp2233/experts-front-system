@@ -8,8 +8,8 @@ export default function Stats() {
     const [targetVisits, setTargetVisits] = useState(150);
 
     const percentageChange = ((users - lastUsers) / lastUsers) * 100;
-    // Para los usuarios
-    // Para los usuarios
+
+
     useEffect(() => {
         const start = performance.now();
         const speed = 500; // Cambio por segundo
@@ -17,7 +17,8 @@ export default function Stats() {
         const animate = (timestamp: number) => {
             const progress = timestamp - start;
             const change = (progress / 1000) * speed;
-            const newUsers = Math.floor(Math.min(lastUsers + change, targetUsers));
+            let newUsers = Math.floor(Math.min(lastUsers + change, targetUsers));
+            newUsers = Math.max(0, newUsers); // Asegurarse de que newUsers nunca sea negativo
             setUsers(newUsers);
 
             if (newUsers < targetUsers) {
@@ -36,7 +37,8 @@ export default function Stats() {
         const animate = (timestamp: number) => {
             const progress = timestamp - start;
             const change = (progress / 1000) * speed;
-            const newVisits = Math.floor(Math.min(lastVisits + change, targetVisits));
+            let newVisits = Math.floor(Math.min(lastVisits + change, targetVisits));
+            newVisits = Math.max(0, newVisits); // Asegurarse de que newVisits nunca sea negativo
             setLastVisits(newVisits);
 
             if (newVisits < targetVisits) {

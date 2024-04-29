@@ -5,6 +5,7 @@ import { useMantenimiento } from "../../../mantenimientoProvider";
 import MantenimientoInit from "./mantenimiento/mantenimientoInit";
 import Paises from "./mantenimiento/datos/paises";
 import Origenes from "./mantenimiento/datos/origenes";
+import Destinos from "./mantenimiento/datos/destinos";
 
 export default function Mantenimiento() {
     const { sistemState, handleSistemState, } = useSistemState();
@@ -18,7 +19,7 @@ export default function Mantenimiento() {
             {mantenimientoState === "init" && <MantenimientoInit />}
             {mantenimientoState === "paises" && <Paises />}
             {mantenimientoState === "origenes" && <Origenes />}
-
+            {mantenimientoState === "destinos" && <Destinos />}
 
         </>
     );

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { checkJwt, isAdmin } from "@/api/auth.api";
+import { checkJwt, isAdmin } from "@/api/usuarios/auth.api";
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
@@ -65,6 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const event = new CustomEvent('info', { detail: 'Haz ingresado como admin' });
             window.dispatchEvent(event);
           }
+
           setIsAdministrator(true);
           return true;
         }

@@ -4,8 +4,8 @@ import { useSistemState } from "@/app/sistema/sistemStateContext";
 import { useAdminModules } from "@/app/sistema/adminModulesProvider";
 import { useMantenimiento } from "@/app/sistema/mantenimientoProvider";
 
-import { getAcuerdosArancelarios } from "@/api/acuerdos_arancelarios";
-import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/api/paises.api";
+import { getAcuerdosArancelarios } from "@/api/mantenimiento/acuerdos_arancelarios";
+import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/api/mantenimiento/paises.api";
 
 import MantenimientoRoute from "../mantenimientoRoute";
 import ReturnButton from "../../../../returnButton";
@@ -179,7 +179,7 @@ export default function Paises() {
             //console.log(formFieldsCreation);
             //console.log(formFieldsModification);
         }
-    }, [paisesJoinAranceles]);
+    }, [paisesJoinAranceles, acuerdoArancelario]);
 
 
 

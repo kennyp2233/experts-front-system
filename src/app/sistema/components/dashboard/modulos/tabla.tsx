@@ -50,6 +50,18 @@ export default function Tabla({
 
     }
 
+    const renderCellContent = (cellData: any) => {
+        if (typeof cellData === 'object' && cellData !== null) {
+            return cellData.nombre;
+        }
+        if (cellData !== null && cellData !== undefined) {
+            if (typeof cellData === 'boolean') {
+                return cellData ? 'Si' : 'No';
+            }
+            return cellData.toString();
+        }
+        return cellData;
+    };
     useEffect(() => {
         // console.log(selectedRowData);
     }, [selectedRowData]);
@@ -85,12 +97,8 @@ export default function Tabla({
                                     <th>{rowIndex + 1}</th>
                                     {Object.keys(visibleColumns).map((column, columnIndex) => (
                                         <td key={columnIndex}>
-                                            {typeof row[column] === 'object' && row[column] !== null
-                                                ? row[column].nombre
-                                                : row[column] !== null && row[column] !== undefined
-                                                    ? row[column].toString()
-                                                    : row[column]
-                                            }
+                                            {renderCellContent(row[column])}
+
                                         </td>
                                     ))}
                                 </tr>

@@ -51,8 +51,19 @@ export default function Formulario(
     const [formState, setFormState] = useState<FormState>({});
     const [isUpdateButtonDisabled, setUpdateButtonDisabled] = useState(true);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, key: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, key: any) => {
         let value = e.target.value;
+
+        // Si es un input de texto, convertir el valor a mayúsculas
+        if (e.target.type === 'text' || e.target.type === 'textarea') {
+            value = value.toUpperCase();
+        }
+
+        if (e.target.type === 'checkbox') {
+            value = (e.target as HTMLInputElement).checked ? "1" : "0";
+
+        }
+
         if ('options' in e.target && e.target.options) {
             const selectedOption = e.target.options[e.target.selectedIndex];
             try {
@@ -61,6 +72,7 @@ export default function Formulario(
                 console.error('Error al convertir el valor de la opción seleccionada:', error);
             }
         }
+
         setFormState({ ...formState, [key]: value });
     };
 
@@ -102,12 +114,13 @@ export default function Formulario(
                 <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
                     <div className={"form-control " + classNameForm}>
                         {formFields?.map((field, index) => (
-                            <div key={index}>
+                            <div key={index} className={(field.type === "checkbox" && "flex flex-row") + ""}>
                                 <label className="label">
                                     <span className="label-text flex text-center justify-center">
                                         {field.label}
                                     </span>
                                 </label>
+
                                 {field.type === 'select' &&
                                     <select
                                         className="select select-bordered w-full"
@@ -128,7 +141,7 @@ export default function Formulario(
                                     </select>
                                 }
 
-                                {field.type !== 'select' &&
+                                {(field.type === 'text' || field.type === 'number') &&
                                     <input
                                         type={field.type}
                                         placeholder={"Ej: " + field.example}
@@ -138,6 +151,27 @@ export default function Formulario(
                                         required
                                         disabled={field.disabled}
                                     />
+                                }
+
+                                {field.type === 'textarea' &&
+                                    <textarea
+                                        placeholder={"Ej: " + field.example}
+                                        className="textarea textarea-bordered w-full"
+                                        value={formState[field.key]}
+                                        onChange={(e) => handleChange(e, field.key)}
+                                    />
+                                }
+
+                                {field.type === 'checkbox' &&
+                                    <>
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox my-auto ml-2"
+                                            checked={Boolean(Number(formState[field.key]))}
+                                            onChange={(e) => handleChange(e, field.key)}
+                                        />
+                                    </>
+
                                 }
                             </div>
                         ))}
