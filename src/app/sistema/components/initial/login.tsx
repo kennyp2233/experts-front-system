@@ -1,18 +1,17 @@
 import { login } from "@/api/usuarios/auth.api";
 import { useState } from "react";
 import { useSistemState } from "../../providers/sistemStateContext";
-import toast, { resolveValue, Toaster } from 'react-hot-toast';
 import { useAuth } from "../../providers/authProvider";
+import { useNavigate } from 'react-router-dom';
 
 export default function Login({ handleClick }: { handleClick: (n: number) => void }) {
+    const { checkToken } = useAuth();
+    const { sistemState, handleSistemState } = useSistemState();
     const [usuario, setUsuario] = useState('');
     const [password, setPassword] = useState('');
-
     const [recordar, setRecordar] = useState(false);
-
-    const { sistemState, handleSistemState } = useSistemState();
-    const { checkToken } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,6 +29,7 @@ export default function Login({ handleClick }: { handleClick: (n: number) => voi
             localStorage.setItem('jwt', res.token);
             checkToken();
             handleSistemState(1);
+            navigate('/dashboard');
         } else {
             const event = new CustomEvent('fail', { detail: res.msg || 'Error desconocido' });
             window.dispatchEvent(event);

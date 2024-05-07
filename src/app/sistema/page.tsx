@@ -85,7 +85,6 @@ export default function Page() {
           {sistemState !== 1 && sistemState !== 2 && sistemState !== 3 && <div>Error</div>}
         </>
       )}
-      {!isLoggedIn && <div>Not Logged In</div>}
     </>
   );
 }
