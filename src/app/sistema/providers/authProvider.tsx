@@ -1,12 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { checkJwt, isAdmin } from "@/api/usuarios/auth.api";
+import { dispatchMenssage } from '@/app/utils/menssageDispatcher';
+
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  //verifyAdmin?: () => Promise<boolean>;
   isAdministrator: boolean;
   setIsAdministrator: (value: boolean) => void;
   checkToken: () => Promise<boolean>;
+  handleLogout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -19,86 +21,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkToken = async () => {
     if (isChecking) return false;
     setIsChecking(true);
+
     const token = localStorage.getItem('jwt');
-    if (token) {
-      try {
-        const response = await checkJwt(token);
+    if (!token) {
+      handleLogout();
+      return false;
+    }
 
-        if (response.ok) {
-          setIsLoggedIn(true);
-          await verifyAdmin();
-          setIsChecking(false);
-          return true;
-        } else {
-          setIsLoggedIn(false);
-          setIsAdministrator(false);
-
-          const event = new CustomEvent('error', { detail: 'Se ha cerrado la sesión' });
-          window.dispatchEvent(event);
-
-          setIsChecking(false);
-          return false;
-        }
-      } catch (error: any) {
-        setIsAdministrator(false);
-        setIsLoggedIn(false);
+    try {
+      const response = await checkJwt(token);
+      if (response.ok) {
+        setIsLoggedIn(true);
+        await verifyAdmin(token);
         setIsChecking(false);
+        return true;
+      } else {
+        handleLogout();
+        return false;
       }
+    } catch (error: any) {
+      handleLogout();
+      return false;
     }
-    const event = new CustomEvent('info', { detail: 'Se ha cerrado la sesión' });
-    window.dispatchEvent(event);
-    setIsChecking(false);
+  };
+
+  const verifyAdmin = async (token: string) => {
+    try {
+      const response = await isAdmin(token);
+      if (response.isAdmin) {
+        setIsAdministrator(true);
+        dispatchMenssage('info', 'Haz ingresado como admin');
+      } else {
+        setIsAdministrator(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsAdministrator(false);
+    }
+  };
+
+  const handleLogout = () => {
     setIsLoggedIn(false);
-    return false;
-
-  }
-
-  const verifyAdmin = async () => {
-
-
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      try {
-        const response = await isAdmin(token);
-        if (response.isAdmin) {
-          if (!isAdministrator) {
-            const event = new CustomEvent('info', { detail: 'Haz ingresado como admin' });
-            window.dispatchEvent(event);
-          }
-
-          setIsAdministrator(true);
-          return true;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
     setIsAdministrator(false);
-    return false;
-
-  }
+    dispatchMenssage('fail', 'Se ha cerrado la sesión');
+    localStorage.removeItem('jwt');
+  };
 
   useEffect(() => {
-
     const token = localStorage.getItem('jwt');
     if (token) {
-      const verifyToken = async () => {
-        try {
-          const response = await checkJwt(token);
-          if (response.ok) {
-            await checkToken();
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      verifyToken();
+      checkToken();
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdministrator, setIsAdministrator, checkToken }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isAdministrator, setIsAdministrator, checkToken, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -106,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

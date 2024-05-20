@@ -1,34 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
-import AllInitial from './components/initial/allInitial';
-import Dashboard from './components/dashboard/dashboard';
-import EventAlerts from './components/eventAlerts';
-import Mantenimiento from './components/dashboard/modulos/mantenimiento';
-import Modulos from './components/dashboard/modulos';
-import { useAuth } from './providers/authProvider';
-import { useSistemState } from './providers/sistemStateContext';
+import EventAlerts from '../utils/eventAlerts';
+import Hero from './initial/hero';
 
+import { useAuth } from './providers/authProvider';
+import { useRouter } from 'next/navigation';
 
 
 export default function Page() {
-  const { sistemState, handleSistemState, } = useSistemState();
   const { isLoggedIn, setIsLoggedIn, isAdministrator } = useAuth();
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
 
 
 
   useEffect(() => {
-    //use effect de cuando no esta logueado
     let timer: NodeJS.Timeout;
-
-    if (!isLoggedIn) {
-      handleSistemState(0);
-    } else {
-      if (isAdministrator) {
-        handleSistemState(1);
-      }
-    }
 
     timer = setTimeout(() => {
       setLoading(false);
@@ -36,11 +23,6 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      handleSistemState(0);
-    }
-  }, [isLoggedIn]);
 
   if (loading) {
     return (
@@ -58,33 +40,14 @@ export default function Page() {
 
   return (
     <>
-      <EventAlerts />
+     
       {
         /*
           <div className='text-primary'>{"logged " + isLoggedIn}</div>
       <div className='text-primary'>{"admin " + isAdministrator}</div>
          */
       }
-
-
-      {sistemState === 0 && <AllInitial />}
-      {isLoggedIn && (
-        <>
-          {isAdministrator ? (
-            <>
-              {sistemState === 2 && <Modulos />}
-            </>
-          ) : (
-            <>
-              <div className='text-primary'>NO ES ADMIN</div>
-            </>
-          )}
-          {sistemState === 1 && <Dashboard />}
-          {sistemState === -1 && <div>Profile</div>}
-          {sistemState === -1 && <div>Settings</div>}
-          {sistemState !== 1 && sistemState !== 2 && sistemState !== 3 && <div>Error</div>}
-        </>
-      )}
+      <Hero />
     </>
   );
 }

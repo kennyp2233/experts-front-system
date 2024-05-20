@@ -2,11 +2,11 @@ import { useAuth } from "../../../providers/authProvider";
 import { useSistemState } from "../../../providers/sistemStateContext";
 import { useAdminModules } from "../../../providers/adminModulesProvider";
 import { useMantenimiento } from "../../../providers/mantenimientoProvider";
-import MantenimientoInit from "./mantenimiento/mantenimientoInit";
-import Paises from "./mantenimiento/datos/paises";
-import Origenes from "./mantenimiento/datos/origenes";
-import Destinos from "./mantenimiento/datos/destinos";
-import Aerolineas from "./mantenimiento/datos/aerolineas";
+import MantenimientoInit from "../dashboard/modulos/mantenimiento/mantenimientoInit";
+import Paises from "../dashboard/modulos/mantenimiento/datos/paises";
+import Origenes from "../dashboard/modulos/mantenimiento/datos/origenes";
+import Destinos from "../dashboard/modulos/mantenimiento/datos/destinos";
+import Aerolineas from "../dashboard/modulos/mantenimiento/datos/aerolineas";
 
 export default function Mantenimiento() {
     const { sistemState, handleSistemState, } = useSistemState();

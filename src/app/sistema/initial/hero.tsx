@@ -1,10 +1,21 @@
-import { useAuth } from "../../providers/authProvider";
-import { useSistemState } from "../../providers/sistemStateContext";
+
+import { useRouter } from "next/navigation";
+import { useAuth } from "../providers/authProvider";
+import { useSistemState } from "../providers/sistemStateContext";
 import Stats from "./stats";
 import Image from "next/image";
-export default function Hero({ handleClick }: { handleClick: (n: number) => void }) {
+
+export default function Hero() {
     const { isLoggedIn } = useAuth();
-    const { handleSistemState, } = useSistemState();
+    const router = useRouter();
+    const handleIngresar = () => {
+        if(isLoggedIn){
+            router.push('sistema/dashboard');
+        } else {
+            router.push('sistema/initial/login');
+        }
+    }
+    
     return (
         <>
             <div className="relative hero min-h-screen bg-base-200 bg-opacity-0" >
@@ -26,7 +37,7 @@ export default function Hero({ handleClick }: { handleClick: (n: number) => void
                         <p className="py-6">Gestiona tus Guías de Manera Eficiente.</p>
                         <Stats />
 
-                        <button className="btn btn-primary max-w-xs w-full mx-auto mt-4" onClick={() => isLoggedIn ? handleSistemState(1) : handleClick(1)}>Ingresar</button>
+                        <button className="btn btn-primary max-w-xs w-full mx-auto mt-4" onClick={handleIngresar}>Ingresar</button>
                     </div>
                 </div>
             </div>

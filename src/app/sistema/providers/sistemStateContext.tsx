@@ -17,9 +17,6 @@ export const SistemStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, []);
 
-    useEffect(() => {
-        checkToken();
-    }, [sistemState]);
 
 
     return (

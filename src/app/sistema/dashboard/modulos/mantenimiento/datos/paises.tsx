@@ -9,8 +9,8 @@ import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/api/ma
 
 import MantenimientoRoute from "../mantenimientoRoute";
 import ReturnButton from "../../../../returnButton";
-import Formulario from "../../formulario";
-import Tabla from "../../tabla";
+import Formulario from "../../../../components/formulario";
+import Tabla from "../../../../components/tabla";
 import ControlButtons from "../controllButtons";
 import { format } from "path";
 import { useAuth } from "@/app/sistema/providers/authProvider";

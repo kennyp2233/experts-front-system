@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/app/sistema/providers/authProvider";
 import { useMantenimiento } from "@/app/sistema/providers/mantenimientoProvider";
 
-import { deleteDestinos, getDestinosJoinPaisesAduanas, postDestino, putDestino } from "@/api/mantenimiento/destinos.api";
+import { getOrigenesJoinPaisesAduanas, deleteOrigenes, postOrigen, putOrigen } from "@/api/mantenimiento/origenes.api";
 import { getPaises } from "@/api/mantenimiento/paises.api";
+import { getAduanas } from "@/api/mantenimiento/cae_aduanas.api";
 
 import MantenimientoRoute from "../mantenimientoRoute";
 import ReturnButton from "../../../../returnButton";
-import Formulario from "../../formulario";
-import Tabla from "../../tabla";
+import Formulario from "../../../../components/formulario";
+import Tabla from "../../../../components/tabla";
 import ControlButtons from "../controllButtons";
 
 interface Pais {
@@ -16,40 +17,44 @@ interface Pais {
     nombre: string;
 }
 
-
-interface Destino {
-    id_destino: number;
-    codigo_destino: string;
+interface Aduana {
+    id_cae_aduana: number;
     nombre: string;
-    aeropuerto?: string;
-    id_pais: number;
-    sesa_id?: string;
-    leyenda_fito?: string;
-    cobro_fitos?: boolean;
-    paise: Pais;
 }
 
 
-export default function Destinos() {
+
+interface Origen {
+    id_origen: number;
+    codigo_origen: string;
+    nombre: string;
+    aeropuerto: string;
+    id_pais: number;
+    id_cae_aduana: number;
+    paise: Pais;
+    cae_aduana: Aduana;
+}
+
+
+export default function Origenes() {
     const { setMantenimientoState } = useMantenimiento();
     const { checkToken } = useAuth();
     const [loading, setLoading] = useState(true);
     const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "default">("default");
-    const [destinos, setDestinos] = useState([] as Destino[]);
+    const [origen, setOrigen] = useState([] as Origen[]);
     const [pais, setPais] = useState([] as Pais[]);
-
+    const [aduana, setAduana] = useState([] as Aduana[]);
     const [tableData, setTableData] = useState({} as { [key: string]: any }[]);
+
     const [selectedRow, setSelectedRow] = useState(-1);
     const [selectedRowData, setSelectedRowData] = useState({} as any);
 
     const [visibleColumns, setVisibleColumns] = useState({
-        codigo_destino: "Codigo Destino",
+        codigo_origen: "Codigo Origen",
         nombre: "Nombre",
         aeropuerto: "Aeropuerto",
         paise: "Pais",
-        sesa_id: "Sesa ID",
-        leyenda_fito: "Leyenda Fito",
-        cobro_fitos: "Cobro Fitos",
+        cae_aduana: "Cae Aduana",
     } as any);
 
     const [formFieldsCreation, setFormFieldsCration] = useState([] as any[]);
@@ -72,7 +77,7 @@ export default function Destinos() {
         );
 
         if (constrolState === "crear") {
-            postDestino(newFormState)
+            postOrigen(newFormState)
                 .then((response: any) => {
                     console.log(response);
                     if (response.ok) {
@@ -87,7 +92,7 @@ export default function Destinos() {
                 });
         }
         if (constrolState === "modificar") {
-            putDestino(newFormState)
+            putOrigen(newFormState)
                 .then((response: any) => {
                     console.log(response);
                     if (response.ok) {
@@ -103,7 +108,7 @@ export default function Destinos() {
         }
 
         if (constrolState === "eliminar") {
-            deleteDestinos(selectedRows)
+            deleteOrigenes(selectedRows)
                 .then((response: any) => {
                     if (response.ok) {
                         const event = new CustomEvent('success', { detail: 'Paises eliminados con exito' });
@@ -121,17 +126,17 @@ export default function Destinos() {
 
     const handleUpdateData = () => {
 
-        getDestinosJoinPaisesAduanas().then(data => {
-            setDestinos(data);
-            setTableData(destinos);
+        getOrigenesJoinPaisesAduanas().then(data => {
+            setOrigen(data);
+            setTableData(origen);
         });
     }
 
 
     useEffect(() => {
 
-        getDestinosJoinPaisesAduanas().then(data => {
-            setDestinos(data);
+        getOrigenesJoinPaisesAduanas().then(data => {
+            setOrigen(data);
             setLoading(false);
         });
 
@@ -139,14 +144,17 @@ export default function Destinos() {
             setPais(data);
         });
 
+        getAduanas().then(data => {
+            setAduana(data);
+        });
 
     }, []);
 
 
     useEffect(() => {
-        if (destinos) {
+        if (origen) {
 
-            setTableData(destinos);
+            setTableData(origen);
 
 
             const createFormFields = (fields: any, idLabel?: string, idKey?: string, isModification = false) => {
@@ -176,24 +184,22 @@ export default function Destinos() {
                 { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: 'Aeropuerto', type: 'text' },
                 { label: visibleColumns[keys[3]], key: keys[3], options: pais, type: 'select' },
-                { label: visibleColumns[keys[4]], key: keys[4], example: 'Sesa ID', type: 'number' },
-                { label: visibleColumns[keys[5]], key: keys[5], example: 'Leyenda Fito', type: 'textarea' },
-                { label: visibleColumns[keys[6]], key: keys[6], example: 'Cobro Fitos', type: 'checkbox' },
+                { label: visibleColumns[keys[4]], key: keys[4], options: aduana, type: 'select' },
             ];
             setFormFieldsCration(createFormFields(fields));
-            setFormFieldsModification(createFormFields(fields, "ID Destino", "id_destino", true));
+            setFormFieldsModification(createFormFields(fields, "ID Origen", "id_origen", true));
 
         }
-    }, [destinos, pais]);
+    }, [origen, pais, aduana]);
 
     return (
         <>
             <div className="hero min-h-screen bg-base-200">
                 <div className="hero-content flex-col justify-start w-full h-full">
                     <MantenimientoRoute
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fillRule="evenodd" d="M8.445 3.168a1 1 0 0 1 1.002-.062L15 5.882l5.553-2.776A1 1 0 0 1 22 4v12a1 1 0 0 1-.445.832l-6 4a1 1 0 0 1-1.002.062L9 18.118l-5.553 2.776A1 1 0 0 1 2 20V8a1 1 0 0 1 .445-.832zM5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m5 1a1 1 0 0 1-1-1a1 1 0 1 1 2 0v.001a1 1 0 0 1-1 1zm4.707-3.708a1 1 0 1 0-1.414 1.414L14.586 12l-1.293 1.293a1 1 0 0 0 1.414 1.414L16 13.414l1.293 1.293a1 1 0 0 0 1.414-1.414L17.414 12l1.293-1.293a1 1 0 0 0-1.414-1.414L16 10.586l-1.293-1.293z" clipRule="evenodd" /></svg>
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14 11.5A2.5 2.5 0 0 0 16.5 9A2.5 2.5 0 0 0 14 6.5A2.5 2.5 0 0 0 11.5 9a2.5 2.5 0 0 0 2.5 2.5M14 2c3.86 0 7 3.13 7 7c0 5.25-7 13-7 13S7 14.25 7 9a7 7 0 0 1 7-7M5 9c0 4.5 5.08 10.66 6 11.81L10 22S3 14.25 3 9c0-3.17 2.11-5.85 5-6.71C6.16 3.94 5 6.33 5 9" /></svg>
                         }
-                        titulo="Destinos"
+                        titulo="Origenes"
                     />
                     <ReturnButton
                         className=""
@@ -202,8 +208,8 @@ export default function Destinos() {
                     />
 
                     <h1 className="text-5xl font-bold self-start pt-8  max-sm:text-4xl">
-                        Destinos{" "}
-                        <svg className="inline-block" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fillRule="evenodd" d="M8.445 3.168a1 1 0 0 1 1.002-.062L15 5.882l5.553-2.776A1 1 0 0 1 22 4v12a1 1 0 0 1-.445.832l-6 4a1 1 0 0 1-1.002.062L9 18.118l-5.553 2.776A1 1 0 0 1 2 20V8a1 1 0 0 1 .445-.832zM5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m5 1a1 1 0 0 1-1-1a1 1 0 1 1 2 0v.001a1 1 0 0 1-1 1zm4.707-3.708a1 1 0 1 0-1.414 1.414L14.586 12l-1.293 1.293a1 1 0 0 0 1.414 1.414L16 13.414l1.293 1.293a1 1 0 0 0 1.414-1.414L17.414 12l1.293-1.293a1 1 0 0 0-1.414-1.414L16 10.586l-1.293-1.293z" clipRule="evenodd" /></svg>
+                        Origenes{" "}
+                        <svg className="inline-block" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14 11.5A2.5 2.5 0 0 0 16.5 9A2.5 2.5 0 0 0 14 6.5A2.5 2.5 0 0 0 11.5 9a2.5 2.5 0 0 0 2.5 2.5M14 2c3.86 0 7 3.13 7 7c0 5.25-7 13-7 13S7 14.25 7 9a7 7 0 0 1 7-7M5 9c0 4.5 5.08 10.66 6 11.81L10 22S3 14.25 3 9c0-3.17 2.11-5.85 5-6.71C6.16 3.94 5 6.33 5 9" /></svg>
                     </h1>
 
                     <div className="flex flex-col w-full gap-3">
@@ -273,7 +279,7 @@ export default function Destinos() {
                                     handleUpdateData={handleUpdateData}
                                     TablaEliminados={
                                         <Tabla
-                                            visibleColumns={{ id_destino: "ID Destino", ...visibleColumns }}
+                                            visibleColumns={{ id_origen: "ID Origen", ...visibleColumns }}
                                             data={
                                                 tableData?.filter((row: any) => selectedRows.includes(row[Object.keys(row)[0]]))
                                             }

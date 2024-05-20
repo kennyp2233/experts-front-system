@@ -12,9 +12,7 @@ export const AdminModulesProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const { checkToken } = useAuth();
 
-    useEffect(() => {
-        checkToken();
-    }, [adminState]);
+
     return (
         <AdminModulesContext.Provider value={{ adminState, setAdminState }}>
             {children}

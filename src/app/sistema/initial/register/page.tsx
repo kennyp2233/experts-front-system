@@ -1,33 +1,33 @@
+'use client';
 import { register } from "@/api/usuarios/auth.api";
 import { useState } from "react";
-import toast, { resolveValue, Toaster } from 'react-hot-toast';
-export default function Register({ handleClick }: { handleClick: (n: number) => void }) {
+import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
+import { useRouter } from "next/navigation";
+export default function Register() {
     const [usuario, setUsuario] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast.error('Las contraseñas no coinciden');
+            dispatchMenssage('fail', 'Las contraseñas no coinciden');
             return;
         }
         const res = await register(usuario, email, password);
         if (res.ok) {
-            toast.success('Usuario registrado correctamente');
-            handleClick(1);
+            dispatchMenssage('success', 'Usuario registrado correctamente');
+            router.push('/sistema/initial/login');
         } else {
-            toast.error(res.msg || 'Error desconocido');
+            dispatchMenssage('fail', res.msg || 'Error desconocido');
         }
     }
     return (
         <>
-
-            <Toaster position="top-right" />
             <div className="hero min-h-screen bg-base-200">
-                <button className="m-6 z-10 btn btn-neutral self-start place-self-start" onClick={() => handleClick(1)}>
+                <button className="m-6 z-10 btn btn-neutral self-start place-self-start" onClick={() => router.push('/sistema/initial/login')}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path fill="currentColor" d="M12 9.059V6.5a1.001 1.001 0 0 0-1.707-.708L4 12l6.293 6.207a.997.997 0 0 0 1.414 0A.999.999 0 0 0 12 17.5v-2.489c2.75.068 5.755.566 8 3.989v-1c0-4.633-3.5-8.443-8-8.941" /></svg>
                     <p>Login</p>
                 </button>

@@ -1,31 +1,21 @@
 'use client'
-import { use, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../providers/authProvider";
-import { log } from "console";
-import { useSistemState } from "../providers/sistemStateContext";
 import Image from 'next/image';
-import { isAdmin } from "@/api/usuarios/auth.api";
+import { useRouter } from "next/navigation";
+
 export default function NavBar() {
-    const { isLoggedIn, setIsLoggedIn, checkToken, isAdministrator } = useAuth();
-
-    const { sistemState, handleSistemState } = useSistemState();
-
+    const { isLoggedIn, setIsLoggedIn, checkToken, isAdministrator, handleLogout } = useAuth();
     const [theme, setTheme] = useState('cupcake');
-
+    const router = useRouter();
     const toggleTheme = () => {
         const newTheme = theme === 'cupcake' ? 'dark' : 'cupcake';
         setTheme(newTheme);
         document.body.setAttribute('data-theme', newTheme);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('jwt');
-        checkToken();
-    };
-
     const handleClick = () => {
-        const event = new CustomEvent('clickLogo');
-        window.dispatchEvent(event);
+        router.push('/sistema');
     };
 
 
@@ -146,7 +136,10 @@ export default function NavBar() {
 
                                         </li>
                                         <li><a>Settings</a></li>
-                                        <li><a onClick={handleLogout}>Logout</a></li>
+                                        <li><a onClick={()=>{
+                                            handleLogout()
+                                            router.push('/sistema')
+                                        }}>Logout</a></li>
                                     </ul>
                                 </div>
                             </>

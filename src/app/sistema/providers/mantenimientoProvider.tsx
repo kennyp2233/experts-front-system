@@ -11,9 +11,6 @@ const MantenimientoContext = createContext<MantenimientoProviderProps | undefine
 export const MantenimientoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [mantenimientoState, setMantenimientoState] = useState("");
     const { checkToken } = useAuth();
-    useEffect(() => {
-        checkToken();
-    }, [mantenimientoState]);
 
     return (
         <MantenimientoContext.Provider value={{ mantenimientoState, setMantenimientoState }}>

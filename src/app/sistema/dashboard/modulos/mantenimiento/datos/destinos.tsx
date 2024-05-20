@@ -2,24 +2,20 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/app/sistema/providers/authProvider";
 import { useMantenimiento } from "@/app/sistema/providers/mantenimientoProvider";
 
-import { deleteAerolineas, getAerolineasJoinAll, postAerolinea, putAerolinea } from "@/api/mantenimiento/aerolineas.api";
-import { getDestinos } from "@/api/mantenimiento/destinos.api";
-
+import { deleteDestinos, getDestinosJoinPaisesAduanas, postDestino, putDestino } from "@/api/mantenimiento/destinos.api";
+import { getPaises } from "@/api/mantenimiento/paises.api";
 
 import MantenimientoRoute from "../mantenimientoRoute";
 import ReturnButton from "../../../../returnButton";
-import Formulario from "../../formulario";
-import Tabla from "../../tabla";
+import Formulario from "../../../../components/formulario";
+import Tabla from "../../../../components/tabla";
 import ControlButtons from "../controllButtons";
 
-interface Origen {
-    id_origen: number;
-    codigo_origen: string;
-    nombre: string;
-    aeropuerto: string;
+interface Pais {
     id_pais: number;
-    id_cae_aduana: number;
+    nombre: string;
 }
+
 
 interface Destino {
     id_destino: number;
@@ -29,120 +25,31 @@ interface Destino {
     id_pais: number;
     sesa_id?: string;
     leyenda_fito?: string;
-    cobro_fitos: boolean;
-}
-
-interface Plantilla {
-    id_aerolinea: number;
-    costo_guia_abrv?: string;
-    combustible_abrv?: string;
-    seguridad_abrv?: string;
-    aux_calculo_abrv?: string;
-    iva_abrv?: string;
-    otros_abrv?: string;
-    aux1_abrv?: string;
-    aux2_abrv?: string;
-    costo_guia_valor?: number;
-    combustible_valor?: number;
-    seguroidad_valor?: number;
-    aux_calculo_valor?: number;
-    otros_valor?: number;
-    aux1_valor?: number;
-    aux2_valor?: number;
-    plantilla_guia_madre?: string;
-    plantilla_formato_aerolinea?: string;
-    plantilla_reservas?: string;
-    tarifa_rate?: number;
-    pca?: number;
-    combustible_mult?: number;
-    seguridad_mult?: number;
-    aux_calc_mult?: number;
-}
-
-interface Aerolinea {
-    id_aerolinea: number;
-    nombre?: string;
-    ci_ruc?: string;
-    direccion?: string;
-    telefono?: string;
-    email?: string;
-    ciudad?: string;
-    pais?: string;
-    contacto?: string;
-    modo?: string;
-    maestra_guias_hijas?: boolean;
-    codigo?: string;
-    prefijo_awb?: string;
-    codigo_cae?: string;
-    estado_activo?: boolean;
-    from1?: number;
-    to1?: number;
-    by1?: number;
-    to2?: number;
-    by2?: number;
-    to3?: number;
-    by3?: number;
-    afiliado_cass: boolean;
-    guias_virtuales: boolean;
-    origen1?: Origen;
-    destino1?: Destino;
-    via1?: Aerolinea;
-    destino2?: Destino;
-    via2?: Aerolinea;
-    destino3?: Destino;
-    via3?: Aerolinea;
-    plantilla: Plantilla;
+    cobro_fitos?: boolean;
+    paise: Pais;
 }
 
 
-
-
-export default function Aerolineas() {
+export default function Destinos() {
     const { setMantenimientoState } = useMantenimiento();
     const { checkToken } = useAuth();
     const [loading, setLoading] = useState(true);
     const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "default">("default");
-    const [aerolineas, setAerolineas] = useState([] as Aerolinea[]);
-    const [origen, setOrigen] = useState([] as Origen[]);
     const [destinos, setDestinos] = useState([] as Destino[]);
-
+    const [pais, setPais] = useState([] as Pais[]);
 
     const [tableData, setTableData] = useState({} as { [key: string]: any }[]);
     const [selectedRow, setSelectedRow] = useState(-1);
     const [selectedRowData, setSelectedRowData] = useState({} as any);
 
     const [visibleColumns, setVisibleColumns] = useState({
+        codigo_destino: "Codigo Destino",
         nombre: "Nombre",
-        ci_ruc: "CI/RUC",
-        direccion: "Direccion",
-        telefono: "Telefono",
-        email: "Email",
-        ciudad: "Ciudad",
-        pais: "Pais",
-        contacto: "Contacto",
-        modo: "Modo",
-        maestra_guias_hijas: "Maestra guias hijas",
-        codigo: "Codigo",
-        prefijo_awb: "Prefijo AWB",
-        codigo_cae: "Codigo CAE",
-        estado_activo: "Estado activo",
-        from1: "From",
-        to1: "To",
-        by1: "By",
-        to2: "To",
-        by2: "By",
-        to3: "To",
-        by3: "By",
-        afiliado_cass: "Afiliado CASS",
-        guias_virtuales: "Guias virtuales",
-        origen1: "Origen",
-        destino1: "Destino",
-        via1: "Via",
-        destino2: "Destino",
-        via2: "Via",
-        destino3: "Destino",
-        via3: "Via",
-        plantilla: "Plantilla",
+        aeropuerto: "Aeropuerto",
+        paise: "Pais",
+        sesa_id: "Sesa ID",
+        leyenda_fito: "Leyenda Fito",
+        cobro_fitos: "Cobro Fitos",
     } as any);
 
     const [formFieldsCreation, setFormFieldsCration] = useState([] as any[]);
@@ -165,7 +72,7 @@ export default function Aerolineas() {
         );
 
         if (constrolState === "crear") {
-            postAerolinea(newFormState)
+            postDestino(newFormState)
                 .then((response: any) => {
                     console.log(response);
                     if (response.ok) {
@@ -180,7 +87,7 @@ export default function Aerolineas() {
                 });
         }
         if (constrolState === "modificar") {
-            putAerolinea(newFormState)
+            putDestino(newFormState)
                 .then((response: any) => {
                     console.log(response);
                     if (response.ok) {
@@ -196,7 +103,7 @@ export default function Aerolineas() {
         }
 
         if (constrolState === "eliminar") {
-            deleteAerolineas(selectedRows)
+            deleteDestinos(selectedRows)
                 .then((response: any) => {
                     if (response.ok) {
                         const event = new CustomEvent('success', { detail: 'Paises eliminados con exito' });
@@ -214,22 +121,22 @@ export default function Aerolineas() {
 
     const handleUpdateData = () => {
 
-        getAerolineasJoinAll().then((data: any) => {
-            setAerolineas(data);
-            setTableData(data);
+        getDestinosJoinPaisesAduanas().then(data => {
+            setDestinos(data);
+            setTableData(destinos);
         });
     }
 
 
     useEffect(() => {
 
-        getAerolineasJoinAll().then((data: any) => {
-            setAerolineas(data);
+        getDestinosJoinPaisesAduanas().then(data => {
+            setDestinos(data);
             setLoading(false);
         });
 
-        getDestinos().then(data => {
-            setDestinos(data);
+        getPaises().then(data => {
+            setPais(data);
         });
 
 
@@ -239,8 +146,8 @@ export default function Aerolineas() {
     useEffect(() => {
         if (destinos) {
 
-            setTableData(aerolineas);
-            console.log(aerolineas);
+            setTableData(destinos);
+
 
             const createFormFields = (fields: any, idLabel?: string, idKey?: string, isModification = false) => {
                 let newFields = fields.map((field: any) => {
@@ -268,7 +175,7 @@ export default function Aerolineas() {
                 { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text' },
                 { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: 'Aeropuerto', type: 'text' },
-                //{ label: visibleColumns[keys[3]], key: keys[3], options: pais, type: 'select' },
+                { label: visibleColumns[keys[3]], key: keys[3], options: pais, type: 'select' },
                 { label: visibleColumns[keys[4]], key: keys[4], example: 'Sesa ID', type: 'number' },
                 { label: visibleColumns[keys[5]], key: keys[5], example: 'Leyenda Fito', type: 'textarea' },
                 { label: visibleColumns[keys[6]], key: keys[6], example: 'Cobro Fitos', type: 'checkbox' },
@@ -277,7 +184,7 @@ export default function Aerolineas() {
             setFormFieldsModification(createFormFields(fields, "ID Destino", "id_destino", true));
 
         }
-    }, [aerolineas, destinos]);
+    }, [destinos, pais]);
 
     return (
         <>
