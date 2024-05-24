@@ -20,9 +20,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [firstCheck, setFirstCheck] = useState(false);
 
   const checkToken = async () => {
+
     setFirstCheck(true);
 
-    if (isChecking) return false;
+    //if (isChecking) return false;
     setIsChecking(true);
 
     const token = localStorage.getItem('jwt');
@@ -46,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       handleLogout();
       return false;
     }
+
   };
 
   const verifyAdmin = async (token: string) => {

@@ -19,6 +19,25 @@ export function getOrigenesJoinPaisesAduanas() {
         });
 }
 
+export function getOrigenes() {
+    const token = localStorage.getItem('jwt');
+    return fetch(baseUrl + '/origenes', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            return data;
+        })
+        .catch((err) => {
+            console.log("ERROR", err);
+        });
+
+}
+
 export function postOrigen(origen: any) {
     const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes', {

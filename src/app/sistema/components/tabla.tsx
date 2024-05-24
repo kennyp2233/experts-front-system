@@ -69,9 +69,9 @@ export default function Tabla({
 
     return (
         <>
-            <div className={"card card-body shrink-0 shadow-2xl bg-base-100 " + className}>
-                <div className={"overflow-x-auto " + classNameTableContainer}>
-                    <table className="table table-pin-rows ">
+            <div className={"card card-body shrink-0 shadow-2xl bg-base-100 " + className} >
+                <div className={"overflow-x-auto " + classNameTableContainer} >
+                    <table className="table table-pin-rows " >
                         {/* head */}
                         <thead>
                             <tr>

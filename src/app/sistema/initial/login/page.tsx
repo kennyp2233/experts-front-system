@@ -7,7 +7,7 @@ import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-    const { checkToken } = useAuth();
+    const { checkToken, isLoggedIn } = useAuth();
     const router = useRouter();
 
     const [usuario, setUsuario] = useState('');
@@ -24,27 +24,34 @@ export default function Login() {
         setIsSubmitting(true);
 
         const res = await login(usuario, password, recordar);
-        let timer: NodeJS.Timeout;
         if (res.ok) {
-            dispatchMenssage('success', 'Sesión iniciada correctamente');
             localStorage.setItem('jwt', res.token);
-            checkToken();
-            router.push('/sistema/dashboard');
+            const tokenCheck = await checkToken();
+            if (tokenCheck) {
+                dispatchMenssage('success', 'Sesión iniciada correctamente');
+                router.push('/sistema/dashboard');
+            } else {
+                dispatchMenssage('fail', 'Error al verificar el token');
+            }
         } else {
             dispatchMenssage('fail', res.msg || 'Error desconocido');
         }
 
         setIsSubmitting(false);
 
-        return () => clearTimeout(timer);
     };
 
-    const handleForgot = () => { 
+    const handleForgot = () => {
         router.push('/sistema/initial/forgot');
     }
 
-    const handleRegister = () => { 
+    const handleRegister = () => {
         router.push('/sistema/initial/register');
+    }
+
+    if (isLoggedIn) {
+        router.push('/sistema/dashboard');
+        return null;
     }
 
     return (
@@ -94,7 +101,8 @@ export default function Login() {
                                     <svg className="mr-1 my-auto text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M11 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3zm1.293 6.293a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1 0 1.414l-3 3a1 1 0 0 1-1.414-1.414L13.586 13H5a1 1 0 1 1 0-2h8.586l-1.293-1.293a1 1 0 0 1 0-1.414" clip-rule="evenodd" /></svg>
                                     Ingresar
                                 </button>
-                                <button onClick={handleRegister} className="btn btn-primary mt-2 lg:hidden" type="button">
+
+                                <button onClick={handleRegister} className="btn btn-outline btn-primary mt-2 lg:hidden" type="button">
                                     <svg className="mr-1 my-auto text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M15 14c-2.67 0-8 1.33-8 4v2h16v-2c0-2.67-5.33-4-8-4m-9-4V7H4v3H1v2h3v3h2v-3h3v-2m6 2a4 4 0 0 0 4-4a4 4 0 0 0-4-4a4 4 0 0 0-4 4a4 4 0 0 0 4 4" /></svg>
                                     Registrarse
                                 </button>

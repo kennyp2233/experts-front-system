@@ -19,7 +19,17 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
   }, [isLoggedIn, isAdministrator, router, adminOnly]);
 
   if (!isLoggedIn || (adminOnly && !isAdministrator)) {
-    return null; // O un componente de carga
+    return (
+      <>
+        <div className="hero min-h-screen bg-base-200">
+          <div className="hero-content text-center">
+            <div className="max-w-md">
+              <span className="loading loading-ball loading-lg"></span>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return children;

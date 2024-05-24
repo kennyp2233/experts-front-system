@@ -26,6 +26,7 @@ export function getAerolineas() {
             'Authorization': 'Bearer ' + token,
         }
     })
+        .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
@@ -42,6 +43,7 @@ export function postAerolinea(aerolinea: any) {
         },
         body: JSON.stringify(aerolinea)
     })
+        .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
@@ -58,6 +60,7 @@ export function putAerolinea(aerolinea: any) {
         },
         body: JSON.stringify(aerolinea)
     })
+        .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
@@ -74,6 +77,7 @@ export function deleteAerolineas(ids: any[]) {
         },
         body: JSON.stringify(ids)
     })
+        .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });

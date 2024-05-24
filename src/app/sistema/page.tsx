@@ -40,13 +40,7 @@ export default function Page() {
 
   return (
     <>
-     
-      {
-        /*
-          <div className='text-primary'>{"logged " + isLoggedIn}</div>
-      <div className='text-primary'>{"admin " + isAdministrator}</div>
-         */
-      }
+
       <Hero />
     </>
   );

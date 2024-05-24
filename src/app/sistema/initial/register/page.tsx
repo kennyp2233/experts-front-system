@@ -3,12 +3,14 @@ import { register } from "@/api/usuarios/auth.api";
 import { useState } from "react";
 import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../providers/authProvider";
 export default function Register() {
     const [usuario, setUsuario] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const router = useRouter();
+    const { isLoggedIn } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -23,6 +25,11 @@ export default function Register() {
         } else {
             dispatchMenssage('fail', res.msg || 'Error desconocido');
         }
+    }
+
+    if (isLoggedIn) {
+        router.push('/sistema/dashboard');
+        return null;
     }
     return (
         <>

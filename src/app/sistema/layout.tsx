@@ -19,6 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+
   return (
     <>
       <AuthProvider>
@@ -32,9 +33,10 @@ export default function RootLayout({
                 <body data-theme="cupcake">
                   <div className={inter.className}>
                     <EventAlerts />
+
                     <NavBar />
                     {children}
-                    <footer className="footer footer-center p-4 bg-base-300 text-base-content">
+                    <footer className="footer footer-center p-4 bg-base-300 text-base-content z-10">
                       <aside>
                         <p>Copyright © 2024 - All right reserved by <a className="btn btn-active btn-link p-0" href="https://www.linkedin.com/in/kenny-pinchao-54543825b">Kenny Pinchao</a></p>
                       </aside>

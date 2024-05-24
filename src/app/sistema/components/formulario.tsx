@@ -110,7 +110,7 @@ export default function Formulario(
     }
     return (
         <>
-            <div className={"card shrink-0 shadow-2xl bg-base-100 " + className}>
+            <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[55%] max-lg:max-w-[60%] max-md:max-w-[65%] max-sm:max-w-[100%] max-w-[50%] " + className}>
                 <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
                     <div className={"form-control " + classNameForm}>
                         {formFields?.map((field, index) => (

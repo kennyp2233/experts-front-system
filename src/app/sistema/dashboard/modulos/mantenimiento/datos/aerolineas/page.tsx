@@ -1,16 +1,10 @@
 'use client';
-import { useEffect, useState } from "react";
-import { useAuth } from "@/app/sistema/providers/authProvider";
-import { deleteAerolineas, getAerolineasJoinAll, postAerolinea, putAerolinea } from "@/api/mantenimiento/aerolineas.api";
+import { deleteAerolineas, getAerolineasJoinAll, postAerolinea, putAerolinea, getAerolineas } from "@/api/mantenimiento/aerolineas.api";
 import { getDestinos } from "@/api/mantenimiento/destinos.api";
-import { useRouter } from "next/navigation";
-import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
+import { getOrigenes } from "@/api/mantenimiento/origenes.api";
 
-import MantenimientoRoute from "../utils/mantenimientoRoute";
-import ReturnButton from "@/app/sistema/components/returnButton";
-import Formulario from "@/app/sistema/components/formulario";
-import Tabla from "@/app/sistema/components/tabla";
-import ControlButtons from "../utils/controllButtons";
+import PaginaDatos from "../utils/paginaDatos";
+import { useEffect, useState } from "react";
 
 interface Origen {
     id_origen: number;
@@ -94,36 +88,19 @@ interface Aerolinea {
     plantilla: Plantilla;
 }
 
-
-function createFormFields(fields: any, idLabel?: string, idKey?: string, isModification = false) {
-    let newFields = fields.map((field: any) => {
-        return { ...field, placeholder: `Ej: ${field.example}` };
-    });
-
-    if (isModification && idKey && idLabel) {
-        newFields.unshift({ label: idLabel, key: idKey, type: 'number', disabled: true });
-    }
-
-    return newFields;
-}
-
-export default function Aerolineas() {
-    const router = useRouter();
-    const { checkToken } = useAuth();
+export default function Page() {
     const [loading, setLoading] = useState(true);
-    const [constrolState, setControlState] = useState<"crear" | "modificar" | "eliminar" | "default">("default");
+    const nombrePagina = "Aerolineas";
+    const iconoPagina = <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"></path><path fill="currentColor" d="M19.71 2.837c.733.147 1.306.72 1.453 1.453a3.557 3.557 0 0 1-.773 2.995l-2.751 3.252l1.944 7.131a1.25 1.25 0 0 1-.322 1.213l-1.302 1.302a1.01 1.01 0 0 1-1.597-.224l-2.993-5.387l-3.258 2.255v.787c0 .331-.132.65-.366.884L8.062 20.18a1.01 1.01 0 0 1-1.673-.395l-.544-1.631l-1.631-.544a1.01 1.01 0 0 1-.395-1.673l1.683-1.683a1.25 1.25 0 0 1 .884-.366h.787l2.255-3.258l-5.387-2.993a1.01 1.01 0 0 1-.224-1.597l1.302-1.302a1.25 1.25 0 0 1 1.213-.322l7.13 1.944l3.253-2.751a3.557 3.557 0 0 1 2.995-.773Z"></path></g></svg>
+    const modificationLabelId = { label: "ID Aerolinea", key: "id_aerolinea" };
 
+    const [origenes, setOrigenes] = useState([] as Origen[]);
+    const [destinos, setDestinos] = useState([] as Destino[]);
     const [aerolineas, setAerolineas] = useState([] as Aerolinea[]);
 
-    const [origen, setOrigen] = useState([] as Origen[]);
-    const [destinos, setDestinos] = useState([] as Destino[]);
+    const [formFields, setFormFields] = useState([] as any[]);
 
-
-    const [tableData, setTableData] = useState({} as { [key: string]: any }[]);
-    const [selectedRow, setSelectedRow] = useState(-1);
-    const [selectedRowData, setSelectedRowData] = useState({} as any);
-
-    const [visibleColumns, setVisibleColumns] = useState({
+    const visibleColumns = {
         nombre: "Nombre",
         ci_ruc: "CI/RUC",
         direccion: "Direccion",
@@ -138,9 +115,9 @@ export default function Aerolineas() {
         prefijo_awb: "Prefijo AWB",
         codigo_cae: "Codigo CAE",
         estado_activo: "Estado activo",
-        from1: "From",
         afiliado_cass: "Afiliado CASS",
         guias_virtuales: "Guias virtuales",
+        from1: "From",
         origen1: "Origen",
         destino1: "Destino",
         via1: "Via",
@@ -149,295 +126,72 @@ export default function Aerolineas() {
         destino3: "Destino",
         via3: "Via",
         plantilla: "Plantilla",
-    } as any);
+    } as any;
 
-    const [formFieldsCreation, setFormFieldsCration] = useState([] as any[]);
-    const [formFieldsModification, setFormFieldsModification] = useState([] as any[]);
-    const [selectedRows, setSelectedRows] = useState([] as any[]);
-
-
-
-    const handleFormSubmit = (formState: any) => {
-        const newFormState = Object.fromEntries(
-            Object.entries(formState).map(([key, value]) => {
-                if (typeof value === 'object' && value !== null) {
-                    // Si el valor es un objeto, reemplázalo con su primer valor
-                    return [Object.keys(value)[0], Object.values(value)[0]];
-                } else {
-                    // De lo contrario, deja el valor tal como está
-                    return [key, value];
-                }
-            })
-        );
-
-        if (constrolState === "crear") {
-            postAerolinea(newFormState)
-                .then((response: any) => {
-                    console.log(response);
-                    if (response.ok) {
-                        dispatchMenssage('success', 'Pais creado con exito');
-                        setControlState("default");
-
-                        handleUpdateData();
-                    } else {
-                        dispatchMenssage('error', response.msg);
-                    }
-                });
-        }
-        if (constrolState === "modificar") {
-            putAerolinea(newFormState)
-                .then((response: any) => {
-                    console.log(response);
-                    if (response.ok) {
-                        dispatchMenssage('success', 'Pais modificado con exito');
-                        setControlState("default");
-                        handleUpdateData();
-                    } else {
-                        dispatchMenssage('error', response.msg);
-                    }
-                });
-        }
-
-        if (constrolState === "eliminar") {
-            deleteAerolineas(selectedRows)
-                .then((response: any) => {
-                    if (response.ok) { 
-                        dispatchMenssage('success', 'Pais eliminado con exito');
-                        setControlState("default");
-                        handleUpdateData();
-                    } else {
-                        dispatchMenssage('error', response.msg);
-                    }
-                });
-        }
-        checkToken();
-    }
-
-    const handleUpdateData = () => {
-
-        getAerolineasJoinAll().then((data: any) => {
-            setAerolineas(data);
-            setTableData(data);
-        });
-    }
-
+    const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
 
     useEffect(() => {
-
-        getAerolineasJoinAll().then((data: any) => {
-            setAerolineas(data);
-            setLoading(false);
+        getOrigenes().then((data) => {
+            console.log(data);
+            setOrigenes(data);
         });
 
-        getDestinos().then(data => {
+        getDestinos().then((data) => {
+            console.log(data);
             setDestinos(data);
         });
 
+        getAerolineas().then((data) => {
+            console.log(data);
+            setAerolineas(data as any);
+        });
 
     }, []);
 
-
     useEffect(() => {
-        if (destinos) {
-
-            setTableData(aerolineas);
-            console.log(aerolineas);
-
-           
-
-            const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
-
-            /*
-            const fields = [
-                { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text' },
-                { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
-                { label: visibleColumns[keys[2]], key: keys[2], example: '1', type: 'number' },
-                { label: visibleColumns[keys[3]], key: keys[3], options: acuerdoArancelario, type: 'select' },
-            ];
-            */
-            const fields = [
+        if (origenes.length > 0 && destinos.length > 0 && aerolineas.length > 0) {
+            setFormFields([
                 { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text' },
                 { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: 'Aeropuerto', type: 'text' },
-                //{ label: visibleColumns[keys[3]], key: keys[3], options: pais, type: 'select' },
+                //{ label: visibleColumns[keys[3]], key: keys[3], options: destinos, type: 'select' },
                 { label: visibleColumns[keys[4]], key: keys[4], example: 'Sesa ID', type: 'number' },
                 { label: visibleColumns[keys[5]], key: keys[5], example: 'Leyenda Fito', type: 'textarea' },
                 { label: visibleColumns[keys[6]], key: keys[6], example: 'Cobro Fitos', type: 'checkbox' },
-            ];
-            setFormFieldsCration(createFormFields(fields));
-            setFormFieldsModification(createFormFields(fields, "ID Destino", "id_destino", true));
-
+            ])
+            setLoading(false);
         }
-    }, [aerolineas, destinos]);
+    }, [origenes, destinos, aerolineas]);
+
+    if (loading) {
+        return (
+            <>
+                <div className="hero min-h-screen bg-base-200">
+                    <div className="hero-content text-center">
+                        <div className="max-w-md">
+                            <span className="loading loading-ball loading-lg"></span>
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
-            <div className="hero min-h-screen bg-base-200">
-                <div className="hero-content flex-col justify-start w-full h-full">
-                    <MantenimientoRoute
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fillRule="evenodd" d="M8.445 3.168a1 1 0 0 1 1.002-.062L15 5.882l5.553-2.776A1 1 0 0 1 22 4v12a1 1 0 0 1-.445.832l-6 4a1 1 0 0 1-1.002.062L9 18.118l-5.553 2.776A1 1 0 0 1 2 20V8a1 1 0 0 1 .445-.832zM5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m5 1a1 1 0 0 1-1-1a1 1 0 1 1 2 0v.001a1 1 0 0 1-1 1zm4.707-3.708a1 1 0 1 0-1.414 1.414L14.586 12l-1.293 1.293a1 1 0 0 0 1.414 1.414L16 13.414l1.293 1.293a1 1 0 0 0 1.414-1.414L17.414 12l1.293-1.293a1 1 0 0 0-1.414-1.414L16 10.586l-1.293-1.293z" clipRule="evenodd" /></svg>
-                        }
-                        titulo="Destinos"
-                    />
-                    <ReturnButton
-                        className=""
-                        onClick={() => router.back()}
-                        text="Regresar"
-                    />
-
-                    <h1 className="text-5xl font-bold self-start pt-8  max-sm:text-4xl">
-                        Destinos{" "}
-                        <svg className="inline-block" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fillRule="evenodd" d="M8.445 3.168a1 1 0 0 1 1.002-.062L15 5.882l5.553-2.776A1 1 0 0 1 22 4v12a1 1 0 0 1-.445.832l-6 4a1 1 0 0 1-1.002.062L9 18.118l-5.553 2.776A1 1 0 0 1 2 20V8a1 1 0 0 1 .445-.832zM5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m5 1a1 1 0 0 1-1-1a1 1 0 1 1 2 0v.001a1 1 0 0 1-1 1zm4.707-3.708a1 1 0 1 0-1.414 1.414L14.586 12l-1.293 1.293a1 1 0 0 0 1.414 1.414L16 13.414l1.293 1.293a1 1 0 0 0 1.414-1.414L17.414 12l1.293-1.293a1 1 0 0 0-1.414-1.414L16 10.586l-1.293-1.293z" clipRule="evenodd" /></svg>
-                    </h1>
-
-                    <div className="flex flex-col w-full gap-3">
-                        {constrolState === "default" &&
-                            <ControlButtons
-                                handleCrear={() => {
-                                    setControlState("crear")
-                                    setSelectedRow(-1)
-                                    setSelectedRows([])
-                                }}
-                                handleModificar={() => {
-                                    setControlState("modificar")
-                                    setSelectedRow(-1)
-                                    setSelectedRows([])
-                                }}
-                                handleEliminar={() => {
-                                    setControlState("eliminar")
-                                    setSelectedRow(-1)
-                                    setSelectedRows([])
-                                }}
-                            />
-                        }
-
-                        {constrolState === "crear" &&
-                            <>
-                                <h2 className="text-3xl self-start  max-sm:text-2xl">Ingresar datos:</h2>
-                                <Formulario
-                                    formType="crear"
-                                    controlState={setControlState as (str: string) => void}
-                                    formFields={formFieldsCreation}
-                                    classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
-                                    className="w-fit self-center"
-                                    handleSubmit={handleFormSubmit}
-                                    handleUpdateData={handleUpdateData}
-                                />
-                            </>
-                        }
-                        {(constrolState === "modificar" && selectedRow >= 0) &&
-                            <>
-                                <h2 className="text-3xl self-start  max-sm:text-2xl">Actualizar datos:</h2>
-                                <Formulario
-                                    formType="modificar"
-                                    controlState={setControlState as (str: string) => void}
-                                    formFields={formFieldsModification}
-                                    classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
-                                    className="w-fit self-center"
-                                    initialValues={selectedRowData}
-                                    setSelectedRow={setSelectedRow}
-                                    selectedRow={selectedRow}
-                                    handleSubmit={handleFormSubmit}
-                                    handleUpdateData={handleUpdateData}
-                                />
-                            </>
-                        }
-
-                        {(constrolState === "eliminar" && selectedRows.length > 0) &&
-                            <>
-
-                                <Formulario
-                                    formType={constrolState}
-                                    controlState={setControlState as (str: string) => void}
-                                    classNameForm=""
-                                    className="w-fit self-center"
-                                    selectedRows={selectedRows}
-                                    setSelectedRows={setSelectedRows}
-                                    handleSubmit={handleFormSubmit}
-                                    handleUpdateData={handleUpdateData}
-                                    TablaEliminados={
-                                        <Tabla
-                                            visibleColumns={{ id_destino: "ID Destino", ...visibleColumns }}
-                                            data={
-                                                tableData?.filter((row: any) => selectedRows.includes(row[Object.keys(row)[0]]))
-                                            }
-                                            selectedRows={selectedRows}
-                                            setSelectedRows={setSelectedRows}
-                                            className="bg-transparent shadow-none p-0"
-                                            classNameTableContainer="h-fit max-h-96"
-                                            controlState="eliminar"
-                                        />
-                                    }
-                                />
-                            </>
-                        }
-
-
-                        {(constrolState === "eliminar" && selectedRows.length <= 0) &&
-
-                            <>
-                                <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">Seleccione uno o varios registros de la tabla</h2>
-                                <button className="btn btn-error w-fit self-center" onClick={() => {
-                                    setControlState("default")
-                                    setSelectedRow(-1)
-                                    setSelectedRows([])
-
-                                }}>
-                                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
-                                    Cancelar
-                                </button>
-                            </>
-
-                        }
-
-
-                        {(constrolState === "modificar" && selectedRow < 0) &&
-
-                            <>
-                                <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">Seleccione un registro de la tabla</h2>
-                                <button className="btn btn-error w-fit self-center" onClick={() => {
-                                    setControlState("default")
-                                    setSelectedRow(-1)
-                                    setSelectedRows([])
-
-                                }}>
-                                    <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
-                                    Cancelar
-                                </button>
-                            </>
-
-                        }
-
-                        <h2 className="text-3xl self-start pt-8  max-sm:text-2xl">Paises:</h2>
-
-                        {tableData.length > 0 && !loading &&
-                            <Tabla
-                                visibleColumns={visibleColumns}
-                                data={tableData}
-                                selectedRow={selectedRow}
-                                setSelectedRow={setSelectedRow}
-                                selectedRowData={selectedRowData}
-                                setSelectedRowData={setSelectedRowData}
-                                selectedRows={selectedRows}
-                                setSelectedRows={setSelectedRows}
-                                controlState={constrolState}
-                                classNameTableContainer="h-96"
-                            />
-                        }
-
-                        {(tableData.length === 0 && !loading) &&
-                            <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">No hay datos</h2>
-
-                        }
-
-                        {loading &&
-                            <div className="skeleton w-full h-96"></div>
-                        }
-
-                    </div>
-
-                </div>
-            </div>
+            {formFields.length > 0 &&
+                <PaginaDatos
+                    nombre={nombrePagina}
+                    icono={iconoPagina}
+                    fetchData={getAerolineasJoinAll}
+                    createData={postAerolinea}
+                    updateData={putAerolinea}
+                    deleteData={deleteAerolineas}
+                    formFields={formFields}
+                    modificationLabelId={modificationLabelId}
+                    visibleColumns={visibleColumns}
+                />
+            }
         </>
     );
 }
