@@ -17,8 +17,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdministrator, setIsAdministrator] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [firstCheck, setFirstCheck] = useState(false);
 
   const checkToken = async () => {
+    setFirstCheck(true);
+
     if (isChecking) return false;
     setIsChecking(true);
 
@@ -50,7 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await isAdmin(token);
       if (response.isAdmin) {
         setIsAdministrator(true);
-        dispatchMenssage('info', 'Haz ingresado como admin');
+        if (!firstCheck) {
+          dispatchMenssage('info', 'Haz ingresado como admin');
+        }
       } else {
         setIsAdministrator(false);
       }
