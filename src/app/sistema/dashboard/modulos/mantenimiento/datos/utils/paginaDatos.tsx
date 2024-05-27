@@ -24,19 +24,11 @@ interface PaginaDatosProps {
     deleteData: (selectedRows: any[]) => Promise<any>;
     formFields: any[];
     modificationLabelId: modificationLabelId;
+    formularioTab?: boolean;
+    formClassName?: string;
 }
 
-const createFormFields = (fields: any, idLabel?: string, idKey?: string, isModification = false) => {
-    let newFields = fields.map((field: any) => {
-        return { ...field, placeholder: `Ej: ${field.example}` };
-    });
 
-    if (isModification && idKey && idLabel) {
-        newFields.unshift({ label: idLabel, key: idKey, type: 'number', disabled: true });
-    }
-
-    return newFields;
-}
 
 export default function PaginaDatos(props: PaginaDatosProps) {
     const router = useRouter();
@@ -56,6 +48,21 @@ export default function PaginaDatos(props: PaginaDatosProps) {
     const [formFieldsModification, setFormFieldsModification] = useState([] as any[]);
     const [selectedRows, setSelectedRows] = useState([] as any[]);
 
+    const createFormFields = (fields: any, idLabel?: string, idKey?: string, isModification = false) => {
+        let newFields = fields.map((field: any) => {
+            return { ...field, placeholder: `Ej: ${field.example}` };
+        });
+
+        if (isModification && idKey && idLabel && props.formularioTab) {
+            newFields.splice(1, 0, { label: idLabel, key: idKey, type: 'number', disabled: true });
+
+        } else if (isModification && idKey && idLabel) {
+            newFields.unshift({ label: idLabel, key: idKey, type: 'number', disabled: true });
+        }
+
+        return newFields;
+    }
+
     const handleFormSubmit = (formState: any) => {
         const newFormState = Object.fromEntries(
             Object.entries(formState).map(([key, value]) => {
@@ -73,14 +80,14 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                     console.log(response);
                     if (response.ok) {
                         setControlState("default");
-                        dispatchMenssage('success', 'Pais creado con exito');
+                        dispatchMenssage('success', 'Registro creado con exito');
                         handleUpdateData();
                     } else {
-                        const event = new CustomEvent('error', { detail: response.msg });
-                        window.dispatchEvent(event);
+                        dispatchMenssage('error', response.msg);
                     }
                 });
         }
+
         if (constrolState === "modificar") {
             props.updateData(newFormState)
                 .then((response: any) => {
@@ -90,8 +97,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                         dispatchMenssage('success', 'Registro modificado con exito');
                         handleUpdateData();
                     } else {
-                        const event = new CustomEvent('error', { detail: response.msg });
-                        window.dispatchEvent(event);
+                        dispatchMenssage('error', response.msg);
                     }
                 });
         }
@@ -105,7 +111,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                         setControlState("default");
                         handleUpdateData();
                     } else {
-                        dispatchMenssage('error', 'Error al eliminar registro');
+                        dispatchMenssage('error', response.msg);
                     }
                 });
         }
@@ -184,10 +190,11 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     formType="crear"
                                     controlState={setControlState as (str: string) => void}
                                     formFields={formFieldsCreation}
-                                    classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
+                                    classNameForm={"grid grid-cols-2 gap-4 max-sm:grid-cols-1 " + props.formClassName}
                                     className="w-fit self-center"
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
+                                    formularioTabs={props.formularioTab}
                                 />
                             </>
                         }
@@ -198,13 +205,14 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     formType="modificar"
                                     controlState={setControlState as (str: string) => void}
                                     formFields={formFieldsModification}
-                                    classNameForm="grid grid-cols-2 gap-4 max-sm:grid-cols-1"
+                                    classNameForm={"grid grid-cols-2 gap-4 max-sm:grid-cols-1 " + props.formClassName}
                                     className="w-fit self-center"
                                     initialValues={selectedRowData}
                                     setSelectedRow={setSelectedRow}
                                     selectedRow={selectedRow}
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
+                                    formularioTabs={props.formularioTab}
                                 />
                             </>
                         }

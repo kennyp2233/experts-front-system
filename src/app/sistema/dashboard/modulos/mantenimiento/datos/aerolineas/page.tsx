@@ -99,7 +99,10 @@ export default function Page() {
     const [aerolineas, setAerolineas] = useState([] as Aerolinea[]);
 
     const [formFields, setFormFields] = useState([] as any[]);
-
+    const [selectOptions, setSelectOptions] = useState([
+        { id_option: 1, nombre: 'EN PIEZAS' },
+        { id_option: 2, nombre: 'EN FULLS' }
+    ] as any[]);
     const visibleColumns = {
         nombre: "Nombre",
         ci_ruc: "CI/RUC",
@@ -149,15 +152,23 @@ export default function Page() {
     }, []);
 
     useEffect(() => {
-        if (origenes.length > 0 && destinos.length > 0 && aerolineas.length > 0) {
+        if (origenes?.length > 0 && destinos?.length > 0 && aerolineas?.length > 0) {
             setFormFields([
-                { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text' },
-                { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
-                { label: visibleColumns[keys[2]], key: keys[2], example: 'Aeropuerto', type: 'text' },
-                //{ label: visibleColumns[keys[3]], key: keys[3], options: destinos, type: 'select' },
-                { label: visibleColumns[keys[4]], key: keys[4], example: 'Sesa ID', type: 'number' },
-                { label: visibleColumns[keys[5]], key: keys[5], example: 'Leyenda Fito', type: 'textarea' },
-                { label: visibleColumns[keys[6]], key: keys[6], example: 'Cobro Fitos', type: 'checkbox' },
+                { division: true, label: 'General' },
+                { label: visibleColumns[keys[0]], key: keys[0], example: 'KLM', type: 'text' },
+                { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
+                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'text' },
+                { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
+                { label: visibleColumns[keys[4]], key: keys[4], example: 'email@email.com', type: 'text' },
+                { label: visibleColumns[keys[5]], key: keys[5], example: 'Quito', type: 'text' },
+                { label: visibleColumns[keys[6]], key: keys[6], example: 'Ecuador', type: 'text' },
+                { label: visibleColumns[keys[7]], key: keys[7], example: 'Juan Perez', type: 'text' },
+                { label: visibleColumns[keys[8]], key: keys[8], options: selectOptions, type: 'select' },
+                { label: visibleColumns[keys[9]], key: keys[9], type: 'checkbox' },
+                { label: visibleColumns[keys[10]], key: keys[10], example: 'QR', type: 'text' },
+                { label: visibleColumns[keys[11]], key: keys[11], example: '123', type: 'text' },
+                { label: visibleColumns[keys[12]], key: keys[12], example: '123', type: 'text' },
+                { division: true, label: 'Codigos y plantillas' },
             ])
             setLoading(false);
         }
@@ -190,6 +201,8 @@ export default function Page() {
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}
+                    formularioTab={true}
+                    formClassName="grid-cols-3 max-lg:grid-cols-2"
                 />
             }
         </>
