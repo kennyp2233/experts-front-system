@@ -10,6 +10,7 @@ interface FormField {
     options?: string[];
     disabled?: boolean;
     division?: boolean;
+    required?: boolean;
 }
 
 interface FormState {
@@ -33,69 +34,6 @@ interface propsFormulario {
     formularioTabs?: boolean,
 }
 
-const RenderField = ({ field, formState, handleChange }: any) => (
-    <div key={field.key} className={
-        (field.type === "checkbox" && "flex flex-row") + " self-center"
-    }>
-        <label className="label">
-            <span className="label-text flex text-center justify-center">{field.label}</span>
-        </label>
-
-        {field.type === 'select' && (
-            <select
-                className="select select-bordered w-full"
-                value={JSON.stringify(formState[field.key])}
-                onChange={(e) => handleChange(e, field.key)}
-                required
-            >
-                <option value="" disabled selected>
-                    Seleccionar
-                </option>
-                {field.options?.map((option: any, index: number) => (
-                    <option
-                        key={index}
-                        value={JSON.stringify(option)}
-                        selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
-                    >
-                        {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
-                    </option>
-                ))}
-            </select>
-        )}
-
-        {(field.type === 'text' || field.type === 'number') && (
-            <input
-                type={field.type}
-                placeholder={"Ej: " + field.example}
-                className="input input-bordered w-full"
-                value={formState[field.key]}
-                onChange={(e) => handleChange(e, field.key)}
-                required
-                disabled={field.disabled}
-            />
-        )}
-
-        {field.type === 'textarea' && (
-            <textarea
-                placeholder={"Ej: " + field.example}
-                className="textarea textarea-bordered w-full"
-                value={formState[field.key]}
-                onChange={(e) => handleChange(e, field.key)}
-            />
-        )}
-
-        {field.type === 'checkbox' && (
-            <>
-                <input
-                    type="checkbox"
-                    className="checkbox my-auto ml-2"
-                    checked={Boolean(Number(formState[field.key]))}
-                    onChange={(e) => handleChange(e, field.key)}
-                />
-            </>
-        )}
-    </div>
-);
 
 export default function Formulario(
     {
@@ -200,6 +138,73 @@ export default function Formulario(
         }
 
     }
+
+
+
+    const RenderField = ({ field, formState, handleChange }: any) => (
+        <div key={field.key} className={
+            (field.type === "checkbox" && "flex flex-row") + " self-center"
+        }>
+            <label className="label">
+                <span className="label-text flex text-center justify-center">{field.label}</span>
+            </label>
+
+            {field.type === 'select' && (
+                <select
+                    className="select select-bordered w-full"
+                    value={JSON.stringify(formState[field.key])}
+                    onChange={(e) => handleChange(e, field.key)}
+                    required//={field.required}
+                >
+                    <option value="" disabled selected>
+                        Seleccionar
+                    </option>
+                    {field.options?.map((option: any, index: number) => (
+                        <option
+                            key={index}
+                            value={JSON.stringify(option)}
+                            //selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
+                        >
+                            {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
+                        </option>
+                    ))}
+                </select>
+            )}
+
+            {(field.type === 'text' || field.type === 'number') && (
+                <input
+                    type={field.type}
+                    placeholder={"Ej: " + field.example}
+                    className="input input-bordered w-full"
+                    value={formState[field.key]}
+                    onChange={(e) => handleChange(e, field.key)}
+                    required={field.required}
+                    disabled={field.disabled}
+                />
+            )}
+
+            {field.type === 'textarea' && (
+                <textarea
+                    placeholder={"Ej: " + field.example}
+                    className="textarea textarea-bordered w-full"
+                    value={formState[field.key]}
+                    onChange={(e) => handleChange(e, field.key)}
+                    required={field.required}
+                />
+            )}
+
+            {field.type === 'checkbox' && (
+                <>
+                    <input
+                        type="checkbox"
+                        className="checkbox my-auto ml-2"
+                        checked={Boolean(Number(formState[field.key]))}
+                        onChange={(e) => handleChange(e, field.key)}
+                    />
+                </>
+            )}
+        </div>
+    );
     return (
         <>
             {!formularioTabs &&

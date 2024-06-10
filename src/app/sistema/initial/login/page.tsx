@@ -102,7 +102,7 @@ export default function Login() {
                                     Ingresar
                                 </button>
 
-                                <button onClick={handleRegister} className="btn btn-outline btn-primary mt-2 lg:hidden" type="button">
+                                <button onClick={handleRegister} className="btn btn-outline btn-neutral mt-2 lg:hidden" type="button">
                                     <svg className="mr-1 my-auto text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M15 14c-2.67 0-8 1.33-8 4v2h16v-2c0-2.67-5.33-4-8-4m-9-4V7H4v3H1v2h3v3h2v-3h3v-2m6 2a4 4 0 0 0 4-4a4 4 0 0 0-4-4a4 4 0 0 0-4 4a4 4 0 0 0 4 4" /></svg>
                                     Registrarse
                                 </button>
@@ -111,7 +111,7 @@ export default function Login() {
                     </div>
                     <div className="hidden text-left lg:block max-w-lg">
                         <h1 className="text-5xl font-bold py-6">No tienes cuenta todavia?</h1>
-                        <button onClick={handleRegister} className="btn btn-primary" type="button">
+                        <button onClick={handleRegister} className="btn btn-outline" type="button">
                             Registrate ahora
                         </button>
                     </div>

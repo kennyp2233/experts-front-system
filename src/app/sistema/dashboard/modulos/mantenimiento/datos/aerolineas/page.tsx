@@ -103,6 +103,7 @@ export default function Page() {
         { id_option: 1, nombre: 'EN PIEZAS' },
         { id_option: 2, nombre: 'EN FULLS' }
     ] as any[]);
+    
     const visibleColumns = {
         nombre: "Nombre",
         ci_ruc: "CI/RUC",
@@ -168,7 +169,11 @@ export default function Page() {
                 { label: visibleColumns[keys[10]], key: keys[10], example: 'QR', type: 'text' },
                 { label: visibleColumns[keys[11]], key: keys[11], example: '123', type: 'text' },
                 { label: visibleColumns[keys[12]], key: keys[12], example: '123', type: 'text' },
-                { division: true, label: 'Codigos y plantillas' },
+                { division: true, label: 'Codigos' },
+                { label: visibleColumns[keys[0]], key: keys[0], example: 'KLM', type: 'text' },
+                { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
+                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'text' },
+                { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
             ])
             setLoading(false);
         }

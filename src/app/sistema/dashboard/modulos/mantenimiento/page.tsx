@@ -38,14 +38,15 @@ export default function MantenimientoInit() {
                             </li>
                         </ul>
                     </div>
+
                     <ReturnButton
                         className=""
                         onClick={() => router.back()}
                         text="Regresar"
                     />
 
-                    <h1 className="text-5xl font-bold self-start pt-10  max-sm:text-4xl">Mantenimiento</h1>
-                    <h2 className="text-4xl self-start  max-sm:text-3xl">Datos maestros</h2>
+                    <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl ">Mantenimiento</h1>
+                    <h2 className="text-xl self-start max-sm:text-lg">Datos maestros</h2>
                     <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 ">
 
 
@@ -105,7 +106,7 @@ export default function MantenimientoInit() {
 
                     </div>
 
-                    <h2 className="text-4xl self-start mt-8  max-sm:text-3xl">Entidades</h2>
+                    <h2 className="text-xl self-start max-sm:text-lg mt-8">Entidades</h2>
                     <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 ">
 
 
@@ -155,7 +156,7 @@ export default function MantenimientoInit() {
 
                     </div>
 
-                    <h2 className="text-4xl self-start mt-8  max-sm:text-3xl">Recursos Humanos</h2>
+                    <h2 className="text-xl self-start max-sm:text-lg mt-8">Recursos Humanos</h2>
                     <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 ">
 
 

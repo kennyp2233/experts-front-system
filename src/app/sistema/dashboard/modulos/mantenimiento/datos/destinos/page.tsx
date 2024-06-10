@@ -50,7 +50,7 @@ export default function Page() {
     useEffect(() => {
         if (paises.length > 0) {
             setFormFields([
-                { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text' },
+                { label: visibleColumns[keys[0]], key: keys[0], example: 'EC', type: 'text', required: true},
                 { label: visibleColumns[keys[1]], key: keys[1], example: 'Ecuador', type: 'text' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: 'Aeropuerto', type: 'text' },
                 { label: visibleColumns[keys[3]], key: keys[3], options: paises, type: 'select' },

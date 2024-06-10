@@ -157,9 +157,12 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                         text="Regresar"
                     />
 
-                    <h1 className="text-5xl font-bold self-start pt-8  max-sm:text-4xl flex gap-4">
+                    <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">
                         {props.nombre}
-                        {props.icono}
+                        <div className="my-auto">
+                            {props.icono}
+                        </div>
+
                     </h1>
 
                     <div className="flex flex-col w-full gap-3">
@@ -185,7 +188,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
 
                         {constrolState === "crear" &&
                             <>
-                                <h2 className="text-3xl self-start  max-sm:text-2xl">Ingresar datos:</h2>
+                                <h2 className="text-xl self-start max-sm:text-lg">Ingresar datos:</h2>
                                 <Formulario
                                     formType="crear"
                                     controlState={setControlState as (str: string) => void}
@@ -282,7 +285,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
 
                         }
 
-                        <h2 className="text-3xl self-start pt-8  max-sm:text-2xl">
+                        <h2 className="text-xl self-start pt-8 max-sm:text-lg">
                             {props.nombre + ":"}
                         </h2>
 
