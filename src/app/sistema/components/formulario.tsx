@@ -161,7 +161,7 @@ export default function Formulario(
                     </option>
                     {field.options?.map((option: any, index: number) => (
                         <option
-                            key={index}
+                            key={option[0]}
                             value={JSON.stringify(option)}
                             selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
                         >
@@ -284,7 +284,7 @@ export default function Formulario(
                         <div className={"form-control "}>
                             <div role="tablist" className={"tabs tabs-lifted"}>
                                 {tabs.map((tab, tabIndex) => (
-                                    <React.Fragment key={tabIndex}>
+                                    <>
                                         <input
                                             type="radio"
                                             name="my_tabs"
@@ -309,7 +309,7 @@ export default function Formulario(
                                                 ))}
                                             </div>
                                         </div>
-                                    </React.Fragment>
+                                    </>
 
                                 ))}
                             </div>
