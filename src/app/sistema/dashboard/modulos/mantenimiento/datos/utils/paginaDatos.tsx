@@ -24,8 +24,8 @@ interface PaginaDatosProps {
     deleteData: (selectedRows: any[]) => Promise<any>;
     formFields: any[];
     modificationLabelId: modificationLabelId;
-    formularioTab?: boolean;
     formClassName?: string;
+    formularioSegments?: boolean;
 }
 
 
@@ -53,7 +53,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
             return { ...field, placeholder: `Ej: ${field.example}` };
         });
 
-        if (isModification && idKey && idLabel && props.formularioTab) {
+        if (isModification && idKey && idLabel && props.formularioSegments) {
             newFields.splice(1, 0, { label: idLabel, key: idKey, type: 'number', disabled: true });
 
         } else if (isModification && idKey && idLabel) {
@@ -197,7 +197,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     className="w-fit self-center"
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
-                                    formularioTabs={props.formularioTab}
+                                    formularioSegments={props.formularioSegments}
                                 />
                             </>
                         }
@@ -215,7 +215,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     selectedRow={selectedRow}
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
-                                    formularioTabs={props.formularioTab}
+                                    formularioSegments={props.formularioSegments}
                                 />
                             </>
                         }

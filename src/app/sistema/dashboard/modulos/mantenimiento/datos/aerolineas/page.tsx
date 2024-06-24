@@ -103,33 +103,36 @@ export default function Page() {
         { id_option: 1, nombre: 'EN PIEZAS' },
         { id_option: 2, nombre: 'EN FULLS' }
     ] as any[]);
-    
+    const [opcionesMultiplicador, setOpcionesMultiplicador] = useState([
+        { id_opcion: 0, nombre: "Gross Weight" },
+        { id_opcion: 1, nombre: "Chargeable Weight" }
+    ] as any[]);
+
     const visibleColumns = {
-        nombre: "Nombre",
-        ci_ruc: "CI/RUC",
-        direccion: "Direccion",
-        telefono: "Telefono",
-        email: "Email",
-        ciudad: "Ciudad",
-        pais: "Pais",
-        contacto: "Contacto",
-        modo: "Modo",
-        maestra_guias_hijas: "Maestra guias hijas",
-        codigo: "Codigo",
-        prefijo_awb: "Prefijo AWB",
-        codigo_cae: "Codigo CAE",
-        estado_activo: "Estado activo",
-        afiliado_cass: "Afiliado CASS",
-        guias_virtuales: "Guias virtuales",
-        from1: "From",
-        origen1: "Origen",
-        destino1: "Destino",
-        via1: "Via",
-        destino2: "Destino",
-        via2: "Via",
-        destino3: "Destino",
-        via3: "Via",
-        plantilla: "Plantilla",
+        nombre: "Nombre", //0
+        ci_ruc: "CI/RUC", //1
+        direccion: "Direccion", //2
+        telefono: "Telefono", //3
+        email: "Email", //4
+        ciudad: "Ciudad", //5
+        pais: "Pais", //7
+        contacto: "Contacto", //7
+        modo: "Modo", //8
+        maestra_guias_hijas: "Maestra guias hijas", //9
+        codigo: "Codigo", //10
+        prefijo_awb: "Prefijo AWB", //11
+        codigo_cae: "Codigo CAE", //12
+        estado_activo: "Estado activo", //13
+        afiliado_cass: "Afiliado CASS", //14
+        guias_virtuales: "Guias virtuales", //15
+        origen1: "Origen", //17
+        destino1: "Destino", //18
+        via1: "Via", //19
+        destino2: "Destino", //20
+        via2: "Via", //21
+        destino3: "Destino", //22
+        via3: "Via", //23
+        plantilla: "Plantilla", //24
     } as any;
 
     const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
@@ -169,11 +172,49 @@ export default function Page() {
                 { label: visibleColumns[keys[10]], key: keys[10], example: 'QR', type: 'text' },
                 { label: visibleColumns[keys[11]], key: keys[11], example: '123', type: 'text' },
                 { label: visibleColumns[keys[12]], key: keys[12], example: '123', type: 'text' },
+                { label: visibleColumns[keys[13]], key: keys[13], type: 'checkbox' },
                 { division: true, label: 'Codigos' },
-                { label: visibleColumns[keys[0]], key: keys[0], example: 'KLM', type: 'text' },
-                { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
-                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'text' },
-                { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
+                { label: "Costo Guia", key: "costo_guia_abrv", example: 'XXX', type: 'text' },
+                { label: "Combustible", key: "combustible_abrv", example: 'XXX', type: 'text' },
+                { label: "Seguridad", key: "seguridad_abrv", example: 'XXX', type: 'text' },
+                { label: "Aux. Calculo", key: "aux_calculo_abrv", example: 'XXX', type: 'text' },
+                { label: "IVA", key: "iva_abrv", example: 'XXX', type: 'text' },
+                { label: "Otros", key: "otros_abrv", example: 'XXX', type: 'text' },
+                { label: "Aux1", key: "aux1_abrv", example: 'XXX', type: 'text' },
+                { label: "Aux2", key: "aux2_abrv", example: 'XXX', type: 'text' },
+                { division: true, label: 'Valores codigos' },
+                { label: "Costo Guia", key: "costo_guia_valor", example: '0.0000', type: 'number' },
+                { label: "Combustible", key: "combustible_valor", example: '0.0000', type: 'number' },
+                { label: "Seguridad", key: "seguridad_valor", example: '0.0000', type: 'number' },
+                { label: "Aux. Calculo", key: "aux_calculo_valor", example: '0.0000', type: 'number' },
+                { label: "Otros", key: "otros_valor", example: '0.0000', type: 'number' },
+                { label: "Aux1", key: "aux1_valor", example: '0.0000', type: 'number' },
+                { label: "Aux2", key: "aux2_valor", example: '0.0000', type: 'number' },
+                { label: "Tarifa Rate", key: "tarifa_rate", example: '0.00', type: 'number' },
+                { label: "PCA", key: "pca", example: '0.0000', type: 'number' },
+
+                { division: true, label: 'Multiplicador' },
+                { label: "Combustible Mult", key: "combustible_mult", type: 'select', options: opcionesMultiplicador },
+                { label: "Seguridad Mult", key: "seguridad_mult", type: 'select', options: opcionesMultiplicador },
+                { label: "Aux. Calculo Mult", key: "aux_calc_mult", type: 'select', options: opcionesMultiplicador },
+
+                { division: true, label: 'Plantillas' },
+                { label: "Plantilla Guia Madre", key: "plantilla_guia_madre", example: 'XXXX000', type: 'text' },
+                { label: "Plantilla Formato Aerolinea", key: "plantilla_formato_aerolinea", example: 'XXXX000', type: 'text' },
+                { label: "Plantilla Reservas", key: "plantilla_reservas", example: 'XXXX000', type: 'text' },
+
+
+                { division: true, label: 'Info Adicional' },
+                { label: visibleColumns[keys[14]], key: keys[1], type: 'checkbox' },
+                { label: visibleColumns[keys[15]], key: keys[2], type: 'checkbox' },
+                { division: true, label: 'Ruta' },
+                { label: visibleColumns[keys[16]], key: keys[3], type: 'select', options: origenes },
+                { label: visibleColumns[keys[17]], key: keys[4], type: 'select', options: destinos },
+                { label: visibleColumns[keys[18]], key: keys[5], type: 'select', options: aerolineas },
+                { label: visibleColumns[keys[19]], key: keys[6], type: 'select', options: destinos },
+                { label: visibleColumns[keys[20]], key: keys[7], type: 'select', options: aerolineas },
+                { label: visibleColumns[keys[21]], key: keys[8], type: 'select', options: destinos },
+                { label: visibleColumns[keys[22]], key: keys[9], type: 'select', options: aerolineas },
             ])
             setLoading(false);
         }
@@ -206,7 +247,7 @@ export default function Page() {
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}
-                    formularioTab={true}
+                    formularioSegments={true}
                     formClassName="grid-cols-3 max-lg:grid-cols-2"
                 />
             }

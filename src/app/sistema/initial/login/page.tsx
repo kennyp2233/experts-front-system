@@ -1,7 +1,6 @@
 'use client'
 import { login } from "@/api/usuarios/auth.api";
 import { useState } from "react";
-import { useSistemState } from "../../providers/sistemStateContext";
 import { useAuth } from "../../providers/authProvider";
 import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";

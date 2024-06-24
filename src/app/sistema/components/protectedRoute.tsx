@@ -1,4 +1,6 @@
 
+import React from 'react'; // Add this line
+
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../providers/authProvider';
 import { useEffect } from 'react';
@@ -14,21 +16,17 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
       router.push('/');
     }
 
-    return () => {
-    };
   }, [isLoggedIn, isAdministrator, router, adminOnly]);
 
-  if (!isLoggedIn || (adminOnly && !isAdministrator)) {
+  if (!isLoggedIn || (adminOnly && !isAdministrator)) { // (!true || (false && !true)) = (false || (false && false)) = (false || false) = false
     return (
-      <>
-        <div className="hero min-h-screen bg-base-200">
-          <div className="hero-content text-center">
-            <div className="max-w-md">
-              <span className="loading loading-ball loading-lg"></span>
-            </div>
+      <div className="hero min-h-screen bg-base-200">
+        <div className="hero-content text-center">
+          <div className="max-w-md">
+            <span className="loading loading-ball loading-lg"></span>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 

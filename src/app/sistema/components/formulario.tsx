@@ -31,7 +31,7 @@ interface propsFormulario {
     setSelectedRows?: (data: any) => void,
     handleSubmit?: (e: any) => void,
     handleUpdateData?: () => void,
-    formularioTabs?: boolean,
+    formularioSegments?: boolean,
 }
 
 
@@ -50,35 +50,30 @@ export default function Formulario(
         setSelectedRows,
         handleSubmit,
         handleUpdateData,
-        formularioTabs
+        formularioSegments
     }: propsFormulario) {
 
     const [formState, setFormState] = useState<FormState>({});
     const [isUpdateButtonDisabled, setUpdateButtonDisabled] = useState(true);
-    const [activeTab, setActiveTab] = useState(0);
 
-    const handleTabChange = (index: any) => {
-        setActiveTab(index);
-    };
-
-    const tabs = [];
-    let currentTabFields = [] as any[];
-    let currentTabLabel = '';
+    const segments = [];
+    let currentSegmentFields = [] as any[];
+    let currentSegmentLabel = '';
 
     formFields?.forEach((field, index) => {
         if (field.division) {
-            if (currentTabFields.length > 0) {
-                tabs.push({ label: currentTabLabel, fields: currentTabFields });
-                currentTabFields = [];
+            if (currentSegmentFields.length > 0) {
+                segments.push({ label: currentSegmentLabel, fields: currentSegmentFields });
+                currentSegmentFields = [];
             }
-            currentTabLabel = field.label;
+            currentSegmentLabel = field.label;
         } else {
-            currentTabFields.push(field);
+            currentSegmentFields.push(field);
         }
     });
 
-    if (currentTabFields.length > 0) {
-        tabs.push({ label: currentTabLabel, fields: currentTabFields });
+    if (currentSegmentFields.length > 0) {
+        segments.push({ label: currentSegmentLabel, fields: currentSegmentFields });
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, key: any) => {
@@ -131,8 +126,9 @@ export default function Formulario(
 
     const handleOnSubmit = (e: any) => {
         e.preventDefault();
+
         if (handleSubmit && handleUpdateData) {
-            //console.log("formState", formState);
+            console.log("formState", formState);
             handleSubmit(formState);
             //handleUpdateData();
         }
@@ -140,79 +136,76 @@ export default function Formulario(
     }
 
 
-
-    const RenderField = ({ field, formState, handleChange }: any) => (
-        <div key={field.key} className={
-            (field.type === "checkbox" && "flex flex-row") + " self-center"
-        }>
-            <label className="label">
-                <span className="label-text flex text-center justify-center">{field.label}</span>
-            </label>
-
-            {field.type === 'select' && (
-                <select
-                    className="select select-bordered w-full"
-                    value={JSON.stringify(formState[field.key])}
-                    onChange={(e) => handleChange(e, field.key)}
-                    required//={field.required}
-                >
-                    <option value="" disabled selected>
-                        Seleccionar
-                    </option>
-                    {field.options?.map((option: any, index: number) => (
-                        <option
-                            key={option[0]}
-                            value={JSON.stringify(option)}
-                            selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
-                        >
-                            {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
-                        </option>
-                    ))}
-                </select>
-            )}
-
-            {(field.type === 'text' || field.type === 'number') && (
-                <input
-                    type={field.type}
-                    placeholder={"Ej: " + field.example}
-                    className="input input-bordered w-full"
-                    value={formState[field.key]}
-                    onChange={(e) => handleChange(e, field.key)}
-                    required={field.required}
-                    disabled={field.disabled}
-                />
-            )}
-
-            {field.type === 'textarea' && (
-                <textarea
-                    placeholder={"Ej: " + field.example}
-                    className="textarea textarea-bordered w-full"
-                    value={formState[field.key]}
-                    onChange={(e) => handleChange(e, field.key)}
-                    required={field.required}
-                />
-            )}
-
-            {field.type === 'checkbox' && (
-                <>
-                    <input
-                        type="checkbox"
-                        className="checkbox my-auto ml-2"
-                        checked={Boolean(Number(formState[field.key]))}
-                        onChange={(e) => handleChange(e, field.key)}
-                    />
-                </>
-            )}
-        </div>
-    );
     return (
         <>
-            {!formularioTabs &&
+
+            {!formularioSegments &&
                 <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[55%] max-lg:max-w-[60%] max-md:max-w-[65%] max-sm:max-w-[100%] max-w-[50%] " + className}>
                     <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
                         <div className={"form-control " + classNameForm}>
                             {formFields?.map((field, index) => (
-                                <RenderField field={field} formState={formState} handleChange={handleChange} />
+                                <div key={field.key} className={
+                                    (field.type === "checkbox" && "flex flex-row") + " self-center"
+                                }>
+                                    <label className="label">
+                                        <span className="label-text flex text-center justify-center">{field.label}</span>
+                                    </label>
+
+                                    {field.type === 'select' && (
+                                        <select
+                                            className="select select-bordered w-full"
+                                            value={JSON.stringify(formState[field.key])}
+                                            onChange={(e) => handleChange(e, field.key)}
+                                            required//={field.required}
+                                        >
+                                            <option value="" disabled selected>
+                                                Seleccionar
+                                            </option>
+                                            {field.options?.map((option: any, index: number) => (
+                                                <option
+                                                    key={option[0]}
+                                                    value={JSON.stringify(option)}
+                                                    selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
+                                                >
+                                                    {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+
+                                    {(field.type === 'text' || field.type === 'number') && (
+                                        <input
+                                            type={field.type}
+                                            placeholder={"Ej: " + field.example}
+                                            className="input input-bordered w-full"
+                                            value={formState[field.key]}
+                                            onChange={(e) => handleChange(e, field.key)}
+                                            required={field.required}
+                                            disabled={field.disabled}
+                                        />
+                                    )}
+
+                                    {field.type === 'textarea' && (
+                                        <textarea
+                                            placeholder={"Ej: " + field.example}
+                                            className="textarea textarea-bordered w-full"
+                                            value={formState[field.key]}
+                                            onChange={(e) => handleChange(e, field.key)}
+                                            required={field.required}
+                                        />
+                                    )}
+
+                                    {field.type === 'checkbox' && (
+                                        <>
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox my-auto ml-2"
+                                                checked={Boolean(Number(formState[field.key]))}
+                                                onChange={(e) => handleChange(e, field.key)}
+                                            />
+                                        </>
+                                    )}
+                                </div>
                             ))}
                             {TablaEliminados && <h2 className="text-xl self-start  max-sm:text-lg">Datos a eliminar:</h2>}
                             {TablaEliminados && TablaEliminados}
@@ -277,42 +270,88 @@ export default function Formulario(
                 </div>
             }
 
-            {formularioTabs &&
+            {formularioSegments &&
                 <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[55%] max-lg:max-w-[60%] max-md:max-w-[65%] max-sm:max-w-[100%] max-w-[50%] " + className}>
 
                     <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
-                        <div className={"form-control "}>
-                            <div role="tablist" className={"tabs tabs-lifted"}>
-                                {tabs.map((tab, tabIndex) => (
-                                    <>
-                                        <input
-                                            type="radio"
-                                            name="my_tabs"
-                                            role="tab"
-                                            className="tab"
-                                            aria-label={tab.label}
-                                            checked={activeTab === tabIndex}
-                                            onChange={() => handleTabChange(tabIndex)}
-                                        />
-                                        <div
-                                            role="tabpanel"
-                                            className={`tab-content bg-base-100 border-base-300 rounded-box p-6 ${activeTab === tabIndex ? '' : 'hidden'}`}
-                                        >
-                                            <div className={" " + classNameForm}>
-                                                {tab.fields.map((field, fieldIndex) => (
-                                                    <RenderField
-                                                        key={fieldIndex}
-                                                        field={field}
-                                                        formState={formState}
-                                                        handleChange={handleChange}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
+                        <div className={"form-control max-h-96 overflow-y-auto"}>
+                            {segments.map((segment, index) => (
+                                <>
+                                    <h2 className="text-lg font-extrabold self-start max-sm:text-lg pb-4">{segment.label}</h2>
+                                    <div className={" " + classNameForm}>
+                                        {segment.fields.map((field: any, fieldIndex: any) => (
+                                            <>
+                                                <div key={field.key} className={
+                                                    (field.type === "checkbox" && "flex flex-row") + " self-end"
+                                                }>
+                                                    <label className="label">
+                                                        <span className="label-text flex text-center justify-center">{field.label}</span>
+                                                    </label>
 
-                                ))}
-                            </div>
+                                                    {field.type === 'select' && (
+                                                        <select
+                                                            name={field.key}
+                                                            className="select select-bordered w-full"
+                                                            value={JSON.stringify(formState[field.key])}
+                                                            onChange={(e) => handleChange(e, field.key)}
+                                                            required//={field.required}
+                                                        >
+                                                            <option value="" disabled selected>
+                                                                Seleccionar
+                                                            </option>
+                                                            {field.options?.map((option: any, index: number) => (
+                                                                <option
+                                                                    key={option[0]}
+                                                                    value={JSON.stringify(option)}
+                                                                    selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
+                                                                >
+                                                                    {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    )}
+
+                                                    {(field.type === 'text' || field.type === 'number') && (
+                                                        <input
+                                                            name={field.key}
+                                                            type={field.type}
+                                                            placeholder={"Ej: " + field.example}
+                                                            className="input input-bordered w-full"
+                                                            value={formState[field.key]}
+                                                            onChange={(e) => handleChange(e, field.key)}
+                                                            required={field.required}
+                                                            disabled={field.disabled}
+                                                        />
+                                                    )}
+
+                                                    {field.type === 'textarea' && (
+                                                        <textarea
+                                                            name={field.key}
+                                                            placeholder={"Ej: " + field.example}
+                                                            className="textarea textarea-bordered w-full"
+                                                            value={formState[field.key]}
+                                                            onChange={(e) => handleChange(e, field.key)}
+                                                            required={field.required}
+                                                        />
+                                                    )}
+
+                                                    {field.type === 'checkbox' && (
+                                                        <>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="checkbox my-auto ml-2"
+                                                                checked={Boolean(Number(formState[field.key]))}
+                                                                onChange={(e) => handleChange(e, field.key)}
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </>
+                                        ))}
+                                    </div>
+                                    <div className="min-h-12"></div>
+                                </>
+                            ))}
 
                             {TablaEliminados && <h2 className="text-xl self-start max-sm:text-lg">Datos a eliminar:</h2>}
                             {TablaEliminados && TablaEliminados}
