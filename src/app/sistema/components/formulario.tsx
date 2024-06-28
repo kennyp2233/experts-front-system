@@ -89,17 +89,14 @@ export default function Formulario(
 
         }
 
-        if ('options' in e.target && e.target.options) {
-            const selectedOption = e.target.options[e.target.selectedIndex];
-            try {
-                value = JSON.parse(selectedOption.value);
-            } catch (error) {
-                console.error('Error al convertir el valor de la opción seleccionada:', error);
-            }
+        if (e.target.type === 'select-one') {
+            value = JSON.parse(e.target.value); // Aquí obtienes directamente el valor del select
         }
 
         setFormState({ ...formState, [key]: value });
+        console.log("formState", formState);
     };
+
 
     useEffect(() => {
         if (formType === "modificar" && selectedRow !== -1) {
@@ -109,7 +106,6 @@ export default function Formulario(
                 }
                 return obj;
             }, {} as any);
-
             setFormState(newFormState);
         }
 
@@ -153,26 +149,34 @@ export default function Formulario(
 
                                     {field.type === 'select' && (
                                         <select
+                                            name={field.key}
                                             className="select select-bordered w-full"
-                                            value={JSON.stringify(formState[field.key])}
+                                            value={JSON.stringify(formState[field.key]) || ""}
                                             onChange={(e) => handleChange(e, field.key)}
-                                            required//={field.required}
+                                            required={field.required}
                                         >
-                                            <option value="" disabled selected>
+                                            <option value="" disabled>
                                                 Seleccionar
                                             </option>
                                             {field.options?.map((option: any, index: number) => (
+                                                // TODO: fix selected option
                                                 <option
                                                     key={option[0]}
                                                     value={JSON.stringify(option)}
-                                                    selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
+
                                                 >
-                                                    {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
+                                                    {
+                                                        Object.keys(option).includes('nombre') ?
+                                                            (Object.keys(option).some(key => key.startsWith('codigo')) ?
+                                                                option[Object.keys(option).find(key => key.startsWith('codigo')) || '']
+                                                                : option.nombre
+                                                            )
+                                                            : option[Object.keys(option)[0]]
+                                                    }
                                                 </option>
                                             ))}
                                         </select>
                                     )}
-
                                     {(field.type === 'text' || field.type === 'number') && (
                                         <input
                                             type={field.type}
@@ -201,6 +205,7 @@ export default function Formulario(
                                                 type="checkbox"
                                                 className="checkbox my-auto ml-2"
                                                 checked={Boolean(Number(formState[field.key]))}
+
                                                 onChange={(e) => handleChange(e, field.key)}
                                             />
                                         </>
@@ -292,20 +297,28 @@ export default function Formulario(
                                                         <select
                                                             name={field.key}
                                                             className="select select-bordered w-full"
-                                                            value={JSON.stringify(formState[field.key])}
+                                                            value={JSON.stringify(formState[field.key]) || ""}
                                                             onChange={(e) => handleChange(e, field.key)}
-                                                            required//={field.required}
+                                                            required={field.required}
                                                         >
-                                                            <option value="" disabled selected>
+                                                            <option value="" disabled>
                                                                 Seleccionar
                                                             </option>
                                                             {field.options?.map((option: any, index: number) => (
+                                                                // TODO: fix selected option
                                                                 <option
                                                                     key={option[0]}
                                                                     value={JSON.stringify(option)}
-                                                                    selected={Boolean(formState[field.key]) && option[Object.keys(option)[0]] === (formState[field.key] as any)[Object.keys((formState[field.key]))[0]]}
+
                                                                 >
-                                                                    {Object.keys(option).includes('nombre') ? option.nombre : option[Object.keys(option)[0]]}
+                                                                    {
+                                                                        Object.keys(option).includes('nombre') ?
+                                                                            (Object.keys(option).some(key => key.startsWith('codigo')) ?
+                                                                                option[Object.keys(option).find(key => key.startsWith('codigo')) || '']
+                                                                                : option.nombre
+                                                                            )
+                                                                            : option[Object.keys(option)[0]]
+                                                                    }
                                                                 </option>
                                                             ))}
                                                         </select>
@@ -341,6 +354,7 @@ export default function Formulario(
                                                                 type="checkbox"
                                                                 className="checkbox my-auto ml-2"
                                                                 checked={Boolean(Number(formState[field.key]))}
+                                                                value={formState[field.key]}
                                                                 onChange={(e) => handleChange(e, field.key)}
                                                             />
                                                         </>
@@ -403,7 +417,7 @@ export default function Formulario(
                                 </>
                             }
 
-                            <a className="btn btn-error" onClick={() => {
+                            <button className="btn btn-error" type="button" onClick={() => {
                                 controlState("default")
                                 if (setSelectedRow) setSelectedRow(-1)
                                 if (setSelectedRows) setSelectedRows([])
@@ -411,7 +425,7 @@ export default function Formulario(
                             }}>
                                 <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
                                 Cancelar
-                            </a>
+                            </button>
                         </div>
                     </form>
 

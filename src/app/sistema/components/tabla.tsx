@@ -52,7 +52,7 @@ export default function Tabla({
 
     const renderCellContent = (cellData: any) => {
         if (typeof cellData === 'object' && cellData !== null) {
-            return cellData.nombre;
+            return cellData[Object.keys(cellData).find((key: any) => key.startsWith('codigo')) || ''] || cellData.nombre || cellData[Object.keys(cellData).find((key: any) => key.startsWith('id')) || ''] || "-";
         }
         if (cellData !== null && cellData !== undefined) {
             if (typeof cellData === 'boolean') {

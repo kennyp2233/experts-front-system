@@ -64,7 +64,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
     }
 
     const handleFormSubmit = (formState: any) => {
-        const newFormState = Object.fromEntries(
+        const newFormState = formState /*Object.fromEntries(
             Object.entries(formState).map(([key, value]) => {
                 if (typeof value === 'object' && value !== null) {
                     return [Object.keys(value)[0], Object.values(value)[0]];
@@ -72,18 +72,18 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                     return [key, value];
                 }
             })
-        );
+        );*/
 
         if (constrolState === "crear") {
             props.createData(newFormState)
                 .then((response: any) => {
                     console.log(response);
-                    if (response.ok) {
+                    if (response?.ok) {
                         setControlState("default");
                         dispatchMenssage('success', 'Registro creado con exito');
                         handleUpdateData();
                     } else {
-                        dispatchMenssage('error', response.msg);
+                        dispatchMenssage('error', response?.msg || 'Error al crear registro');
                     }
                 });
         }
@@ -92,12 +92,12 @@ export default function PaginaDatos(props: PaginaDatosProps) {
             props.updateData(newFormState)
                 .then((response: any) => {
                     console.log(response);
-                    if (response.ok) {
+                    if (response?.ok) {
                         setControlState("default");
                         dispatchMenssage('success', 'Registro modificado con exito');
                         handleUpdateData();
                     } else {
-                        dispatchMenssage('error', response.msg);
+                        dispatchMenssage('error', response?.msg || 'Error al modificar registro');
                     }
                 });
         }
@@ -105,13 +105,13 @@ export default function PaginaDatos(props: PaginaDatosProps) {
         if (constrolState === "eliminar") {
             props.deleteData(selectedRows)
                 .then((response: any) => {
-                    if (response.ok) {
+                    if (response?.ok) {
 
                         dispatchMenssage('success', 'Registro eliminado con exito');
                         setControlState("default");
                         handleUpdateData();
                     } else {
-                        dispatchMenssage('error', response.msg);
+                        dispatchMenssage('error', response?.msg || 'Error al eliminar registro');
                     }
                 });
         }

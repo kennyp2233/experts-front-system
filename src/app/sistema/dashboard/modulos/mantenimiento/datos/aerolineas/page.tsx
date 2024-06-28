@@ -1,7 +1,8 @@
 'use client';
-import { deleteAerolineas, getAerolineasJoinAll, postAerolinea, putAerolinea, getAerolineas } from "@/api/mantenimiento/aerolineas.api";
+import { deleteAerolineasJoinAll, getAerolineasJoinAll, putAerolineasJoinAll, postAerolineaJoinAll } from "@/api/mantenimiento/aerolineas.api";
 import { getDestinos } from "@/api/mantenimiento/destinos.api";
 import { getOrigenes } from "@/api/mantenimiento/origenes.api";
+import { getCatalogosAerolineasModo, getCatalogosAerolineasMult } from "@/api/mantenimiento/catalogos/catalogos_aerolineas.api";
 
 import PaginaDatos from "../utils/paginaDatos";
 import { useEffect, useState } from "react";
@@ -86,6 +87,9 @@ interface Aerolinea {
     destino3?: Destino;
     via3?: Aerolinea;
     plantilla: Plantilla;
+    multiplicador1?: number;
+    multiplicador2?: number;
+    multiplicador3?: number;
 }
 
 export default function Page() {
@@ -97,16 +101,11 @@ export default function Page() {
     const [origenes, setOrigenes] = useState([] as Origen[]);
     const [destinos, setDestinos] = useState([] as Destino[]);
     const [aerolineas, setAerolineas] = useState([] as Aerolinea[]);
+    const [selectOptions, setSelectOptions] = useState([] as any[]);
+    const [opcionesMultiplicador, setOpcionesMultiplicador] = useState([] as any[]);
+
 
     const [formFields, setFormFields] = useState([] as any[]);
-    const [selectOptions, setSelectOptions] = useState([
-        { id_option: 1, nombre: 'EN PIEZAS' },
-        { id_option: 2, nombre: 'EN FULLS' }
-    ] as any[]);
-    const [opcionesMultiplicador, setOpcionesMultiplicador] = useState([
-        { id_opcion: 0, nombre: "Gross Weight" },
-        { id_opcion: 1, nombre: "Chargeable Weight" }
-    ] as any[]);
 
     const visibleColumns = {
         nombre: "Nombre", //0
@@ -115,7 +114,7 @@ export default function Page() {
         telefono: "Telefono", //3
         email: "Email", //4
         ciudad: "Ciudad", //5
-        pais: "Pais", //7
+        pais: "Pais", //6
         contacto: "Contacto", //7
         modo: "Modo", //8
         maestra_guias_hijas: "Maestra guias hijas", //9
@@ -125,14 +124,14 @@ export default function Page() {
         estado_activo: "Estado activo", //13
         afiliado_cass: "Afiliado CASS", //14
         guias_virtuales: "Guias virtuales", //15
-        origen1: "Origen", //17
-        destino1: "Destino", //18
-        via1: "Via", //19
-        destino2: "Destino", //20
-        via2: "Via", //21
-        destino3: "Destino", //22
-        via3: "Via", //23
-        plantilla: "Plantilla", //24
+        origen1: "Origen", //16
+        destino1: "Destino", //17
+        via1: "Via", //18
+        destino2: "Destino", //19
+        via2: "Via", //20
+        destino3: "Destino", //21
+        via3: "Via", //22
+        //plantilla: "Plantilla", //23
     } as any;
 
     const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
@@ -148,20 +147,36 @@ export default function Page() {
             setDestinos(data);
         });
 
-        getAerolineas().then((data) => {
+        getAerolineasJoinAll().then((data) => {
             console.log(data);
             setAerolineas(data as any);
+        });
+
+        getCatalogosAerolineasModo().then((data) => {
+            console.log(data);
+            setSelectOptions(data);
+        });
+
+        getCatalogosAerolineasMult().then((data) => {
+            console.log(data);
+            setOpcionesMultiplicador(data);
         });
 
     }, []);
 
     useEffect(() => {
-        if (origenes?.length > 0 && destinos?.length > 0 && aerolineas?.length > 0) {
+        if (
+            origenes?.length > 0 &&
+            destinos?.length > 0 &&
+            aerolineas?.length > 0 &&
+            selectOptions?.length > 0 &&
+            opcionesMultiplicador?.length > 0
+        ) {
             setFormFields([
                 { division: true, label: 'General' },
                 { label: visibleColumns[keys[0]], key: keys[0], example: 'KLM', type: 'text' },
                 { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
-                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'text' },
+                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'textarea' },
                 { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
                 { label: visibleColumns[keys[4]], key: keys[4], example: 'email@email.com', type: 'text' },
                 { label: visibleColumns[keys[5]], key: keys[5], example: 'Quito', type: 'text' },
@@ -173,6 +188,7 @@ export default function Page() {
                 { label: visibleColumns[keys[11]], key: keys[11], example: '123', type: 'text' },
                 { label: visibleColumns[keys[12]], key: keys[12], example: '123', type: 'text' },
                 { label: visibleColumns[keys[13]], key: keys[13], type: 'checkbox' },
+
                 { division: true, label: 'Codigos' },
                 { label: "Costo Guia", key: "costo_guia_abrv", example: 'XXX', type: 'text' },
                 { label: "Combustible", key: "combustible_abrv", example: 'XXX', type: 'text' },
@@ -194,9 +210,9 @@ export default function Page() {
                 { label: "PCA", key: "pca", example: '0.0000', type: 'number' },
 
                 { division: true, label: 'Multiplicador' },
-                { label: "Combustible Mult", key: "combustible_mult", type: 'select', options: opcionesMultiplicador },
-                { label: "Seguridad Mult", key: "seguridad_mult", type: 'select', options: opcionesMultiplicador },
-                { label: "Aux. Calculo Mult", key: "aux_calc_mult", type: 'select', options: opcionesMultiplicador },
+                { label: "Combustible Mult", key: "multiplicador1", type: 'select', options: opcionesMultiplicador },
+                { label: "Seguridad Mult", key: "multiplicador2", type: 'select', options: opcionesMultiplicador },
+                { label: "Aux. Calculo Mult", key: "multiplicador3", type: 'select', options: opcionesMultiplicador },
 
                 { division: true, label: 'Plantillas' },
                 { label: "Plantilla Guia Madre", key: "plantilla_guia_madre", example: 'XXXX000', type: 'text' },
@@ -205,20 +221,20 @@ export default function Page() {
 
 
                 { division: true, label: 'Info Adicional' },
-                { label: visibleColumns[keys[14]], key: keys[1], type: 'checkbox' },
-                { label: visibleColumns[keys[15]], key: keys[2], type: 'checkbox' },
+                { label: visibleColumns[keys[14]], key: keys[14], type: 'checkbox' },
+                { label: visibleColumns[keys[15]], key: keys[15], type: 'checkbox' },
                 { division: true, label: 'Ruta' },
-                { label: visibleColumns[keys[16]], key: keys[3], type: 'select', options: origenes },
-                { label: visibleColumns[keys[17]], key: keys[4], type: 'select', options: destinos },
-                { label: visibleColumns[keys[18]], key: keys[5], type: 'select', options: aerolineas },
-                { label: visibleColumns[keys[19]], key: keys[6], type: 'select', options: destinos },
-                { label: visibleColumns[keys[20]], key: keys[7], type: 'select', options: aerolineas },
-                { label: visibleColumns[keys[21]], key: keys[8], type: 'select', options: destinos },
-                { label: visibleColumns[keys[22]], key: keys[9], type: 'select', options: aerolineas },
+                { label: visibleColumns[keys[16]], key: keys[16], type: 'select', options: origenes },
+                { label: visibleColumns[keys[17]], key: keys[17], type: 'select', options: destinos },
+                { label: visibleColumns[keys[18]], key: keys[18], type: 'select', options: aerolineas },
+                { label: visibleColumns[keys[19]], key: keys[19], type: 'select', options: destinos },
+                { label: visibleColumns[keys[20]], key: keys[20], type: 'select', options: aerolineas },
+                { label: visibleColumns[keys[21]], key: keys[21], type: 'select', options: destinos },
+                { label: visibleColumns[keys[22]], key: keys[22], type: 'select', options: aerolineas },
             ])
             setLoading(false);
         }
-    }, [origenes, destinos, aerolineas]);
+    }, [origenes, destinos, aerolineas, selectOptions, opcionesMultiplicador]);
 
     if (loading) {
         return (
@@ -241,9 +257,9 @@ export default function Page() {
                     nombre={nombrePagina}
                     icono={iconoPagina}
                     fetchData={getAerolineasJoinAll}
-                    createData={postAerolinea}
-                    updateData={putAerolinea}
-                    deleteData={deleteAerolineas}
+                    createData={postAerolineaJoinAll}
+                    updateData={putAerolineasJoinAll}
+                    deleteData={deleteAerolineasJoinAll}
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}

@@ -17,6 +17,24 @@ export function getAerolineasJoinAll() {
 
 }
 
+export function putAerolineasJoinAll(aerolinea: any) {
+    const token = localStorage.getItem('jwt');
+    return fetch(baseUrl + '/aerolineas/joinAll', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify(aerolinea)
+    })
+        .then(response => response.json())
+        .catch((err) => {
+            console.log("ERROR", err);
+        });
+
+
+}
+
 export function getAerolineas() {
     const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
@@ -70,6 +88,39 @@ export function putAerolinea(aerolinea: any) {
 export function deleteAerolineas(ids: any[]) {
     const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify(ids)
+    })
+        .then(response => response.json())
+        .catch((err) => {
+            console.log("ERROR", err);
+        });
+}
+
+export function postAerolineaJoinAll(aerolinea: any) {
+    const token = localStorage.getItem('jwt');
+    return fetch(baseUrl + '/aerolineas/joinAll', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify(aerolinea)
+    })
+        .then(response => response.json())
+        .catch((err) => {
+            console.log("ERROR", err);
+        });
+
+}
+
+export function deleteAerolineasJoinAll(ids: any[]) {
+    const token = localStorage.getItem('jwt');
+    return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
