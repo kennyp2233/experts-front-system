@@ -50,7 +50,7 @@ export default function RootLayout({
             </MantenimientoProvider>
           </AdminModulesProvider>
         </SistemStateProvider>
-      </AuthProvider>
+      </AuthProvider >
 
     </>
   );

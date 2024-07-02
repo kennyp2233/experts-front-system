@@ -18,7 +18,6 @@ export default function Page() {
     const [formFields, setFormFields] = useState([] as any[]);
 
     const visibleColumns = {
-        id_medida: "ID",
         nombre: "Nombre",
     } as any;
 

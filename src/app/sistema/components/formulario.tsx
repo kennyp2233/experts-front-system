@@ -124,19 +124,20 @@ export default function Formulario(
     }, [initialValues, formFields, selectedRow]);
 
     useEffect(() => {
-        // Define newFormState para comparación
-        const newFormState = formFields?.reduce((obj, field) => {
-            if (field.key in initialValues) {
-                obj[field.key] = initialValues[field.key];
-            }
-            return obj;
-        }, {} as any);
+        if (formType === "modificar") {
+            const newFormState = formFields?.reduce((obj, field) => {
+                if (field.key in initialValues) {
+                    obj[field.key] = initialValues[field.key];
+                }
+                return obj;
+            }, {} as any);
 
-        // Compara formState con newFormState
-        const hasFormStateChanged = JSON.stringify(formState) !== JSON.stringify(newFormState);
+            // Compara formState con newFormState
+            const hasFormStateChanged = JSON.stringify(formState) !== JSON.stringify(newFormState);
 
-        // Habilita o deshabilita el botón de actualizar según si formState ha cambiado o no
-        setUpdateButtonDisabled(!hasFormStateChanged);
+            // Habilita o deshabilita el botón de actualizar según si formState ha cambiado o no
+            setUpdateButtonDisabled(!hasFormStateChanged);
+        }
     }, [formState, formFields, initialValues]);
 
 
@@ -199,7 +200,7 @@ export default function Formulario(
                         </>
                     }
 
-                    <a className="btn btn-error" onClick={() => {
+                    <button type="button" className="btn btn-error" onClick={() => {
                         controlState("default")
                         if (setSelectedRow) setSelectedRow(-1)
                         if (setSelectedRows) setSelectedRows([])
@@ -207,7 +208,7 @@ export default function Formulario(
                     }}>
                         <svg className="text-xl" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 13.41L9.11 16.3a.996.996 0 1 1-1.41-1.41L10.59 12L7.7 9.11A.996.996 0 1 1 9.11 7.7L12 10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 12l2.89 2.89c.38.38.38 1.02 0 1.41"></path></svg>
                         Cancelar
-                    </a>
+                    </button>
                 </div>
             </>
         )
@@ -261,7 +262,7 @@ export default function Formulario(
                                             name={field.type} // Aquí asignamos el nombre del campo
                                             placeholder={"Ej: " + field.example}
                                             className="input input-bordered w-full"
-                                            value={formState[field.key]}
+                                            value={formState[field.key] || ""}
                                             onChange={(e) => handleChange(e, field.key)}
                                             required={field.required}
                                             disabled={field.disabled}
@@ -275,7 +276,7 @@ export default function Formulario(
                                         <textarea
                                             placeholder={"Ej: " + field.example}
                                             className="textarea textarea-bordered w-full"
-                                            value={formState[field.key]}
+                                            value={formState[field.key] || ""}
                                             onChange={(e) => handleChange(e, field.key)}
                                             required={field.required}
                                         />
@@ -354,7 +355,7 @@ export default function Formulario(
                                                             name={field.type} // Aquí asignamos el nombre del campo
                                                             placeholder={"Ej: " + field.example}
                                                             className="input input-bordered w-full"
-                                                            value={formState[field.key]}
+                                                            value={formState[field.key] || ""}
                                                             onChange={(e) => handleChange(e, field.key)}
                                                             required={field.required}
                                                             disabled={field.disabled}
@@ -368,7 +369,7 @@ export default function Formulario(
                                                         <textarea
                                                             placeholder={"Ej: " + field.example}
                                                             className="textarea textarea-bordered w-full"
-                                                            value={formState[field.key]}
+                                                            value={formState[field.key] || ""}
                                                             onChange={(e) => handleChange(e, field.key)}
                                                             required={field.required}
                                                         />

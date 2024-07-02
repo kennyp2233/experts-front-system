@@ -178,7 +178,7 @@ export default function Page() {
                 { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
                 { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'textarea' },
                 { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
-                { label: visibleColumns[keys[4]], key: keys[4], example: 'email@email.com', type: 'text' },
+                { label: visibleColumns[keys[4]], key: keys[4], example: 'email@email.com', type: 'email' },
                 { label: visibleColumns[keys[5]], key: keys[5], example: 'Quito', type: 'text' },
                 { label: visibleColumns[keys[6]], key: keys[6], example: 'Ecuador', type: 'text' },
                 { label: visibleColumns[keys[7]], key: keys[7], example: 'Juan Perez', type: 'text' },

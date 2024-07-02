@@ -146,7 +146,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
     return (
         <>
             <div className="hero min-h-screen bg-base-200">
-                <div className="hero-content flex-col justify-start w-full h-full max-xl:max-w-[100vw] max-w-screen-xl">
+                <div className="hero-content flex-col justify-start h-full max-w-[100dvw] min-lg:max-w-screen-xl">
                     <MantenimientoRoute
                         icon={props.icono}
                         titulo={props.nombre}
@@ -203,7 +203,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                         }
                         {(constrolState === "modificar" && selectedRow >= 0) &&
                             <>
-                                <h2 className="text-3xl self-start  max-sm:text-2xl">Actualizar datos:</h2>
+                                <h2 className="text-xl self-start max-sm:text-lg">Actualizar datos:</h2>
                                 <Formulario
                                     formType="modificar"
                                     controlState={setControlState as (str: string) => void}

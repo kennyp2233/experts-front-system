@@ -57,8 +57,9 @@ export default function Page() {
                 { label: "Mercancia", key: "mercancia", type: "text", example: "Mercancia" },
                 { label: "Harmonised Comidity Code", key: "harmonised_comidity", type: "text", example: "Harmonised Comidity Code" },
             ])
+            setLoading(false);
         }
-        setLoading(false);
+
     }, [tipoCarga, tipoEmbalaje]);
 
     if (loading) {
