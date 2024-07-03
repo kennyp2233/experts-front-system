@@ -3,7 +3,10 @@ import PaginaDatos from "../utils/paginaDatos";
 import { useEffect, useState } from "react";
 
 import { getConsignatarioJoinAll } from "@/api/mantenimiento/consignatario.api";
-import { get } from "http";
+import { getClientes } from "@/api/mantenimiento/clientes.api";
+import { getEmbarcadores } from "@/api/mantenimiento/embarcadores.api";
+import { getDestinos } from "@/api/mantenimiento/destinos.api";
+import { getCatalogosTipoDocumento } from "@/api/mantenimiento/catalogos/catalogos_tipo_documento.api";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -12,9 +15,10 @@ export default function Page() {
     const modificationLabelId = { label: "ID Consignatario", key: "id_consignatario" };
 
 
-    const [selectOptions, setSelectOptions] = useState([] as any[]);
-    const [opcionesMultiplicador, setOpcionesMultiplicador] = useState([] as any[]);
-
+    const [clientes, setClientes] = useState([] as any[]);
+    const [embarcadores, setEmbarcadores] = useState([] as any[]);
+    const [destinos, setDestinos] = useState([] as any[]);
+    const [tipoDocumento, setTipoDocumento] = useState([] as any[]);
 
     const [formFields, setFormFields] = useState([] as any[]);
 
@@ -22,76 +26,98 @@ export default function Page() {
         nombre: "Nombre",
         ruc: "CI/RUC",
         direccion: "Direccion",
+        embarcador: "Embarcador",
+        cliente: "Cliente",
     } as any;
 
     const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
 
     useEffect(() => {
-
+        getClientes().then(data => {
+            setClientes(data);
+        });
+        getEmbarcadores().then(data => {
+            setEmbarcadores(data);
+        });
+        getDestinos().then(data => {
+            setDestinos(data);
+        });
+        getCatalogosTipoDocumento().then(data => {
+            setTipoDocumento(data);
+        });
 
     }, []);
 
     useEffect(() => {
         if (
-
-            true
+            clientes.length > 0 &&
+            embarcadores.length > 0 &&
+            destinos.length > 0
         ) {
             setFormFields([
                 { division: true, label: 'General' },
-                { label: visibleColumns[keys[0]], key: keys[0], example: 'KLM', type: 'text' },
-                { label: visibleColumns[keys[1]], key: keys[1], example: '1234567890', type: 'text' },
-                { label: visibleColumns[keys[2]], key: keys[2], example: 'Calle 123', type: 'textarea' },
-                { label: visibleColumns[keys[3]], key: keys[3], example: '0987654321', type: 'text' },
-                { label: visibleColumns[keys[4]], key: keys[4], example: 'email@email.com', type: 'text' },
-                { label: visibleColumns[keys[5]], key: keys[5], example: 'Quito', type: 'text' },
-                { label: visibleColumns[keys[6]], key: keys[6], example: 'Ecuador', type: 'text' },
-                { label: visibleColumns[keys[7]], key: keys[7], example: 'Juan Perez', type: 'text' },
-                { label: visibleColumns[keys[8]], key: keys[8], options: selectOptions, type: 'select' },
-                { label: visibleColumns[keys[9]], key: keys[9], type: 'checkbox' },
-                { label: visibleColumns[keys[10]], key: keys[10], example: 'QR', type: 'text' },
-                { label: visibleColumns[keys[11]], key: keys[11], example: '123', type: 'text' },
-                { label: visibleColumns[keys[12]], key: keys[12], example: '123', type: 'text' },
-                { label: visibleColumns[keys[13]], key: keys[13], type: 'checkbox' },
+                { label: "Nombre", key: "nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "CI/RUC", key: "ruc", example: 'CI o RUC del consignatario', type: 'text' },
+                { loading: true, label: "Direccion", key: "direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Embarcador", key: "embarcador", example: 'Embarcador del consignatario', type: 'select', options: embarcadores },
+                { label: "Cliente", key: "cliente", example: 'Cliente del consignatario', type: 'select', options: clientes },
+                { label: "Telefono", key: "telefono", example: 'Telefono del consignatario', type: 'text' },
+                { label: "Email", key: "email", example: 'Email del consignatario', type: 'email' },
+                { label: "Ciudad", key: "ciudad", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Pais", key: "pais", example: 'Pais del consignatario', type: 'text' },
 
-                { division: true, label: 'Codigos' },
-                { label: "Costo Guia", key: "costo_guia_abrv", example: 'XXX', type: 'text' },
-                { label: "Combustible", key: "combustible_abrv", example: 'XXX', type: 'text' },
-                { label: "Seguridad", key: "seguridad_abrv", example: 'XXX', type: 'text' },
-                { label: "Aux. Calculo", key: "aux_calculo_abrv", example: 'XXX', type: 'text' },
-                { label: "IVA", key: "iva_abrv", example: 'XXX', type: 'text' },
-                { label: "Otros", key: "otros_abrv", example: 'XXX', type: 'text' },
-                { label: "Aux1", key: "aux1_abrv", example: 'XXX', type: 'text' },
-                { label: "Aux2", key: "aux2_abrv", example: 'XXX', type: 'text' },
-                { division: true, label: 'Valores codigos' },
-                { label: "Costo Guia", key: "costo_guia_valor", example: '0.0000', type: 'number' },
-                { label: "Combustible", key: "combustible_valor", example: '0.0000', type: 'number' },
-                { label: "Seguridad", key: "seguridad_valor", example: '0.0000', type: 'number' },
-                { label: "Aux. Calculo", key: "aux_calculo_valor", example: '0.0000', type: 'number' },
-                { label: "Otros", key: "otros_valor", example: '0.0000', type: 'number' },
-                { label: "Aux1", key: "aux1_valor", example: '0.0000', type: 'number' },
-                { label: "Aux2", key: "aux2_valor", example: '0.0000', type: 'number' },
-                { label: "Tarifa Rate", key: "tarifa_rate", example: '0.00', type: 'number' },
-                { label: "PCA", key: "pca", example: '0.0000', type: 'number' },
+                { division: true, label: 'Guia Madre' },
+                { label: "Consignee", key: "guia_m_consignee", example: 'Consignee del consignatario', type: 'text' },
+                { label: "Consignee's Name and Address", key: "guia_m_name_address", example: 'Consignee\'s Name and Address del consignatario', type: 'textarea' },
+                { label: "Notify", key: "guia_m_notify", example: 'Notify Party del consignatario', type: 'textarea' },
+                { label: "Destino", key: "id_destino", example: 'Destino del consignatario', type: 'select', options: destinos },
 
-                { division: true, label: 'Multiplicador' },
-                { label: "Combustible Mult", key: "multiplicador1", type: 'select', options: opcionesMultiplicador },
-                { label: "Seguridad Mult", key: "multiplicador2", type: 'select', options: opcionesMultiplicador },
-                { label: "Aux. Calculo Mult", key: "multiplicador3", type: 'select', options: opcionesMultiplicador },
+                { division: true, label: 'Guia Hija' },
+                { label: "Consignee", key: "guia_h_consignee", example: 'Consignee del consignatario', type: 'text' },
+                { label: "Consignee's Name and Address", key: "guia_h_name_adress", example: 'Consignee\'s Name and Address del consignatario', type: 'textarea' },
+                { label: "Notify", key: "guia_h_notify", example: 'Notify Party del consignatario', type: 'textarea' },
 
-                { division: true, label: 'Plantillas' },
-                { label: "Plantilla Guia Madre", key: "plantilla_guia_madre", example: 'XXXX000', type: 'text' },
-                { label: "Plantilla Formato Aerolinea", key: "plantilla_formato_aerolinea", example: 'XXXX000', type: 'text' },
-                { label: "Plantilla Reservas", key: "plantilla_reservas", example: 'XXXX000', type: 'text' },
+                { division: true, label: 'Fito y Forma A' },
+                { label: "Declared Name and Adress of Consignee", key: "fito_declared_name", example: 'Declared Name and Adress of Consignee del consignatario', type: 'textarea' },
+                { label: "Forma A", key: "fito_forma_a", example: 'Declared Name and Adress of Consignee del consignatario', type: 'textarea' },
+                { label: "Forma A Nombre", key: "fito_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Forma A Direccion", key: "fito_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Forma A Pais", key: "fito_pais", example: 'Ciudad del consignatario', type: 'text' },
 
 
-                { division: true, label: 'Info Adicional' },
-                { label: visibleColumns[keys[14]], key: keys[14], type: 'checkbox' },
-                { label: visibleColumns[keys[15]], key: keys[15], type: 'checkbox' },
-                { division: true, label: 'Ruta' },
+                { division: true, label: 'Transmición Consignee' },
+                { label: "Nombre", key: "consignee_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "consignee_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "consignee_ciudad", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "consignee_provincia", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "consignee_pais", example: 'Siglas Pais del consignatario', type: 'text' },
+                { label: "EU EORI", key: "consignee_eueori", example: 'EU EORI del consignatario', type: 'text' },
+
+                { division: true, label: 'Transmición Notify' },
+                { label: "Nombre", key: "notify_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "notify_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "notify_ciudad", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "notify_provincia", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "notify_pais", example: 'Siglas Pais del consignatario', type: 'text' },
+                { label: "EU EORI", key: "notify_eueori", example: 'EU EORI del consignatario', type: 'text' },
+
+                { division: true, label: 'Transmición HAWB Guias Hijas' },
+                { label: "Nombre", key: "hawb_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "hawb_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "hawb_ciudad", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "hawb_provincia", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "hawb_pais", example: 'Siglas Pais del consignatario', type: 'text' },
+                { label: "EU EORI", key: "hawb_eueori", example: 'EU EORI del consignatario', type: 'text' },
+
+                { division: true, label: 'CAE-SICE Consignee' },
+                { label: "Nombre", key: "consignee_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "consignee_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Tipo Documento", key: "consignee_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+
             ])
             setLoading(false);
         }
-    }, [selectOptions, opcionesMultiplicador]);
+    }, [clientes, embarcadores]);
 
     if (loading) {
         return (

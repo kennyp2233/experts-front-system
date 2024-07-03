@@ -13,6 +13,8 @@ interface FormField {
     required?: boolean;
     pattern?: string;
     maxLength?: number;
+    step?: number;
+    min?: number;
 }
 
 interface FormState {
@@ -89,10 +91,29 @@ export default function Formulario(
 
         // Validar input numérico para no permitir letras
         if (e.target.type === 'number') {
-            const isValidNumber = /^\d*$/.test(value); // Expresión regular para solo números
-            if (!isValidNumber) {
-                // Si no es un número válido, no actualizar el estado
+            // Determinar el número de decimales permitidos basado en el step
+            const decimalPlaces = (e.target as HTMLInputElement).step ?
+                ((e.target as HTMLInputElement).step.includes('.') ? (e.target as HTMLInputElement).step.split('.')[1].length : 0) :
+                0;
+
+            // Crear una expresión regular basada en el número de decimales permitidos
+            const regex = decimalPlaces > 0 ?
+                new RegExp(`^-?\\d*(\\.\\d{0,${decimalPlaces}})?$`) :
+                /^-?\d*$/;
+
+            if (!regex.test(value)) {
+                // Si no es un número válido según el step, no actualizar el estado
                 return;
+            }
+
+            // Opcional: convertir a número y validar contra min/max si están definidos
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                const min = parseFloat((e.target as HTMLInputElement).min);
+                const max = parseFloat((e.target as HTMLInputElement).max);
+
+                if (!isNaN(min) && numValue < min) return;
+                if (!isNaN(max) && numValue > max) return;
             }
         }
 
@@ -224,7 +245,7 @@ export default function Formulario(
                             {formFields?.map((field, index) => (
                                 <div key={field.key} className={(field.type === "checkbox" && "flex flex-row") + " self-center"}>
                                     <label className="label">
-                                        <span className="label-text flex text-center justify-center">{field.label}</span>
+                                        <span className="label-text flex text-left justify-center">{field.label}</span>
                                     </label>
 
                                     {field.type === 'select' && (
@@ -260,7 +281,7 @@ export default function Formulario(
                                         <input
                                             type={field.type.includes('cedula') ? 'text' : field.type}
                                             name={field.type} // Aquí asignamos el nombre del campo
-                                            placeholder={"Ej: " + field.example}
+                                            placeholder={field.example}
                                             className="input input-bordered w-full"
                                             value={formState[field.key] || ""}
                                             onChange={(e) => handleChange(e, field.key)}
@@ -268,13 +289,15 @@ export default function Formulario(
                                             disabled={field.disabled}
                                             pattern={field.pattern || undefined}
                                             maxLength={field.maxLength || undefined}
+                                            min={field.min || undefined}
+                                            step={field.step || undefined}
                                         />
                                     )}
 
 
                                     {field.type === 'textarea' && (
                                         <textarea
-                                            placeholder={"Ej: " + field.example}
+                                            placeholder={field.example}
                                             className="textarea textarea-bordered w-full"
                                             value={formState[field.key] || ""}
                                             onChange={(e) => handleChange(e, field.key)}
@@ -303,7 +326,7 @@ export default function Formulario(
             }
 
             {formularioSegments &&
-                <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[55%] max-lg:max-w-[60%] max-md:max-w-[65%] max-sm:max-w-[100%] max-w-[50%] " + className}>
+                <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[65%] max-lg:max-w-[70%] max-md:max-w-[75%] max-sm:max-w-[100%] max-w-[50%] " + className}>
 
                     <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
                         <div className={"form-control max-h-96 overflow-y-auto"}>
@@ -317,7 +340,7 @@ export default function Formulario(
                                                     (field.type === "checkbox" && "flex flex-row") + " self-end"
                                                 }>
                                                     <label className="label">
-                                                        <span className="label-text flex text-center justify-center">{field.label}</span>
+                                                        <span className="label-text flex text-left justify-center">{field.label}</span>
                                                     </label>
 
                                                     {field.type === 'select' && (
@@ -353,7 +376,7 @@ export default function Formulario(
                                                         <input
                                                             type={field.type.includes('cedula') ? 'text' : field.type}
                                                             name={field.type} // Aquí asignamos el nombre del campo
-                                                            placeholder={"Ej: " + field.example}
+                                                            placeholder={field.example}
                                                             className="input input-bordered w-full"
                                                             value={formState[field.key] || ""}
                                                             onChange={(e) => handleChange(e, field.key)}
@@ -361,13 +384,15 @@ export default function Formulario(
                                                             disabled={field.disabled}
                                                             pattern={field.pattern || undefined}
                                                             maxLength={field.maxLength || undefined}
+                                                            min={field.min || undefined}
+                                                            step={field.step || undefined}
                                                         />
                                                     )}
 
 
                                                     {field.type === 'textarea' && (
                                                         <textarea
-                                                            placeholder={"Ej: " + field.example}
+                                                            placeholder={field.example}
                                                             className="textarea textarea-bordered w-full"
                                                             value={formState[field.key] || ""}
                                                             onChange={(e) => handleChange(e, field.key)}
