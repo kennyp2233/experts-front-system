@@ -146,7 +146,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
     return (
         <>
             <div className="hero min-h-screen bg-base-200">
-                <div className="hero-content flex-col justify-start h-full max-w-[100dvw] min-lg:max-w-screen-xl">
+                <div className="hero-content flex-col justify-start h-full w-[100dvw] max-w-screen-xl">
                     <MantenimientoRoute
                         icon={props.icono}
                         titulo={props.nombre}
