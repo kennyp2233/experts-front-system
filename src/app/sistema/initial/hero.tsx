@@ -9,13 +9,13 @@ export default function Hero() {
     const { isLoggedIn } = useAuth();
     const router = useRouter();
     const handleIngresar = () => {
-        if(isLoggedIn){
+        if (isLoggedIn) {
             router.push('sistema/dashboard');
         } else {
             router.push('sistema/initial/login');
         }
     }
-    
+
     return (
         <>
             <div className="relative hero min-h-screen bg-base-200 bg-opacity-0" >
@@ -32,9 +32,9 @@ export default function Hero() {
 
                     <div className="flex flex-col text-center justify-center">
 
-                        <h1 className="text-5xl font-bold">Bienvenidos a ExpertGuide</h1>
+                        <h1 className="text-5xl font-bold max-sm:text-3xl">Bienvenidos a ExpertGuide</h1>
 
-                        <p className="py-6">Gestiona tus Guías de Manera Eficiente.</p>
+                        <p className="py-6 max-sm:text-base">Gestiona tus Guías de Manera Eficiente.</p>
                         <Stats />
 
                         <button className="btn btn-primary max-w-xs w-full mx-auto mt-4" onClick={handleIngresar}>Ingresar</button>

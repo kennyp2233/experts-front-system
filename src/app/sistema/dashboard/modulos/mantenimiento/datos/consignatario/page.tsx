@@ -2,7 +2,7 @@
 import PaginaDatos from "../utils/paginaDatos";
 import { useEffect, useState } from "react";
 
-import { getConsignatarioJoinAll } from "@/api/mantenimiento/consignatario.api";
+import { getConsignatarioJoinAll, postConsignatarioJoinAll, updateConsignatarioJoinAll, deleteConsigantarioJoinAll } from "@/api/mantenimiento/consignatario.api";
 import { getClientes } from "@/api/mantenimiento/clientes.api";
 import { getEmbarcadores } from "@/api/mantenimiento/embarcadores.api";
 import { getDestinos } from "@/api/mantenimiento/destinos.api";
@@ -52,7 +52,8 @@ export default function Page() {
         if (
             clientes.length > 0 &&
             embarcadores.length > 0 &&
-            destinos.length > 0
+            destinos.length > 0 &&
+            tipoDocumento.length > 0
         ) {
             setFormFields([
                 { division: true, label: 'General' },
@@ -70,7 +71,7 @@ export default function Page() {
                 { label: "Consignee", key: "guia_m_consignee", example: 'Consignee del consignatario', type: 'text' },
                 { label: "Consignee's Name and Address", key: "guia_m_name_address", example: 'Consignee\'s Name and Address del consignatario', type: 'textarea' },
                 { label: "Notify", key: "guia_m_notify", example: 'Notify Party del consignatario', type: 'textarea' },
-                { label: "Destino", key: "id_destino", example: 'Destino del consignatario', type: 'select', options: destinos },
+                { label: "Destino", key: "destino", example: 'Destino del consignatario', type: 'select', options: destinos },
 
                 { division: true, label: 'Guia Hija' },
                 { label: "Consignee", key: "guia_h_consignee", example: 'Consignee del consignatario', type: 'text' },
@@ -86,38 +87,60 @@ export default function Page() {
 
 
                 { division: true, label: 'Transmición Consignee' },
-                { label: "Nombre", key: "consignee_nombre", example: 'Nombre del consignatario', type: 'text' },
-                { label: "Direccion", key: "consignee_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Ciudad", key: "consignee_ciudad", example: 'Ciudad del consignatario', type: 'text' },
-                { label: "Provincia", key: "consignee_provincia", example: 'Provincia del consignatario', type: 'text' },
-                { label: "Siglas Pais", key: "consignee_pais", example: 'Siglas Pais del consignatario', type: 'text' },
-                { label: "EU EORI", key: "consignee_eueori", example: 'EU EORI del consignatario', type: 'text' },
+                { label: "Nombre", key: "consignee_nombre_trans", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "consignee_direccion_trans", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "consignee_ciudad_trans", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "consignee_provincia_trans", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "consignee_pais_trans", example: 'Siglas Pais del consignatario', type: 'text' },
+                { label: "EU EORI", key: "consignee_eueori_trans", example: 'EU EORI del consignatario', type: 'text' },
 
                 { division: true, label: 'Transmición Notify' },
-                { label: "Nombre", key: "notify_nombre", example: 'Nombre del consignatario', type: 'text' },
-                { label: "Direccion", key: "notify_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Ciudad", key: "notify_ciudad", example: 'Ciudad del consignatario', type: 'text' },
-                { label: "Provincia", key: "notify_provincia", example: 'Provincia del consignatario', type: 'text' },
-                { label: "Siglas Pais", key: "notify_pais", example: 'Siglas Pais del consignatario', type: 'text' },
-                { label: "EU EORI", key: "notify_eueori", example: 'EU EORI del consignatario', type: 'text' },
+                { label: "Nombre", key: "notify_nombre_trans", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "notify_direccion_trans", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "notify_ciudad_trans", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "notify_provincia_trans", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "notify_pais_trans", example: 'Siglas Pais del consignatario', type: 'text' },
+                { label: "EU EORI", key: "notify_eueori_trans", example: 'EU EORI del consignatario', type: 'text' },
 
                 { division: true, label: 'Transmición HAWB Guias Hijas' },
-                { label: "Nombre", key: "hawb_nombre", example: 'Nombre del consignatario', type: 'text' },
-                { label: "Direccion", key: "hawb_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Ciudad", key: "hawb_ciudad", example: 'Ciudad del consignatario', type: 'text' },
-                { label: "Provincia", key: "hawb_provincia", example: 'Provincia del consignatario', type: 'text' },
+                { label: "Nombre", key: "hawb_nombre_trans", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "hawb_direccion_trans", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Ciudad", key: "hawb_ciudad_trans", example: 'Ciudad del consignatario', type: 'text' },
+                { label: "Provincia", key: "hawb_provincia_trans", example: 'Provincia del consignatario', type: 'text' },
                 { label: "Siglas Pais", key: "hawb_pais", example: 'Siglas Pais del consignatario', type: 'text' },
-                { label: "EU EORI", key: "hawb_eueori", example: 'EU EORI del consignatario', type: 'text' },
+                { label: "EU EORI", key: "hawb_eueori_trans", example: 'EU EORI del consignatario', type: 'text' },
 
                 { division: true, label: 'CAE-SICE Consignee' },
                 { label: "Nombre", key: "consignee_nombre", example: 'Nombre del consignatario', type: 'text' },
                 { label: "Direccion", key: "consignee_direccion", example: 'Direccion del consignatario', type: 'text' },
                 { label: "Tipo Documento", key: "consignee_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Numero Documento", key: "consignee_documento", example: 'Numero Documento del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "consignee_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
 
+
+                { division: true, label: 'CAE-SICE Notify' },
+                { label: "Nombre", key: "notify_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "notify_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Tipo Documento", key: "notify_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Numero Documento", key: "notify_documento", example: 'Numero Documento del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "notify_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
+
+                { division: true, label: 'CAE-SICE HAWB Guias Hijas' },
+                { label: "Nombre", key: "hawb_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "hawb_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "Tipo Documento", key: "hawb_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Numero Documento", key: "hawb_documento", example: 'Numero Documento del consignatario', type: 'text' },
+                { label: "Siglas Pais", key: "hawb_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
+
+                { division: true, label: 'Facturación' },
+                { label: "Nombre", key: "factura_nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Direccion", key: "factura_direccion", example: 'Direccion del consignatario', type: 'text' },
+                { label: "RUC", key: "factura_ruc", example: 'RUC del consignatario', type: 'text' },
+                { label: "Telefono", key: "factura_telefono", example: 'Telefono del consignatario', type: 'text' },
             ])
             setLoading(false);
         }
-    }, [clientes, embarcadores]);
+    }, [clientes, embarcadores, destinos, tipoDocumento]);
 
     if (loading) {
         return (
@@ -140,9 +163,9 @@ export default function Page() {
                     nombre={nombrePagina}
                     icono={iconoPagina}
                     fetchData={getConsignatarioJoinAll}
-                    createData={() => Promise.resolve()}
-                    updateData={() => Promise.resolve()}
-                    deleteData={() => Promise.resolve()}
+                    createData={postConsignatarioJoinAll}
+                    updateData={updateConsignatarioJoinAll}
+                    deleteData={deleteConsigantarioJoinAll}
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}

@@ -60,7 +60,7 @@ export default function Login() {
 
                 <div className="hero-content min-w-0 w-full flex-col lg:flex-row-reverse">
 
-                    <h1 className=" text-5xl font-bold pb-6 lg:hidden max-md:text-center">
+                    <h1 className=" text-3xl font-bold lg:hidden max-md:text-center">
                         Iniciar Sesión
                     </h1>
                     <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
