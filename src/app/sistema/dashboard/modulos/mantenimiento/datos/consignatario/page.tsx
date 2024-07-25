@@ -30,8 +30,6 @@ export default function Page() {
         cliente: "Cliente",
     } as any;
 
-    const keys = Object.keys(visibleColumns).filter(key => visibleColumns[key]);
-
     useEffect(() => {
         getClientes().then(data => {
             setClientes(data);
@@ -57,11 +55,11 @@ export default function Page() {
         ) {
             setFormFields([
                 { division: true, label: 'General' },
-                { label: "Nombre", key: "nombre", example: 'Nombre del consignatario', type: 'text' },
+                { label: "Nombre", key: "nombre", example: 'Nombre del consignatario', type: 'text', required: true },
                 { label: "CI/RUC", key: "ruc", example: 'CI o RUC del consignatario', type: 'text' },
                 { loading: true, label: "Direccion", key: "direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Embarcador", key: "embarcador", example: 'Embarcador del consignatario', type: 'select', options: embarcadores },
-                { label: "Cliente", key: "cliente", example: 'Cliente del consignatario', type: 'select', options: clientes },
+                { label: "Embarcador", key: "embarcador", example: 'Embarcador del consignatario', type: 'select', options: embarcadores, required: true },
+                { label: "Cliente", key: "cliente", example: 'Cliente del consignatario', type: 'select', options: clientes, required: true },
                 { label: "Telefono", key: "telefono", example: 'Telefono del consignatario', type: 'text' },
                 { label: "Email", key: "email", example: 'Email del consignatario', type: 'email' },
                 { label: "Ciudad", key: "ciudad", example: 'Ciudad del consignatario', type: 'text' },
@@ -113,7 +111,7 @@ export default function Page() {
                 { division: true, label: 'CAE-SICE Consignee' },
                 { label: "Nombre", key: "consignee_nombre", example: 'Nombre del consignatario', type: 'text' },
                 { label: "Direccion", key: "consignee_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Tipo Documento", key: "consignee_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Tipo Documento", key: "tipo_documento_consignee", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
                 { label: "Numero Documento", key: "consignee_documento", example: 'Numero Documento del consignatario', type: 'text' },
                 { label: "Siglas Pais", key: "consignee_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
 
@@ -121,14 +119,14 @@ export default function Page() {
                 { division: true, label: 'CAE-SICE Notify' },
                 { label: "Nombre", key: "notify_nombre", example: 'Nombre del consignatario', type: 'text' },
                 { label: "Direccion", key: "notify_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Tipo Documento", key: "notify_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Tipo Documento", key: "tipo_documento_notify", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
                 { label: "Numero Documento", key: "notify_documento", example: 'Numero Documento del consignatario', type: 'text' },
                 { label: "Siglas Pais", key: "notify_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
 
                 { division: true, label: 'CAE-SICE HAWB Guias Hijas' },
                 { label: "Nombre", key: "hawb_nombre", example: 'Nombre del consignatario', type: 'text' },
                 { label: "Direccion", key: "hawb_direccion", example: 'Direccion del consignatario', type: 'text' },
-                { label: "Tipo Documento", key: "hawb_tipo_documento", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
+                { label: "Tipo Documento", key: "tipo_documento_hawb", example: 'Tipo Documento del consignatario', type: 'select', options: tipoDocumento },
                 { label: "Numero Documento", key: "hawb_documento", example: 'Numero Documento del consignatario', type: 'text' },
                 { label: "Siglas Pais", key: "hawb_siglas_pais", example: 'Siglas Pais del consignatario', type: 'text' },
 
