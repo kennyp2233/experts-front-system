@@ -37,6 +37,7 @@ interface propsFormulario {
     setSelectedRows?: (data: any) => void,
     handleSubmit?: (e: any) => void,
     handleUpdateData?: () => void,
+    formularioSegments?: boolean,
 }
 
 
@@ -82,31 +83,21 @@ export default function Formulario(
 
             customFields.forEach((field) => {
                 const customName = field.custom_name || "custom";
-
-                // Si no existe el array para customName, inicializarlo
-                if (!customDataObject[customName]) {
-                    customDataObject[customName] = [];
-                }
+                const customFieldsObject = {} as any;
 
                 // Crear un objeto con los campos personalizados
-                /*
-                const customFieldsObject: any = {};
                 field.custom.forEach((customField: any) => {
-                    customFieldsObject[customField.key] = "";
+                    customFieldsObject[`${customField.key}_1`] = "";
                 });
-             
-                // Agregar el objeto al array de customName
-                customDataObject[customName].push(customFieldsObject);
-                   */
 
+                // Asignar el objeto al nombre personalizado
+                customDataObject[customName] = customFieldsObject;
             });
 
             // Actualizar el estado
             setCustomData(customDataObject);
         }
     }, [formFields]);
-
-
 
     useEffect(() => {
         console.log("customData", customData);
@@ -120,13 +111,10 @@ export default function Formulario(
                 }
                 return obj;
             }, {} as any);
-
-            const customNames = extractCustomNames(formFields!);
-            setCustomData(transformCustomValues(initialValues, customNames, formFields!));
+            setCustomData(transformCustomValues(initialValues, extractCustomNames(formFields!)));
             setFormState(newFormState);
         }
     }, [initialValues, formFields, selectedRow]);
-
 
     // useEffect para comparar y habilitar el botón de actualizar
     useEffect(() => {
@@ -278,71 +266,88 @@ export default function Formulario(
         )
     };
 
-    const handleCustomDataChange = (fieldConfig: any, customName: string, index: number, key: string, value: string) => {
-        setCustomData((prevData: any) => {
-            const updatedData = [...prevData[customName]];
 
-            if (fieldConfig?.type === 'select') {
-                // Para campos de tipo 'select', reemplazar el objeto completo en el índice
-                const parsedValue = JSON.parse(value);
-                updatedData[index] = {
-                    ...updatedData[index],
-                    ...parsedValue,
-                };
-            } else {
-                // Para otros campos, actualizar solo la clave específica
-                const parsedValue = fieldConfig?.type === 'select' ? JSON.parse(value) : value;
-                updatedData[index] = {
-                    ...updatedData[index],
-                    [key]: parsedValue,
-                };
+    const handleCustomDataChange = (customName: any, key: any, value: any) => {
+        setCustomData((prevData: any) => ({
+            ...prevData,
+            [customName]: {
+                ...prevData[customName],
+                [key]: value
             }
-
-            return {
-                ...prevData,
-                [customName]: updatedData,
-            };
-        });
+        }));
     };
 
     const addCustomField = (customName: string, customFields: any[]) => {
         setCustomData((prevData: any) => {
-            // Obtener el array actual de campos personalizados para el nombre proporcionado
-            const currentFieldsArray = prevData[customName] || [];
+            // Obtener el objeto actual de campos personalizados para el nombre proporcionado
+            const currentFields = prevData[customName] || {};
 
-            // Crear un nuevo objeto basado en los campos personalizados proporcionados
-            const newFieldsObject: any = {};
+            // Encontrar el número máximo de campos existentes
+            const existingKeys = Object.keys(currentFields);
+            const maxIndex = existingKeys.reduce((max, key) => {
+                const match = key.match(/_(\d+)$/);
+                if (match) {
+                    const index = parseInt(match[1], 10);
+                    return Math.max(max, index);
+                }
+                return max;
+            }, 0);
+
+            // Determinar el nuevo índice
+            const newIndex = maxIndex + 1;
+
+            // Crear un nuevo objeto con el nuevo campo agregado
+            const newFields = { ...currentFields };
             customFields.forEach(field => {
-                newFieldsObject[field.key] = "";
+                const newKey = `${field.key}_${newIndex}`;
+                newFields[newKey] = "";
             });
 
-            // Agregar el nuevo objeto al array existente
-            const newFieldsArray = [...currentFieldsArray, newFieldsObject];
-
             // Devolver el nuevo estado
             return {
                 ...prevData,
-                [customName]: newFieldsArray
+                [customName]: newFields
             };
         });
     };
-
-    const removeCustomField = (customName: string) => {
+    const removeCustomField = (customName: string, templateFields: any[]) => {
         setCustomData((prevData: any) => {
-            // Obtener el array actual de campos personalizados para el nombre proporcionado
-            const currentFieldsArray = prevData[customName] || [];
+            // Obtener el objeto actual de campos personalizados para el nombre proporcionado
+            const currentFields = prevData[customName] || {};
 
-            // Remover el último objeto del array
-            const newFieldsArray = currentFieldsArray.slice(0, -1);
+            // Obtener todas las filas
+            const rows = Object.keys(currentFields);
+
+            // Determinar cuántas filas queremos eliminar
+            const numRowsToRemove = templateFields.length;
+
+            // Ordenar las filas por el índice numérico (si están formateadas como `key_index`)
+            const sortedRows = rows.sort((a, b) => {
+                const indexA = parseInt(a.split('_').pop() || '0', 10);
+                const indexB = parseInt(b.split('_').pop() || '0', 10);
+                return indexB - indexA; // Ordenar en orden descendente
+            });
+
+            // Seleccionar las filas a eliminar (las más recientes)
+            const rowsToRemove = sortedRows.slice(0, numRowsToRemove);
+
+            // Crear un nuevo objeto con los campos que se deben conservar
+            const newFields = {} as any;
+
+            // Copiar los campos que no están en las filas a eliminar
+            Object.entries(currentFields).forEach(([key, value]) => {
+                if (!rowsToRemove.includes(key)) {
+                    newFields[key] = value;
+                }
+            });
 
             // Devolver el nuevo estado
             return {
                 ...prevData,
-                [customName]: newFieldsArray
+                [customName]: newFields
             };
         });
     };
-
 
 
     function extractCustomNames(fields: any[]): string[] {
@@ -351,41 +356,30 @@ export default function Formulario(
             .map(field => field.custom_name);
     }
 
-    function transformCustomValues(initialValues: any, customNames: string[], formFields: any[]): any {
+    function transformCustomValues(initialValues: any, customNames: string[]): any {
         const transformedData: any = {};
 
         customNames.forEach(customName => {
-            const customDataArray = initialValues[customName] || [];
-            const fieldConfig = formFields.find(field => field.custom_name === customName) || {};
+            const customDataArray = initialValues[customName];
 
-            // Determinar si el campo es de tipo 'select'
-            const isSelect = fieldConfig.custom[0].type === 'select';
-
-            transformedData[customName] = customDataArray.map((item: any) => {
-                const newItem: any = {};
-
-                if (isSelect) {
-                    // Si es un 'select', mantener todos los campos
+            if (customDataArray) {
+                customDataArray.forEach((item: any, index: number) => {
                     Object.keys(item).forEach(key => {
-                        newItem[key] = item[key];
-                    });
-                } else {
-                    // Si no es un 'select', omitir claves que empiezan con 'id_'
-                    Object.keys(item).forEach(key => {
+                        // Filtrar claves que empiezan con 'id_'
                         if (!key.startsWith('id_')) {
-                            newItem[key] = item[key];
+                            const newKey = `${key}_${index + 1}`;
+                            if (!transformedData[customName]) {
+                                transformedData[customName] = {};
+                            }
+                            transformedData[customName][newKey] = item[key];
                         }
                     });
-                }
-
-                return newItem;
-            });
+                });
+            }
         });
 
         return transformedData;
     }
-
-
 
 
     return (
@@ -394,7 +388,7 @@ export default function Formulario(
             <div className={"card shrink-0 shadow-2xl bg-base-100 max-xl:max-w-[55%] max-lg:max-w-[60%] max-md:max-w-[65%] max-sm:max-w-[100%] max-w-[50%] " + className}>
                 <form className="card-body" onSubmit={(e: any) => handleOnSubmit(e)}>
 
-                    <div className={"form-control max-h-96 overflow-y-auto " + classNameForm}>
+                    <div className={"form-control " + classNameForm}>
                         {formFields?.map((field, index) => {
                             if (field.division) {
                                 return (
@@ -508,87 +502,23 @@ export default function Formulario(
 
                                         {customData && customData[field.custom_name!] &&
                                             <div className={`grid gap-3 grid-cols-${Object.keys(field.custom).length}`}>
-                                                {customData[field.custom_name!]?.map((customObject: any, index: number) => {
-                                                    // Verifica si el objeto es un campo de tipo select
-                                                    const fieldConfig = field.custom.find((f: any) => f.key in customObject);
+                                                {Object.entries(customData[field.custom_name!]).map(([key, value]) => (
 
-                                                    if (fieldConfig?.type === 'select') {
-                                                        // Solo renderiza el valor asociado al `key` para campos select
-                                                        const selectValue = customObject[fieldConfig.key];  // Obtener el valor del campo select
-                                                        //  console.log("CUSTOMDATA", customData[field.custom_name!][index][fieldConfig.key])
-                                                        return (
-                                                            <div key={`${fieldConfig.key}_${index}`} className="custom-field">
-                                                                <label className="label label-text flex text-left" htmlFor={`${fieldConfig.key}_${index}`}>
-                                                                    {fieldConfig?.label || fieldConfig.key}
-                                                                </label>
-                                                                <select
-                                                                    id={`${fieldConfig.key}_${index}`}
-                                                                    name={`${fieldConfig.key}_${index}`}
-                                                                    className="select select-bordered w-full"
-                                                                    //formState[field.key] !== null && formState[field.key] ? JSON.stringify(selectValue) || ""
+                                                    <div key={key} className="custom-field">
+                                                        <label className="label label-text flex text-left" htmlFor={key}>{
 
-                                                                    value={customData[field.custom_name!][index][fieldConfig.key] !== "" ? JSON.stringify(customData[field.custom_name!][index][fieldConfig.key]) : ""}
-                                                                    onChange={(e) => handleCustomDataChange(fieldConfig, field.custom_name!, index, fieldConfig.key, e.target.value)}
-                                                                    required={fieldConfig?.required}
-                                                                >
-                                                                    <option value="" disabled>Seleccionar</option>
-                                                                    {fieldConfig?.options?.map((option: any) => (
-                                                                        <option
-                                                                            key={option[fieldConfig.valueField]}
-                                                                            value={JSON.stringify(option)}
-                                                                        >
-                                                                            {option[fieldConfig.textField] || option[fieldConfig.valueField] || option[0]}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        );
-                                                    } else {
-                                                        // Manejo para otros tipos de campos
-                                                        return Object.entries(customObject).map(([key, value]) => {
-                                                            const fieldConfig = field.custom.find((f: any) => f.key === key);
-
-                                                            let inputElement;
-                                                            switch (fieldConfig?.type) {
-                                                                case 'text':
-                                                                case 'number':
-                                                                    inputElement = (
-                                                                        <input
-                                                                            key={`${key}_${index}`}
-                                                                            id={`${key}_${index}`}
-                                                                            type={fieldConfig?.type}
-                                                                            name={`${key}_${index}`}
-                                                                            placeholder={fieldConfig?.example}
-                                                                            className="input input-bordered w-full"
-                                                                            value={(value || "") as string}
-                                                                            onChange={(e) => handleCustomDataChange(fieldConfig, field.custom_name!, index, key, e.target.value)}
-                                                                            required={fieldConfig?.required}
-                                                                            disabled={fieldConfig?.disabled}
-                                                                            pattern={fieldConfig?.pattern || undefined}
-                                                                            maxLength={fieldConfig?.maxLength || undefined}
-                                                                            min={fieldConfig?.min || undefined}
-                                                                            step={fieldConfig?.step || undefined}
-                                                                        />
-                                                                    );
-                                                                    break;
-
-                                                                default:
-                                                                    inputElement = null;
-                                                            }
-
-                                                            return (
-                                                                <div key={`${key}_${index}`} className="custom-field">
-                                                                    <label className="label label-text flex text-left" htmlFor={`${key}_${index}`}>
-                                                                        {fieldConfig?.label || key}
-                                                                    </label>
-                                                                    {inputElement}
-                                                                </div>
-                                                            );
-                                                        });
-                                                    }
-                                                })}
-
-
+                                                            field.custom.find((f: any) => f.key === key.split("_").slice(0, -1).join('_')) ? field.custom.find((f: any) => f.key === key.split("_").slice(0, -1).join('_')).label : key
+                                                        }</label>
+                                                        <input
+                                                            className="input input-bordered w-full"
+                                                            type="text"
+                                                            id={key}
+                                                            name={key}
+                                                            value={value as string}
+                                                            onChange={(e) => handleCustomDataChange(field.custom_name!, key, e.target.value)}
+                                                        />
+                                                    </div>
+                                                ))}
                                                 <div className="col-span-full gap-2 flex">
                                                     <button
                                                         type="button"
@@ -600,14 +530,14 @@ export default function Formulario(
                                                     <button
                                                         type="button"
                                                         className="btn btn-sm btn-error"
-                                                        onClick={() => removeCustomField(field.custom_name!)}
+                                                        onClick={() => removeCustomField(field.custom_name!, field.custom)}
                                                     >
                                                         Eliminar
                                                     </button>
                                                 </div>
+
                                             </div>
                                         }
-
                                     </div>
                                 </>
                             );

@@ -23,7 +23,7 @@ export default function Page() {
     const [formFields, setFormFields] = useState([] as any[]);
 
     const visibleColumns = {
-        nombre: "Nombre",
+        nombre_consignatario: "Nombre",
         ruc: "CI/RUC",
         direccion: "Direccion",
         embarcador: "Embarcador",
@@ -55,7 +55,7 @@ export default function Page() {
         ) {
             setFormFields([
                 { division: true, label: 'General' },
-                { label: "Nombre", key: "nombre", example: 'Nombre del consignatario', type: 'text', required: true },
+                { label: "Nombre", key: "nombre_consignatario", example: 'Nombre del consignatario', type: 'text', required: true },
                 { label: "CI/RUC", key: "ruc", example: 'CI o RUC del consignatario', type: 'text' },
                 { loading: true, label: "Direccion", key: "direccion", example: 'Direccion del consignatario', type: 'text' },
                 { label: "Embarcador", key: "embarcador", example: 'Embarcador del consignatario', type: 'select', options: embarcadores, required: true },
@@ -169,6 +169,7 @@ export default function Page() {
                     visibleColumns={visibleColumns}
                     formularioSegments={true}
                     formClassName="grid-cols-3 max-lg:grid-cols-2"
+                    formClassNameOuter=""
                 />
             }
         </>

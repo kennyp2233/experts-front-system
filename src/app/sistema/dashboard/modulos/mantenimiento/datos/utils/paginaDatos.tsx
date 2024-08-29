@@ -26,6 +26,7 @@ interface PaginaDatosProps {
     modificationLabelId: modificationLabelId;
     formClassName?: string;
     formularioSegments?: boolean;
+    formClassNameOuter?: string;
 }
 
 
@@ -53,10 +54,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
             return { ...field, placeholder: `Ej: ${field.example}` };
         });
 
-        if (isModification && idKey && idLabel && props.formularioSegments) {
-            newFields.splice(1, 0, { label: idLabel, key: idKey, type: 'number', disabled: true });
-
-        } else if (isModification && idKey && idLabel) {
+        if (isModification && idKey && idLabel) {
             newFields.unshift({ label: idLabel, key: idKey, type: 'number', disabled: true });
         }
 
@@ -194,10 +192,10 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     controlState={setControlState as (str: string) => void}
                                     formFields={formFieldsCreation}
                                     classNameForm={"grid grid-cols-2 gap-4 max-sm:grid-cols-1 " + props.formClassName}
-                                    className="w-fit self-center"
+                                    className={"w-fit self-center " + props.formClassNameOuter}
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
-                                    formularioSegments={props.formularioSegments}
+
                                 />
                             </>
                         }
@@ -209,13 +207,13 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     controlState={setControlState as (str: string) => void}
                                     formFields={formFieldsModification}
                                     classNameForm={"grid grid-cols-2 gap-4 max-sm:grid-cols-1 " + props.formClassName}
-                                    className="w-fit self-center"
+                                    className={"w-fit self-center " + props.formClassNameOuter}
                                     initialValues={selectedRowData}
                                     setSelectedRow={setSelectedRow}
                                     selectedRow={selectedRow}
                                     handleSubmit={handleFormSubmit}
                                     handleUpdateData={handleUpdateData}
-                                    formularioSegments={props.formularioSegments}
+
                                 />
                             </>
                         }
@@ -227,7 +225,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                                     formType={constrolState}
                                     controlState={setControlState as (str: string) => void}
                                     classNameForm=""
-                                    className="w-fit self-center"
+                                    className={"w-fit self-center " + props.formClassNameOuter}
                                     selectedRows={selectedRows}
                                     setSelectedRows={setSelectedRows}
                                     handleSubmit={handleFormSubmit}

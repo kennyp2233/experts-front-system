@@ -71,6 +71,7 @@ export default function Page() {
     useEffect(() => {
         if (unidadDeMedida.length > 0 && simpleCompuesto.length > 0) {
             setFormFields([
+                { division: true, label: 'Producto' },
                 { label: "Código", key: "codigo_producto", required: true, type: "text", example: "Código del producto" },
                 { label: "Nombre", key: "nombre", required: true, type: "text", example: "Nombre del producto" },
                 { label: "Descripción", key: "descripcion", type: "textarea", example: "Descripción del producto" },
@@ -82,6 +83,66 @@ export default function Page() {
                 { label: "Simple/Compuesto", key: "opcion", type: "select", options: simpleCompuesto, required: true },
                 { label: "Stems por Full", key: "stems_por_full", type: "number", example: "0.00" },
                 { label: "ID SESA", key: "id_sesa", type: "number", example: "0.00" },
+                { division: true, label: 'MIPRO' },
+                {
+                    custom: [
+                        {
+                            label: "Acuerdo",
+                            key: "mipro_acuerdo",
+                            type: "text",
+                            required: false,
+                        },
+                        {
+                            label: "DJOCode",
+                            key: "mipro_djocode",
+                            type: "text",
+                            required: false,
+                        },
+                        {
+                            label: "TariffCode",
+                            key: "mipro_tariffcode",
+                            type: "text",
+                            required: false,
+                        }
+                    ],
+                    custom_name: "mipro"
+                },
+                { division: true, label: 'Aranceles' },
+                {
+                    custom: [
+                        {
+                            label: "Destino",
+                            key: "aranceles_destino",
+                            type: "text",
+                            required: false,
+                        },
+                        {
+                            label: "Codigo Arancelario",
+                            key: "aranceles_codigo",
+                            type: "text",
+                            required: false,
+                        },
+                    ],
+                    custom_name: "aranceles"
+                },
+                { division: true, label: 'Producto Compuesto' },
+                {
+                    custom: [
+                        {
+                            label: "Destino",
+                            key: "producto_compuesto_destino",
+                            type: "text",
+                            required: false,
+                        },
+                        {
+                            label: "Cantidad",
+                            key: "producto_compuesto_declaracion",
+                            type: "number",
+                            required: false,
+                        },
+                    ],
+                    custom_name: "producto_compuesto"
+                },
             ])
             setLoading(false);
         }
@@ -114,6 +175,7 @@ export default function Page() {
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}
+
                 />
             }
         </>

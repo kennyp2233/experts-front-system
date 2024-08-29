@@ -24,7 +24,7 @@ export default function Hero() {
                     src="/img/descarga.jpeg"
                     alt="Background Image"
                     layout="fill"
-                    objectFit="cover"
+                    style={{ objectFit: 'cover' }}
                     quality={100}
                 />
                 <div className="hero-overlay bg-opacity-75"></div>
