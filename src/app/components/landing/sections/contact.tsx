@@ -41,38 +41,50 @@ const Contact = React.forwardRef((props, ref) => {
         <>
 
             <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] min-h-[100vh] max-md:px-4 max-md:pt-28">
+
                 <h1 className="text-6xl text-center tracking-tighter font-bold max-md:text-4xl">
                     Contacto
                 </h1>
-                <div className="container-grid w-full mt-12">
-                    <div className="direccion min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
-                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+                <div className="container-grid w-full mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <div className="direccion flex flex-col items-center p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow-lg">
+                        <h5 className="mb-4 text-2xl font-bold tracking-tight text-white flex items-center">
                             <span className="mr-2 text-blue-500 animate-bounce">🏠</span> Dirección
                         </h5>
-                        <p className="text-gray-400">
-                            10 DE DICIEMBRE Y CHILLANES CONJUNTO MI PASEO CASA 31, SANGOLQUI ECUADOR
-                        </p>
+                        <p>10 DE DICIEMBRE Y CHILLANES</p>
+                        <p>CONJUNTO MI PASEO CASA 31</p>
+                        <p>SANGOLQUI</p>
+                        <p>ECUADOR</p>
                     </div>
-                    <div className="telefono min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
-                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+
+                    <div className="telefono flex flex-col items-center p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow-lg">
+                        <h5 className="mb-4 text-2xl font-bold tracking-tight text-white flex items-center">
                             <span className="mr-2 text-blue-500 animate-bounce">📞</span> Teléfono
                         </h5>
-                        <p className="text-gray-400">023526170</p>
-                        <p className="text-gray-400">0960058635</p>
+                        <div className="text-gray-400 text-center text-lg">
+                            <p className="mb-2">
+                                <span className="font-semibold">Número Fijo:</span> +593 2 352 6170
+                            </p>
+                            <p className="mb-2">
+                                <span className="font-semibold">Celular:</span> +593 96 005 8635
+                            </p>
+                            <p>
+                                <span className="font-semibold">WhatsApp:</span> <strong>+593 98 237 2511</strong>
+                            </p>
+                        </div>
                     </div>
-                    <div className="correo min-w-0 block p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow max-md:w-full max-lg:min-h-36">
-                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-white max-md:text-xl">
+
+                    <div className="correo flex flex-col items-center p-6 bg-transparent backdrop-blur-[50px] border border-gray-200 rounded-lg shadow-lg">
+                        <h5 className="mb-4 text-2xl font-bold tracking-tight text-white flex items-center">
                             <span className="mr-2 text-blue-500 animate-bounce">✉️</span> Correo
                         </h5>
-                        <p className="text-gray-400 break-words">
+                        <p className="text-gray-400 text-center break-words">
                             <a href="mailto:manager@expertshcargo.com">manager@expertshcargo.com</a>
                         </p>
-                        <p className="text-gray-400 break-words">
-                            <a href="mailto:coordination@expertshcargo.com">
-                                coordination@expertshcargo.com
-                            </a>
+                        <p className="text-gray-400 text-center break-words">
+                            <a href="mailto:coordination@expertshcargo.com">coordination@expertshcargo.com</a>
                         </p>
-                        <p className="text-gray-400 break-words">
+                        <p className="text-gray-400 text-center break-words">
                             <a href="mailto:expertshcargosa@gmail.com">expertshcargosa@gmail.com</a>
                         </p>
                     </div>
