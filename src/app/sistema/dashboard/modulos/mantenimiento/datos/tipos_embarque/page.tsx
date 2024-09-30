@@ -124,6 +124,7 @@ export default function Page() {
                     text="Regresar"
                 />
                 <div className="text-center text-error">Hubo un problema al cargar los datos. Por favor, intenta nuevamente.</div>
+                <div className="text-center text-error">{error}</div>
             </div>
         );
     }

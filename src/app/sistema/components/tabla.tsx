@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect } from "react";
 
 interface TableInterface {
@@ -68,45 +69,43 @@ export default function Tabla({
 
 
     return (
-        <>
-            <div className={"card card-body shrink-0 shadow-2xl bg-base-100 " + className} >
-                <div className={"overflow-x-auto " + classNameTableContainer} >
-                    <table className="table table-pin-rows " >
-                        {/* head */}
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {Object.values(visibleColumns).map((column, index) => (
-                                    <th key={index}>{column}</th>
+        <div className={`card card-body shadow-2xl bg-base-100 ${className}`}>
+            <div className={`overflow-auto ${classNameTableContainer}`}>
+                <table className="table table-pin-rows w-full table-auto">
+                    {/* head */}
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {Object.values(visibleColumns).map((column, index) => (
+                                <th key={index}>{column}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((row, rowIndex) => (
+                            <tr
+                                key={rowIndex}
+                                //data-id={row.id} // Asume que cada objeto tiene una propiedad 'id'
+                                onClick={handleSelectedRow}
+                                className={
+
+                                    controlState === "eliminar" ?
+                                        (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-secondary text-secondary-content' : '') :
+                                        (selectedRow === rowIndex ? 'bg-base-200' : '')
+                                }
+                            >
+                                <th>{rowIndex + 1}</th>
+                                {Object.keys(visibleColumns).map((column, columnIndex) => (
+                                    <td key={columnIndex}>
+                                        {renderCellContent(row[column])}
+
+                                    </td>
                                 ))}
                             </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((row, rowIndex) => (
-                                <tr
-                                    key={rowIndex}
-                                    //data-id={row.id} // Asume que cada objeto tiene una propiedad 'id'
-                                    onClick={handleSelectedRow}
-                                    className={
-
-                                        controlState === "eliminar" ?
-                                            (selectedRows?.includes(row[Object.keys(row)[0]]) ? 'bg-secondary text-secondary-content' : '') :
-                                            (selectedRow === rowIndex ? 'bg-base-200' : '')
-                                    }
-                                >
-                                    <th>{rowIndex + 1}</th>
-                                    {Object.keys(visibleColumns).map((column, columnIndex) => (
-                                        <td key={columnIndex}>
-                                            {renderCellContent(row[column])}
-
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-        </>
+        </div>
     );
 }

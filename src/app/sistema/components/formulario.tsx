@@ -24,7 +24,8 @@ interface FormState {
 }
 
 interface propsFormulario {
-    controlState: (state: string) => void;
+    controlState: React.Dispatch<React.SetStateAction<any>>;
+
     className: string;
     formFields?: FormField[];
     classNameForm: string;
