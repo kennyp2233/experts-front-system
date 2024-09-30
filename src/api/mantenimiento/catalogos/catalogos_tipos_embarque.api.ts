@@ -1,14 +1,12 @@
 import { baseUrl } from "../config.api";
 
-
 export function getCatalogosEmbarqueCarga() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/catalogos/tipos-embarque/carga', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -21,13 +19,12 @@ export function getCatalogosEmbarqueCarga() {
 }
 
 export function getCatalogosEmbarqueEmbalaje() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/catalogos/tipos-embarque/embalaje', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {

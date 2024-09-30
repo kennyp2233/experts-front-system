@@ -1,10 +1,12 @@
 import { baseUrl } from '../mantenimiento/config.api';
+
 export async function login(usuario: string, pass: string, recordar: boolean) {
     const res = await fetch(baseUrl + '/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ usuario, pass, recordar })
     });
     return await res.json();
@@ -17,31 +19,30 @@ export async function register(usuario: string, email: string, pass: string) {
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ usuario, email, pass })
     });
     return await res.json();
 }
 
-export async function checkJwt(token: string) {
-    const res = await fetch(baseUrl + '/verify', {
+export async function logout() {
+    const res = await fetch(baseUrl + '/logout', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token })
+        credentials: 'include'
     });
     return await res.json();
+}
 
-}
-export async function isAdmin(token: string) {
-    const res = await fetch(baseUrl + '/isAdmin', {
-        method: 'POST',
+export async function getMe() {
+    const res = await fetch(baseUrl + '/me', {
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token })
+        credentials: 'include'
     });
     return await res.json();
 }
+

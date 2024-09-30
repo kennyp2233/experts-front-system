@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getPaises() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/paises', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -19,13 +18,12 @@ export function getPaises() {
 }
 
 export function getPaisesJoinAcuerdos() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/paises-acuerdos', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -37,14 +35,13 @@ export function getPaisesJoinAcuerdos() {
 }
 
 export function postPais(pais: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/paises', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(pais)
+        body: JSON.stringify(pais),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -56,14 +53,13 @@ export function postPais(pais: any) {
 }
 
 export function putPais(pais: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/paises', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(pais)
+        body: JSON.stringify(pais),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -75,14 +71,13 @@ export function putPais(pais: any) {
 }
 
 export function deletePaises(paises: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/paises', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(paises)
+        body: JSON.stringify(paises),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {

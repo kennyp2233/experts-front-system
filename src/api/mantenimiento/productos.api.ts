@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getProductos() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productos', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -20,13 +19,12 @@ export function getProductos() {
 }
 
 export function getProductosJoinAll() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productosJoinAll', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -38,15 +36,13 @@ export function getProductosJoinAll() {
         });
 }
 
-
 export function postProducto(producto: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productos', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(producto)
     })
         .then((res) => res.json())
@@ -59,13 +55,12 @@ export function postProducto(producto: any) {
 }
 
 export function putProducto(producto: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productos', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(producto)
     })
         .then((res) => res.json())
@@ -78,13 +73,12 @@ export function putProducto(producto: any) {
 }
 
 export function deleteProducto(id: number) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productos/' + id, {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -96,13 +90,12 @@ export function deleteProducto(id: number) {
 }
 
 export function deleteProductos(productos: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/productos', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(productos)
     })
         .then((res) => res.json())

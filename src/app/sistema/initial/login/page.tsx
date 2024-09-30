@@ -1,12 +1,12 @@
 'use client'
-import { login } from "@/api/usuarios/auth.api";
+
 import { useState } from "react";
 import { useAuth } from "../../providers/authProvider";
 import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-    const { checkToken, isLoggedIn } = useAuth();
+    const { handleLogin, isLoggedIn } = useAuth();
     const router = useRouter();
 
     const [usuario, setUsuario] = useState('');
@@ -22,18 +22,10 @@ export default function Login() {
 
         setIsSubmitting(true);
 
-        const res = await login(usuario, password, recordar);
-        if (res.ok) {
-            localStorage.setItem('jwt', res.token);
-            const tokenCheck = await checkToken();
-            if (tokenCheck) {
-                dispatchMenssage('success', 'Sesión iniciada correctamente');
-                router.push('/sistema/dashboard');
-            } else {
-                dispatchMenssage('fail', 'Error al verificar el token');
-            }
-        } else {
-            dispatchMenssage('fail', res.msg || 'Error desconocido');
+        // Aquí puedes hacer la petición al backend para iniciar sesión
+        const response = await handleLogin(usuario, password, recordar);
+        if (response) {
+            router.push('/sistema/dashboard');
         }
 
         setIsSubmitting(false);

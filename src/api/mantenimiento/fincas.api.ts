@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
-export function getFincasJoinAll(){
-    const token = localStorage.getItem('jwt');
+export function getFincasJoinAll() {
     return fetch(baseUrl + '/fincasJoinAll', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -19,15 +18,14 @@ export function getFincasJoinAll(){
         });
 }
 
-export function postFinca(finca: any){
-    const token = localStorage.getItem('jwt');
+export function postFinca(finca: any) {
     return fetch(baseUrl + '/fincas', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(finca)
+        body: JSON.stringify(finca),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -38,15 +36,14 @@ export function postFinca(finca: any){
         });
 }
 
-export function putFinca(finca: any){
-    const token = localStorage.getItem('jwt');
+export function putFinca(finca: any) {
     return fetch(baseUrl + '/fincas', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(finca)
+        body: JSON.stringify(finca),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -57,15 +54,14 @@ export function putFinca(finca: any){
         });
 }
 
-export function deleteFincas(fincas: number[]){
-    const token = localStorage.getItem('jwt');
+export function deleteFincas(fincas: number[]) {
     return fetch(baseUrl + '/fincas', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(fincas)
+        body: JSON.stringify(fincas),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {

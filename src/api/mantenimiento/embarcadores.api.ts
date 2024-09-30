@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getEmbarcadores() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/embarcadores', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -19,14 +18,13 @@ export function getEmbarcadores() {
 }
 
 export function postEmbarcador(embarcador: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/embarcadores', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(embarcador)
+        body: JSON.stringify(embarcador),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -38,14 +36,13 @@ export function postEmbarcador(embarcador: any) {
 }
 
 export function putEmbarcador(embarcador: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/embarcadores', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(embarcador)
+        body: JSON.stringify(embarcador),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -57,14 +54,13 @@ export function putEmbarcador(embarcador: any) {
 }
 
 export function deleteEmbarcadores(ids: number[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/embarcadores', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(ids)
+        body: JSON.stringify(ids),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {

@@ -1,10 +1,9 @@
 
 import { useRouter } from "next/navigation";
 import { useAuth } from "../providers/authProvider";
-import { useSistemState } from "../providers/sistemStateContext";
 import Stats from "./stats";
 import Image from "next/image";
-
+import React from "react";
 export default function Hero() {
     const { isLoggedIn } = useAuth();
     const router = useRouter();
@@ -20,15 +19,15 @@ export default function Hero() {
         <>
             <div className="relative hero min-h-screen bg-base-200 bg-opacity-0" >
                 <Image
-                    className="-z-[1]"
+                    className="z-[0]"
                     src="/img/descarga.jpeg"
                     alt="Background Image"
                     layout="fill"
                     style={{ objectFit: 'cover' }}
                     quality={100}
                 />
-                <div className="hero-overlay bg-opacity-75"></div>
-                <div className="hero-content text-center text-neutral-content">
+                <div className="hero-overlay bg-opacity-75 z-[1]"></div>
+                <div className="hero-content text-center text-neutral-content z-[2]">
 
                     <div className="flex flex-col text-center justify-center">
 

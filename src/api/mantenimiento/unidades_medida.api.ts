@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getUnidadesMedida() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/unidadesMedida', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -20,13 +19,12 @@ export function getUnidadesMedida() {
 }
 
 export function getUnidadMedida(id: number) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/unidadesMedida/' + id, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -39,13 +37,12 @@ export function getUnidadMedida(id: number) {
 }
 
 export function postUnidadMedida(data: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/unidadesMedida', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(data)
     })
         .then((res) => res.json())
@@ -59,13 +56,12 @@ export function postUnidadMedida(data: any) {
 }
 
 export function putUnidadMedida(unidadMedida: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/unidadesMedida', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(unidadMedida)
     })
         .then((res) => res.json())
@@ -79,13 +75,12 @@ export function putUnidadMedida(unidadMedida: any) {
 }
 
 export function deleteUnidadMedida(ids: number[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/unidadesMedida', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(ids)
     })
         .then((res) => res.json())
@@ -97,4 +92,3 @@ export function deleteUnidadMedida(ids: number[]) {
             console.log("ERROR", err);
         });
 }
-

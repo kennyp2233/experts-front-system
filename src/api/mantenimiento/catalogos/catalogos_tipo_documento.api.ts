@@ -1,13 +1,12 @@
 import { baseUrl } from "../config.api";
 
 export function getCatalogosTipoDocumento() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/catalogos/tipo-documento', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+        },
+        credentials: 'include',
     })
         .then((res) => res.json())
         .then((data) => {

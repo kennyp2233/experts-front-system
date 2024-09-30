@@ -1,13 +1,12 @@
 import { baseUrl } from "../config.api";
 
 export function getCatalogosProductoOpciones() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/catalogos/productos/opciones', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -20,13 +19,12 @@ export function getCatalogosProductoOpciones() {
 }
 
 export function getCatalogosProductoUnidad() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/catalogos/productos/unidad', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -37,4 +35,3 @@ export function getCatalogosProductoUnidad() {
             console.log("ERROR", err);
         });
 }
-

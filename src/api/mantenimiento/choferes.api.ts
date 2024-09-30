@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getChoferes() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/choferes', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -20,14 +19,13 @@ export function getChoferes() {
 }
 
 export function postChofer(chofer: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/choferes', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(chofer)
+        body: JSON.stringify(chofer),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -39,14 +37,13 @@ export function postChofer(chofer: any) {
 }
 
 export function putChofer(chofer: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/choferes', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(chofer)
+        body: JSON.stringify(chofer),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -58,14 +55,13 @@ export function putChofer(chofer: any) {
 }
 
 export function deleteChoferes(choferes: number[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/choferes', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(choferes)
+        body: JSON.stringify(choferes),
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -75,4 +71,3 @@ export function deleteChoferes(choferes: number[]) {
             console.log("ERROR", err);
         });
 }
-

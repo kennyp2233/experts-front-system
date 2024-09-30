@@ -1,13 +1,12 @@
 import { baseUrl } from "./config.api";
 
 export function getDestinos() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/destinos', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -19,13 +18,12 @@ export function getDestinos() {
 }
 
 export function getDestinosJoinPaisesAduanas() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/destinos/paises', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -37,13 +35,12 @@ export function getDestinosJoinPaisesAduanas() {
 }
 
 export function postDestino(destino: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/destinos', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(destino)
     })
         .then((res) => res.json())
@@ -56,13 +53,12 @@ export function postDestino(destino: any) {
 }
 
 export function putDestino(destino: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/destinos', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(destino)
     })
         .then((res) => res.json())
@@ -75,13 +71,12 @@ export function putDestino(destino: any) {
 }
 
 export function deleteDestinos(destino: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/destinos', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(destino)
     })
         .then((res) => res.json())

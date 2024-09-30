@@ -1,99 +1,87 @@
 import { baseUrl } from "./config.api";
 
 export function getAerolineasJoinAll() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        }
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => { return data })
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function putAerolineasJoinAll(aerolinea: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(aerolinea)
+        body: JSON.stringify(aerolinea),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
-
-
 }
 
 export function getAerolineas() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        }
+        },
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function postAerolinea(aerolinea: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(aerolinea)
+        body: JSON.stringify(aerolinea),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function putAerolinea(aerolinea: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(aerolinea)
+        body: JSON.stringify(aerolinea),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function deleteAerolineas(ids: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(ids)
+        body: JSON.stringify(ids),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
@@ -102,31 +90,28 @@ export function deleteAerolineas(ids: any[]) {
 }
 
 export function postAerolineaJoinAll(aerolinea: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(aerolinea)
+        body: JSON.stringify(aerolinea),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function deleteAerolineasJoinAll(ids: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/aerolineas/joinAll', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify(ids)
+        body: JSON.stringify(ids),
+        credentials: 'include'
     })
         .then(response => response.json())
         .catch((err) => {

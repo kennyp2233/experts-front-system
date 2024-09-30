@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useAuth } from "../providers/authProvider";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
-
+import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
+import React from "react";
 export default function NavBar() {
     const { isLoggedIn, setIsLoggedIn, checkToken, isAdministrator, handleLogout } = useAuth();
     const [theme, setTheme] = useState('cupcake');
@@ -80,7 +81,7 @@ export default function NavBar() {
                                         </div>
                                     </div>
 
-                                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[3] p-2 shadow bg-base-100 rounded-box w-52">
                                         <li>
                                             <a className="justify-between">
                                                 Profile
@@ -92,6 +93,7 @@ export default function NavBar() {
                                         <li><a onClick={() => {
                                             handleLogout()
                                             router.push('/sistema')
+                                            dispatchMenssage("success", "Se cerró la sesión correctamente")
                                         }}>Logout</a></li>
                                     </ul>
                                 </div>

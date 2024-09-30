@@ -1,14 +1,12 @@
 import { baseUrl } from "./config.api";
 
-
 export function getOrigenesJoinPaisesAduanas() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes/paises-aduanas', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -20,13 +18,12 @@ export function getOrigenesJoinPaisesAduanas() {
 }
 
 export function getOrigenes() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then((res) => res.json())
         .then((data) => {
@@ -35,17 +32,15 @@ export function getOrigenes() {
         .catch((err) => {
             console.log("ERROR", err);
         });
-
 }
 
 export function postOrigen(origen: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(origen)
     })
         .then((res) => res.json())
@@ -58,13 +53,12 @@ export function postOrigen(origen: any) {
 }
 
 export function putOrigen(origen: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(origen)
     })
         .then((res) => res.json())
@@ -76,15 +70,13 @@ export function putOrigen(origen: any) {
         });
 }
 
-
 export function deleteOrigenes(origenes: any[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/origenes', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(origenes)
     })
         .then((res) => res.json())

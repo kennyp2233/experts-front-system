@@ -1,33 +1,31 @@
 import { baseUrl } from "./config.api"
 
 export function getClientes() {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/clientes', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     })
         .then(res => res.json())
         .then(data => {
             console.log("DATA", data);
             return data;
-        }).
-        catch(err => {
+        })
+        .catch(err => {
             console.log("ERROR", err);
         });
 }
 
 export function postCliente(cliente: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/clientes', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(cliente)
+        body: JSON.stringify(cliente),
+        credentials: 'include'
     })
         .then(res => res.json())
         .then(data => {
@@ -39,14 +37,13 @@ export function postCliente(cliente: any) {
 }
 
 export function putCliente(cliente: any) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/clientes', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(cliente)
+        body: JSON.stringify(cliente),
+        credentials: 'include'
     })
         .then(res => res.json())
         .then(data => {
@@ -58,14 +55,13 @@ export function putCliente(cliente: any) {
 }
 
 export function deleteClientes(ids: number[]) {
-    const token = localStorage.getItem('jwt');
     return fetch(baseUrl + '/clientes', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(ids)
+        body: JSON.stringify(ids),
+        credentials: 'include'
     })
         .then(res => res.json())
         .then(data => {

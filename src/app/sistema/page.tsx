@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
-import EventAlerts from '../utils/eventAlerts';
+
 import Hero from './initial/hero';
 
 import { useAuth } from './providers/authProvider';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 
 export default function Page() {
@@ -23,24 +24,13 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, []);
 
-
   if (loading) {
-    return (
-      <>
-        <div className="hero min-h-screen bg-base-200">
-          <div className="hero-content text-center">
-            <div className="max-w-md">
-              <span className="loading loading-ball loading-lg"></span>
-            </div>
-          </div>
-        </div>
-      </>
-    );
+    return null;
   }
+
 
   return (
     <>
-
       <Hero />
     </>
   );

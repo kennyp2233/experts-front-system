@@ -141,6 +141,15 @@ export default function PaginaDatos(props: PaginaDatosProps) {
         }
     }, [data]);
 
+    if (loading) {
+        return (
+            <div className="flex flex-col p-4 gap-4 w-full h-full">
+                <div className="skeleton w-full h-1/3"></div>
+                <div className="skeleton w-full h-full"></div>
+            </div>
+        )
+    }
+
     return (
         <>
             <div className="hero min-h-screen bg-base-200">
@@ -287,7 +296,7 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                             {props.nombre + ":"}
                         </h2>
 
-                        {tableData.length > 0 && !loading &&
+                        {tableData.length > 0 &&
                             <Tabla
 
                                 visibleColumns={visibleColumns}
@@ -304,15 +313,9 @@ export default function PaginaDatos(props: PaginaDatosProps) {
                             />
                         }
 
-                        {(tableData.length === 0 && !loading) &&
+                        {tableData.length === 0 &&
                             <h2 className="text-2xl self-center pt-8  max-sm:text-1xl">No hay datos</h2>
-
                         }
-
-                        {loading &&
-                            <div className="skeleton w-full h-96"></div>
-                        }
-
                     </div>
 
                 </div>

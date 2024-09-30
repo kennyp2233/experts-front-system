@@ -6,8 +6,8 @@ import { MenuIcon, BellIcon, XIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import ExpertsIcon from './icon/experts_icon';
-import BotonLlamativo from './botonLlamativo';
+import LogoExperts from './icon/experts_icon';
+import BotonLlamativo from './landing/botonLlamativo';
 
 
 const link = [
@@ -83,7 +83,7 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                             href='/'
                                             className='flex items-center transition duration-300 ease-in-out md:hover:scale-100'
                                         >
-                                            <ExpertsIcon
+                                            <LogoExperts
                                                 fill="#000000"
                                                 className='transition duration-300 ease-in-out md:hover:scale-110 max-md:scale-[0.8]'
                                             />
