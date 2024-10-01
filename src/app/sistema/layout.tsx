@@ -30,7 +30,8 @@ export default function RootLayout({
         <body className={bodyClass} data-theme="cupcake">
           <EventAlerts />
           <NavBar />
-          <section className="hero min-h-screen bg-base-200">
+
+          <section className="hero min-h-screen w-full bg-base-200">
             {children}
           </section>
           <footer className="footer footer-center p-4 bg-base-300 text-base-content z-10">

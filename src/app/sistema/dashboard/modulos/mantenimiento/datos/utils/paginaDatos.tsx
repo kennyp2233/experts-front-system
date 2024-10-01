@@ -288,59 +288,57 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
     }
 
     return (
-        <div className="hero min-h-screen bg-base-200">
-            <div className="hero-content flex-col justify-start h-full w-full max-w-screen-xl">
-                <MantenimientoRoute icon={icono} titulo={nombre} />
-                <ReturnButton onClick={() => router.back()} text="Regresar" />
+        <div className="hero-content flex-col justify-start h-full w-full max-w-screen-xl">
+            <MantenimientoRoute icon={icono} titulo={nombre} />
 
-                <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">
-                    {nombre}
-                    <span className="my-auto">{icono}</span>
-                </h1>
 
-                <div className="flex flex-col w-full gap-3">
-                    {controlState === "default" && (
-                        <ControlButtons
-                            handleCrear={() => {
-                                setControlState("crear");
-                                setSelectedRow(-1);
-                                setSelectedRows([]);
-                            }}
-                            handleModificar={() => {
-                                setControlState("modificar");
-                                setSelectedRow(-1);
-                                setSelectedRows([]);
-                            }}
-                            handleEliminar={() => {
-                                setControlState("eliminar");
-                                setSelectedRow(-1);
-                                setSelectedRows([]);
-                            }}
-                        />
-                    )}
+            <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">
+                {nombre}
+                <span className="my-auto">{icono}</span>
+            </h1>
 
-                    {renderForm}
+            <div className="flex flex-col w-full gap-3">
+                {controlState === "default" && (
+                    <ControlButtons
+                        handleCrear={() => {
+                            setControlState("crear");
+                            setSelectedRow(-1);
+                            setSelectedRows([]);
+                        }}
+                        handleModificar={() => {
+                            setControlState("modificar");
+                            setSelectedRow(-1);
+                            setSelectedRows([]);
+                        }}
+                        handleEliminar={() => {
+                            setControlState("eliminar");
+                            setSelectedRow(-1);
+                            setSelectedRows([]);
+                        }}
+                    />
+                )}
 
-                    <h2 className="text-xl self-start pt-8 max-sm:text-lg">{`${nombre}:`}</h2>
+                {renderForm}
 
-                    {tableData.length > 0 ? (
-                        <Tabla
-                            visibleColumns={currentVisibleColumns}
-                            data={tableData}
-                            selectedRow={selectedRow}
-                            setSelectedRow={setSelectedRow}
-                            selectedRowData={selectedRowData}
-                            setSelectedRowData={setSelectedRowData}
-                            selectedRows={selectedRows}
-                            setSelectedRows={setSelectedRows}
-                            controlState={controlState}
-                            classNameTableContainer="h-96"
-                            className="w-full"
-                        />
-                    ) : (
-                        <h2 className="text-2xl self-center pt-8 max-sm:text-xl">No hay datos</h2>
-                    )}
-                </div>
+                <h2 className="text-xl self-start pt-8 max-sm:text-lg">{`${nombre}:`}</h2>
+
+                {tableData.length > 0 ? (
+                    <Tabla
+                        visibleColumns={currentVisibleColumns}
+                        data={tableData}
+                        selectedRow={selectedRow}
+                        setSelectedRow={setSelectedRow}
+                        selectedRowData={selectedRowData}
+                        setSelectedRowData={setSelectedRowData}
+                        selectedRows={selectedRows}
+                        setSelectedRows={setSelectedRows}
+                        controlState={controlState}
+                        classNameTableContainer="h-96"
+                        className="w-full"
+                    />
+                ) : (
+                    <h2 className="text-2xl self-center pt-8 max-sm:text-xl">No hay datos</h2>
+                )}
             </div>
         </div>
     );
