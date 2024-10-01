@@ -89,16 +89,16 @@ export default function PaginaGenerica({
     useEffect(() => {
         let isMounted = true;
         let timeoutId: NodeJS.Timeout | null = null;
-    
+
         const loadData = async () => {
             console.log("Iniciando carga de datos...");
             setLoading(true); // Reiniciar loading antes de cada carga
             setError(null); // Limpiar cualquier error previo
             setCatalogError(null); // Limpiar error de catálogos antes de intentar cargar de nuevo
-    
+
             // Iniciar la carga de catálogos
             await fetchCatalogos();
-    
+
             // Si los datos se cargaron correctamente, cancelar el timeout
             if (isMounted) {
                 if (timeoutId) {
@@ -108,9 +108,9 @@ export default function PaginaGenerica({
                 setLoading(false); // Desactivar loading cuando los datos se cargan correctamente
             }
         };
-    
+
         loadData(); // Ejecutar la función de carga al montar el componente
-    
+
         // Establecer timeout para mostrar el mensaje de error si la operación tarda más de lo esperado
         timeoutId = setTimeout(() => {
             if (isMounted) {
@@ -121,7 +121,7 @@ export default function PaginaGenerica({
                 setLoading(false); // Desactivar loading si excede el tiempo esperado
             }
         }, 5000); // Tiempo límite de 5 segundos
-    
+
         return () => {
             isMounted = false; // Cancelar la operación si el componente se desmonta
             if (timeoutId) {
@@ -129,13 +129,16 @@ export default function PaginaGenerica({
             }
             console.log("Componente desmontado.");
         };
-    }, [fetchCatalogos, retryCount]); // Dependemos de retryCount para reejecutar
-    
+    }, [retryCount]); // Dependemos de retryCount para reejecutar
+
 
 
     const retryFetch = () => {
-        setRetryCount(prev => prev + 1);
+        if (error || catalogError) {
+            setRetryCount(prev => prev + 1);
+        }
     };
+
 
     // Función para renderizar la pantalla de error
     const renderErrorScreen = (title: string, message: string, type: "error" | "warning", onRetry: () => void) => {
