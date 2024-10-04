@@ -1,7 +1,7 @@
 import { baseUrl } from "./config.api";
 
 export function getFincasJoinAll() {
-    return fetch(baseUrl + '/fincasJoinAll', {
+    return fetch(baseUrl + '/fincas/fincasJoinAll', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

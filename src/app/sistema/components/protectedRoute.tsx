@@ -9,10 +9,14 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
   const router = useRouter();
 
   useEffect(() => {
+    checkToken();
+  }, []);
+
+  useEffect(() => {
     if (!isLoggedIn) {
       router.push('/sistema');
     } else if (adminOnly && !isAdministrator) {
-      router.push('/');
+      router.push('/sistema');
     }
 
   }, [isLoggedIn, isAdministrator, router, adminOnly]);

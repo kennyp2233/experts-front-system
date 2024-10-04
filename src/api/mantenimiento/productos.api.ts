@@ -19,7 +19,7 @@ export function getProductos() {
 }
 
 export function getProductosJoinAll() {
-    return fetch(baseUrl + '/productosJoinAll', {
+    return fetch(baseUrl + '/productos/productosJoinAll', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

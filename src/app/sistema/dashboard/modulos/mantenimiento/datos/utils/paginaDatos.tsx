@@ -322,7 +322,7 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
 
                 <h2 className="text-xl self-start pt-8 max-sm:text-lg">{`${nombre}:`}</h2>
 
-                {tableData.length > 0 ? (
+                {tableData?.length > 0 ? (
                     <Tabla
                         visibleColumns={currentVisibleColumns}
                         data={tableData}
