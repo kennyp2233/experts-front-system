@@ -16,6 +16,8 @@ interface PaginaGenericaProps {
     formFieldsConfig: (data: any[]) => any[];
     visibleColumns: Record<string, string>;
     modificationLabelId: { label: string; key: string };
+    formClassName?: string;
+    formClassNameOuter?: string;
 }
 
 export default function PaginaGenerica({
@@ -29,6 +31,8 @@ export default function PaginaGenerica({
     formFieldsConfig,
     visibleColumns,
     modificationLabelId,
+    formClassName,
+    formClassNameOuter,
 }: PaginaGenericaProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -220,6 +224,8 @@ export default function PaginaGenerica({
                     formFields={formFields}
                     modificationLabelId={modificationLabelId}
                     visibleColumns={visibleColumns}
+                    formClassName={formClassName}
+                    formClassNameOuter={formClassNameOuter}
                 />
             )}
         </>

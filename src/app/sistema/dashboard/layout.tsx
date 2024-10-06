@@ -4,7 +4,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <section className="hero-content flex-col justify-start w-full h-full">
+        <section className="hero-content flex-col justify-start w-[100dvw] h-full">
             {children}
         </section>
     );

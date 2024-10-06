@@ -1,120 +1,128 @@
 import { baseUrl } from "./config.api";
 
-export function getAerolineasJoinAll() {
-    return fetch(baseUrl + '/aerolineas/joinAll', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-    })
-        .then((res) => res.json())
-        .then((data) => { return data })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function getAerolineasJoinAll() {
+    try {
+        const res = await fetch(baseUrl + '/aerolineas/joinAll', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function putAerolineasJoinAll(aerolinea: any) {
-    return fetch(baseUrl + '/aerolineas/joinAll', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aerolinea),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function putAerolineasJoinAll(aerolinea: any) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas/joinAll', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(aerolinea),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function getAerolineas() {
-    return fetch(baseUrl + '/aerolineas', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function getAerolineas() {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function postAerolinea(aerolinea: any) {
-    return fetch(baseUrl + '/aerolineas', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aerolinea),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function postAerolinea(aerolinea: any) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(aerolinea),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function putAerolinea(aerolinea: any) {
-    return fetch(baseUrl + '/aerolineas', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aerolinea),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function putAerolinea(aerolinea: any) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(aerolinea),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function deleteAerolineas(ids: any[]) {
-    return fetch(baseUrl + '/aerolineas', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(ids),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function deleteAerolineas(ids: any[]) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ids),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function postAerolineaJoinAll(aerolinea: any) {
-    return fetch(baseUrl + '/aerolineas/joinAll', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aerolinea),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function postAerolineaJoinAll(aerolinea: any) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas/joinAll', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(aerolinea),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function deleteAerolineasJoinAll(ids: any[]) {
-    return fetch(baseUrl + '/aerolineas/joinAll', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(ids),
-        credentials: 'include'
-    })
-        .then(response => response.json())
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function deleteAerolineasJoinAll(ids: any[]) {
+    try {
+        const response = await fetch(baseUrl + '/aerolineas/joinAll', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ids),
+            credentials: 'include'
         });
+        return await response.json();
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
