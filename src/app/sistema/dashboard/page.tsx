@@ -27,9 +27,9 @@ const Dashboard = () => {
     }
 
     return (
-        <ProtectedRoute adminOnly={false}>
-            <h1 className="text-5xl font-bold self-start pt-10 max-sm:text-4xl">Dashboard</h1>
-            <h2 className="text-4xl self-start max-sm:text-3xl">Accesos Directos</h2>
+        <>
+            <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl">Dashboard</h1>
+            <h2 className="text-xl self-start max-sm:text-lg">Accesos Directos</h2>
             <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 ">
 
 
@@ -74,7 +74,8 @@ const Dashboard = () => {
 
 
             </div>
-        </ProtectedRoute>
+        </>
+
     );
 }
 
