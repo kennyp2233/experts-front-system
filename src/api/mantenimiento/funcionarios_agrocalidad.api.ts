@@ -57,7 +57,7 @@ export async function deleteFuncionariosAgrocalidad(ids: number[]) {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ ids })
+            body: JSON.stringify(ids)
         });
         const data = await res.json();
         return data;

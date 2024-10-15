@@ -138,7 +138,7 @@ export async function deleteAgenciasIata(ids: number[]) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ids }),
+            body: JSON.stringify(ids),
             credentials: 'include'
         });
         return await response.json();

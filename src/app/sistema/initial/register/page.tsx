@@ -43,7 +43,7 @@ export default function Register() {
                 <div className="hero-content min-w-0 w-full flex-col lg:flex-row-reverse">
 
                     <div className="text-left lg:text-center">
-                        <h1 className="text-5xl font-bold py-6 px-10 max-md:pt-14 max-sm:pt-20">Regístrate</h1>
+                        <h1 className="text-3xl font-bold py-6 px-10 max-md:pt-14 max-sm:pt-20">Regístrate</h1>
                     </div>
 
                     <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

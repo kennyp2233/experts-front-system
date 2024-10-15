@@ -1,89 +1,84 @@
 import { baseUrl } from "./config.api";
 
-export function getDestinos() {
-    return fetch(baseUrl + '/destinos', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function getDestinos() {
+    try {
+        const res = await fetch(baseUrl + '/destinos', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function getDestinosJoinPaisesAduanas() {
-    return fetch(baseUrl + '/destinos/paises', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function getDestinosJoinPaisesAduanas() {
+    try {
+        const res = await fetch(baseUrl + '/destinos/paises', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function postDestino(destino: any) {
-    return fetch(baseUrl + '/destinos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(destino)
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function postDestino(destino: any) {
+    try {
+        const res = await fetch(baseUrl + '/destinos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(destino)
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function putDestino(destino: any) {
-    return fetch(baseUrl + '/destinos', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(destino)
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function putDestino(destino: any) {
+    try {
+        const res = await fetch(baseUrl + '/destinos', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(destino)
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }
 
-export function deleteDestinos(destino: any[]) {
-    return fetch(baseUrl + '/destinos', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(destino)
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => {
-            console.log("ERROR", err);
+export async function deleteDestinos(destino: any[]) {
+    try {
+        const res = await fetch(baseUrl + '/destinos', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(destino)
         });
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log("ERROR", err);
+    }
 }

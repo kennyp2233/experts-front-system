@@ -289,7 +289,7 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
 
     return (
         <div className="hero-content flex-col justify-start h-full w-full max-w-screen-xl">
-            <MantenimientoRoute icon={icono} titulo={nombre} />
+            <MantenimientoRoute icon={icono} titulo={nombre} desde="sistema" />
 
 
             <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">

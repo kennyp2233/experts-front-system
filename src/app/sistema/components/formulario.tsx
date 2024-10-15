@@ -1,5 +1,4 @@
-
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface FormField {
     label: string;
@@ -17,6 +16,7 @@ interface FormField {
     min?: number;
     custom?: any;
     custom_name?: string;
+    uppercase?: boolean; // Nueva propiedad
 }
 
 interface FormState {
@@ -62,16 +62,6 @@ export default function Formulario(
     const [formState, setFormState] = useState<FormState>({});
     const [isUpdateButtonDisabled, setUpdateButtonDisabled] = useState(true);
     const [customData, setCustomData] = useState({} as any);
-
-    /**
-     *  CustomData sera todo el conglomerado de datos que se encuentren en los campos custom. Ejemplo:
-     * {
-     *  custom_name1: {
-     *     label1: "value1",
-     *    label2: "value2", 
-     *   label3: "value3"
-     * },
-     */
 
     useEffect(() => {
         if (formFields) {
@@ -151,14 +141,16 @@ export default function Formulario(
 
 
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, key: any) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        field: FormField
+    ) => {
         let value = e.target.value;
 
-        // Si es un input de texto, convertir el valor a mayúsculas
-        if ((e.target.type === 'text' || e.target.type === 'textarea') && e.target.name !== 'email') {
+        // Si es un input de texto o textarea, convertir el valor a mayúsculas si uppercase no es false
+        if ((e.target.type === 'text' || e.target.type === 'textarea') && field.uppercase !== false) {
             value = value.toUpperCase();
         }
-
 
         // Validar input numérico para no permitir letras
         if (e.target.type === 'number') {
@@ -197,7 +189,7 @@ export default function Formulario(
             value = JSON.parse(e.target.value); // Aquí obtienes directamente el valor del select
         }
 
-        setFormState({ ...formState, [key]: value });
+        setFormState({ ...formState, [field.key]: value });
         console.log("formState", formState);
     };
 
@@ -279,7 +271,20 @@ export default function Formulario(
         )
     };
 
-    const handleCustomDataChange = (fieldConfig: any, customName: string, index: number, key: string, value: string) => {
+    const handleCustomDataChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        fieldConfig: any,
+        customName: string,
+        index: number,
+        key: string
+    ) => {
+        let value = e.target.value;
+
+        // Convertir a mayúsculas si `uppercase` no es false
+        if ((e.target.type === 'text' || e.target.type === 'textarea') && fieldConfig.uppercase !== false) {
+            value = value.toUpperCase();
+        }
+
         setCustomData((prevData: any) => {
             const updatedData = [...prevData[customName]];
 
@@ -292,10 +297,9 @@ export default function Formulario(
                 };
             } else {
                 // Para otros campos, actualizar solo la clave específica
-                const parsedValue = fieldConfig?.type === 'select' ? JSON.parse(value) : value;
                 updatedData[index] = {
                     ...updatedData[index],
-                    [key]: parsedValue,
+                    [key]: value,
                 };
             }
 
@@ -419,7 +423,7 @@ export default function Formulario(
                                             name={field.key}
                                             className="select select-bordered w-full"
                                             value={formState[field.key] !== null && formState[field.key] ? JSON.stringify(formState[field.key]) : ""}
-                                            onChange={(e) => handleChange(e, field.key)}
+                                            onChange={(e) => handleChange(e, field)}
                                             required={field.required}
                                         >
                                             <option value="" disabled>
@@ -456,7 +460,7 @@ export default function Formulario(
                                             placeholder={field.example}
                                             className="input input-bordered w-full"
                                             value={formState[field.key] || ""}
-                                            onChange={(e) => handleChange(e, field.key)}
+                                            onChange={(e) => handleChange(e, field)}
                                             required={field.required}
                                             disabled={field.disabled}
                                             pattern={field.pattern || undefined}
@@ -474,7 +478,7 @@ export default function Formulario(
                                             placeholder={field.example}
                                             className="textarea textarea-bordered w-full"
                                             value={formState[field.key] || ""}
-                                            onChange={(e) => handleChange(e, field.key)}
+                                            onChange={(e) => handleChange(e, field)}
                                             required={field.required}
                                         />
                                     );
@@ -487,7 +491,7 @@ export default function Formulario(
                                             type="checkbox"
                                             className="checkbox my-auto ml-2"
                                             checked={Boolean(Number(formState[field.key]))}
-                                            onChange={(e) => handleChange(e, field.key)}
+                                            onChange={(e) => handleChange(e, field)}
                                         />
                                     );
                                     break;
@@ -526,10 +530,8 @@ export default function Formulario(
                                                                     id={`${fieldConfig.key}_${index}`}
                                                                     name={`${fieldConfig.key}_${index}`}
                                                                     className="select select-bordered w-full"
-                                                                    //formState[field.key] !== null && formState[field.key] ? JSON.stringify(selectValue) || ""
-
                                                                     value={customData[field.custom_name!][index][fieldConfig.key] !== "" ? JSON.stringify(customData[field.custom_name!][index][fieldConfig.key]) : ""}
-                                                                    onChange={(e) => handleCustomDataChange(fieldConfig, field.custom_name!, index, fieldConfig.key, e.target.value)}
+                                                                    onChange={(e) => handleCustomDataChange(e, fieldConfig, field.custom_name!, index, fieldConfig.key)}
                                                                     required={fieldConfig?.required}
                                                                 >
                                                                     <option value="" disabled>Seleccionar</option>
@@ -562,7 +564,7 @@ export default function Formulario(
                                                                             placeholder={fieldConfig?.example}
                                                                             className="input input-bordered w-full"
                                                                             value={(value || "") as string}
-                                                                            onChange={(e) => handleCustomDataChange(fieldConfig, field.custom_name!, index, key, e.target.value)}
+                                                                            onChange={(e) => handleCustomDataChange(e, fieldConfig, field.custom_name!, index, key)}
                                                                             required={fieldConfig?.required}
                                                                             disabled={fieldConfig?.disabled}
                                                                             pattern={fieldConfig?.pattern || undefined}

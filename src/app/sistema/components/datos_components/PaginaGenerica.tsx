@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ExclamationIcon, RefreshIcon } from "@heroicons/react/solid";
 import { InformationCircleIcon } from "@heroicons/react/outline";
-import PaginaDatos from "../../dashboard/modulos/mantenimiento/datos/utils/paginaDatos";
+import PaginaDatos from "./utils/paginaDatos";
 
 interface PaginaGenericaProps {
     nombrePagina: string;

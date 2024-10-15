@@ -1,5 +1,5 @@
 'use client';
-import BotonDashboard from "../components/botonesMenu";
+import BotonDashboard from "../components/BotonesMenu";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "../components/protectedRoute";
 
