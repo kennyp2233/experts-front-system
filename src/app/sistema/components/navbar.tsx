@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { useAuth } from "../providers/authProvider";
+import { useAuth } from "../../providers/authProvider";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 import { dispatchMenssage } from "@/app/utils/menssageDispatcher";

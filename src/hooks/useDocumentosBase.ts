@@ -6,10 +6,38 @@ export interface Guia {
     secuencial: number;
 }
 
+
+export interface Aerolinea {
+    id_aerolinea: number;
+    nombre: string;
+    ci_ruc: string;
+    direccion: string;
+    telefono: string;
+    email: string;
+    ciudad: string;
+    pais: string;
+    contacto: string;
+    id_modo: number;
+    maestra_guias_hijas: any[];
+    codigo: string;
+    prefijo_awb: string;
+    codigo_cae: string;
+    estado_activo: boolean;
+    from1: string;
+    to1: string;
+    by1: string;
+    to2: string;
+    by2: string;
+    to3: string;
+    by3: string;
+    afiliado_cass: string;
+    guias_virtuales: any[];
+}
+
 export interface DocumentoBase {
     id: number;
     fecha: string;
-    aerolinea: string;
+    aerolinea: Aerolinea; // Cambiado de string a Aerolinea
     referencia: string;
     stock: string;
     guias: Guia[];

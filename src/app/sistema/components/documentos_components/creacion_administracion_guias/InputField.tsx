@@ -8,7 +8,7 @@ interface InputFieldProps {
     type: string;
     value: string | number;
     onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    options?: string[];
+    options?: any[];
     editable?: boolean;
 }
 

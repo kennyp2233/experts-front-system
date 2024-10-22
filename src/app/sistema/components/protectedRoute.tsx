@@ -1,7 +1,7 @@
 import React from 'react'; // Add this line
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../providers/authProvider';
+import { useAuth } from '../../providers/authProvider';
 import { useEffect } from 'react';
 
 const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, adminOnly: boolean }) => {

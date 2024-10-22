@@ -2,12 +2,12 @@
 
 import React, { useState, ChangeEvent } from 'react';
 import InputField from './InputField';
-import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
+import { Aerolinea, DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
 
 
 
 interface CrearDocumentoModalProps {
-    aerolineas: string[];
+    aerolineas: Aerolinea[];
     stockTypes: string[];
     onPreview: (data: {
         documento_base: Partial<DocumentoBase>;
@@ -36,7 +36,7 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
         prefijo: 0,
         numero: '',
         cantidad: 0,
-        aerolinea: '',
+        aerolinea: aerolineas[0] || { id: 0, nombre: '' }, // Default to the first aerolinea or a placeholder
         fecha: '',
         referencia: '',
         stock: ''
@@ -49,7 +49,8 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
         const { id, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [id]: (id === 'cantidad' || id === 'prefijo') ? parseInt(value) || 0 : value
+            [id]: (id === 'cantidad' || id === 'prefijo') ? parseInt(value) || 0 :
+                (id === 'aerolinea' ? aerolineas.find(a => a.id_aerolinea === parseInt(value)) || prev.aerolinea : value)
         }));
     };
 
@@ -105,7 +106,7 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
                 prefijo: 0,
                 numero: '',
                 cantidad: 0,
-                aerolinea: '',
+                aerolinea: aerolineas[0] || { id: 0, nombre: '' },
                 fecha: '',
                 referencia: '',
                 stock: ''
@@ -162,7 +163,7 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
                             label="Aerolínea"
                             id="aerolinea"
                             type="select"
-                            value={formData.aerolinea}
+                            value={formData.aerolinea.id_aerolinea}
                             onChange={handleInputChange}
                             options={aerolineas}
                         />

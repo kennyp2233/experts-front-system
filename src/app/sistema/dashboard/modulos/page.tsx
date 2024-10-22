@@ -2,7 +2,7 @@
 import BotonesMenu from "../../components/BotonesMenu";
 import ReturnButton from "../../components/returnButton";
 import { useRouter } from "next/navigation";
-import ProtectedRoute from "../../components/protectedRoute";
+
 export default function Modulos() {
 
     const router = useRouter();
@@ -17,7 +17,7 @@ export default function Modulos() {
     }
 
     return (
-        <ProtectedRoute adminOnly={false}>
+        <>
             <div className="text-sm breadcrumbs self-start max-sm:hidden">
                 <ul>
                     <li>
@@ -70,6 +70,6 @@ export default function Modulos() {
                 />
 
             </div>
-        </ProtectedRoute>
+        </>
     );
 }

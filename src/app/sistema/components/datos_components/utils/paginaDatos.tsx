@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useAuth } from "@/app/sistema/providers/authProvider";
+import { useAuth } from "@/app/providers/authProvider";
 import { useRouter } from "next/navigation";
 import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
 

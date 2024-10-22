@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import Hero from './initial/hero';
 
-import { useAuth } from './providers/authProvider';
+import { useAuth } from '../providers/authProvider';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 

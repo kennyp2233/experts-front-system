@@ -27,14 +27,15 @@ const Page: React.FC = () => {
     } = useDocumentosBase(API_BASE_URL);
 
     const [selectedDocumento, setSelectedDocumento] = useState<DocumentoBase | null>(null);
-    const [aerolineas, setAerolineas] = useState<string[]>([]);
-    const [stockTypes, setStockTypes] = useState<string[]>([]);
+    const [aerolineas, setAerolineas] = useState<any[]>([]);
+    const [stockTypes, setStockTypes] = useState<any[]>([]);
 
 
     useEffect(() => {
         // Obtener la lista de aerolíneas
         getAerolineas().then((data) => {
             setAerolineas(data);
+            console.log(data);
         });
     }, []);
 
