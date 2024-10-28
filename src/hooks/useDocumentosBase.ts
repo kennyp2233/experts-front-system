@@ -6,6 +6,11 @@ export interface Guia {
     secuencial: number;
 }
 
+export interface Stock {
+    id: number;
+    nombre: string;
+}
+
 
 export interface Aerolinea {
     id_aerolinea: number;
@@ -38,8 +43,8 @@ export interface DocumentoBase {
     id: number;
     fecha: string;
     aerolinea: Aerolinea; // Cambiado de string a Aerolinea
-    referencia: string;
-    stock: string;
+    referencia: any;
+    stock: Stock;
     guias: Guia[];
 }
 

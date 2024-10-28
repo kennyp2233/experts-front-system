@@ -8,8 +8,8 @@ import CrearDocumentoModal from '@/app/sistema/components/documentos_components/
 import useDocumentosBase, { DocumentoBase } from '@/hooks/useDocumentosBase';
 import { baseUrl } from '@/api/mantenimiento/config.api';
 import { getAerolineas } from '@/api/mantenimiento/aerolineas.api';
-
-
+import { getStock } from '@/api/documentos/stock.api';
+import { getAgenciasIata } from '@/api/mantenimiento/agencias_iata.api';
 
 const API_BASE_URL = baseUrl; // Reemplaza con tu URL base
 
@@ -29,7 +29,7 @@ const Page: React.FC = () => {
     const [selectedDocumento, setSelectedDocumento] = useState<DocumentoBase | null>(null);
     const [aerolineas, setAerolineas] = useState<any[]>([]);
     const [stockTypes, setStockTypes] = useState<any[]>([]);
-
+    const [agenciasIata, setAgenciasIata] = useState<any[]>([]);
 
     useEffect(() => {
         // Obtener la lista de aerolíneas
@@ -37,13 +37,20 @@ const Page: React.FC = () => {
             setAerolineas(data);
             console.log(data);
         });
+
+        getStock().then((data) => {
+            setStockTypes(data);
+            console.log(data);
+        });
+
+        getAgenciasIata().then((data) => {
+            setAgenciasIata(data);
+            console.log(data);
+        });
+
     }, []);
 
-    useEffect(() => {
-        // Obtener la lista de tipos de stock
-        // Reemplaza con tu función para obtener los tipos de stock
-        setStockTypes(['Virtual', 'Físico']);
-    }, []);
+
 
     useEffect(() => {
         // Obtener la lista inicial de documentos base
@@ -82,6 +89,7 @@ const Page: React.FC = () => {
             <CrearDocumentoModal
                 aerolineas={aerolineas}
                 stockTypes={stockTypes}
+                agenciasIata={agenciasIata}
                 onPreview={handlePreviewDocumento}
                 onConfirm={handleCrearDocumento}
                 onClose={() => {
