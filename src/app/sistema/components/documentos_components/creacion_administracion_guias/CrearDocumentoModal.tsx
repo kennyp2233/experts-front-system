@@ -93,14 +93,14 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
             }
 
             const response = await onPreview({
-                documento_base: { aerolinea, fecha, referencia, stock },
+                documento_base: { id_aerolinea: aerolinea.id_aerolinea, fecha, id_referencia: referencia.id_stock, id_stock: stock.id },
                 n_guias: cantidad,
                 secuencial_inicial,
                 prefijo
             });
 
             if (response) {
-                setGuiasPreview(response.guias || []); // Asegúrate de que response tiene el campo 'guias'
+                setGuiasPreview(response.guias_madre || []); // Asegúrate de que response tiene el campo 'guias'
                 setStep(2);
             } else {
                 setError('No se pudo generar la vista previa.');
@@ -123,7 +123,7 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
             }
 
             await onConfirm({
-                documento_base: { aerolinea, fecha, referencia, stock },
+                documento_base: { id_aerolinea: aerolinea.id_aerolinea, fecha, id_referencia: referencia.id_stock, id_stock: stock.id },
                 n_guias: cantidad,
                 secuencial_inicial,
                 prefijo

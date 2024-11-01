@@ -28,8 +28,8 @@ const DocumentoBaseTable: React.FC<DocumentoBaseTableProps> = ({ documentosBase,
                     >
                         <th>{documento.id}</th>
                         <td>{documento.fecha}</td>
-                        <td>{documento.aerolinea.nombre}</td>
-                        <td>{documento.guias.length}</td>
+                        <td>{documento.id_aerolinea}</td>
+
                     </tr>
                 ))}
             </tbody>

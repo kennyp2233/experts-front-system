@@ -42,11 +42,13 @@ export interface Aerolinea {
 export interface DocumentoBase {
     id: number;
     fecha: string;
-    aerolinea: Aerolinea; // Cambiado de string a Aerolinea
-    referencia: any;
-    stock: Stock;
-    guias: Guia[];
+    id_aerolinea: number | null;
+    id_referencia: number | null;
+    id_stock: number | null;
+    guias_madre: Guia[];
+    // Otros campos según la API...
 }
+
 
 interface UseDocumentosBaseReturn {
     documentosBase: DocumentoBase[];
@@ -108,7 +110,7 @@ const useDocumentosBase = (apiBaseUrl: string): UseDocumentosBaseReturn => {
                 }
 
                 const data = await response.json();
-                setDocumentosBase(data.documentos);
+                setDocumentosBase(data.data);
                 setTotalPages(data.totalPages || 1);
                 setCurrentPage(data.currentPage || 1);
             } catch (err: any) {
