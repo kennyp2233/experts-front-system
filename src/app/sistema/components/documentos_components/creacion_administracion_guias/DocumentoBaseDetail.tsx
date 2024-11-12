@@ -5,13 +5,20 @@ import InputField from './InputField';
 import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
 interface DocumentoBaseDetailProps {
     documento: DocumentoBase;
+    aerolineas: any[];
+    stockTypes: any[];
+    agenciasIata: any[];
     onUpdate: (updatedFields: Partial<DocumentoBase>) => void;
 }
 
-const aerolineas: string[] = ['Aerolínea 1', 'Aerolínea 2', 'Aerolínea 3'];
-const stockTypes: string[] = ['Virtual', 'Físico'];
 
-const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, onUpdate }) => {
+const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({
+    documento,
+    onUpdate,
+    aerolineas,
+    stockTypes,
+    agenciasIata
+}) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [formData, setFormData] = useState<Partial<DocumentoBase>>({});
 
@@ -80,31 +87,32 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
                 label="Aerolínea"
                 id="aerolinea"
                 type="select"
-                value={documento.aerolinea.nombre}
+                value={documento.aerolinea?.id_aerolinea}
                 onChange={handleChange}
-                options={aerolineas}
+                options={aerolineas.map(a => ({ label: a.nombre, value: a.id_aerolinea }))}
                 editable={false} // Siempre no editable
             />
             <InputField
                 label="Referencia"
                 id="referencia"
-                type="text"
-                value={formData.referencia !== undefined ? formData.referencia : documento.referencia}
+                type="select"
+                value={documento.referencia?.id_referencia}
                 onChange={handleChange}
+                options={agenciasIata.map(a => ({ label: a.nombre, value: a.id_referencia }))}
                 editable={isEditing}
             />
             <InputField
                 label="Tipo de Stock"
                 id="stock"
                 type="select"
-                value={formData.stock !== undefined ? formData.stock : documento.stock}
+                value={documento.stock?.id}
                 onChange={handleChange}
-                options={stockTypes}
+                options={stockTypes.map(s => ({ label: s.nombre, value: s.id }))}
                 editable={isEditing}
             />
             <h3 className="font-bold mt-6 mb-2">Guías Generadas:</h3>
             <ul className="list-disc pl-4">
-                {documento.guias.map((guia, index) => (
+                {documento.guias_madre.map((guia, index) => (
                     <li key={index}>
                         {`Guía: ${guia.id_documento_base}, Fecha: ${guia.id_documento_base}, Aerolínea: ${guia.id_documento_base}, Referencia: ${guia.id_documento_base}, Stock: ${guia.id_documento_base}`}
                     </li>
