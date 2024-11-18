@@ -5,10 +5,11 @@ import InputField from './InputField';
 import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
 interface DocumentoBaseDetailProps {
     documento: DocumentoBase;
-    onUpdate: (updatedFields: Partial<DocumentoBase>) => void;
     aerolineas: any[];
     stockTypes: any[];
     agenciasIata: any[];
+    onUpdate: (updatedFields: Partial<DocumentoBase>) => void;
+
 }
 
 
@@ -99,6 +100,7 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
                 type="text"
                 value={formData.id_referencia || documento.id_referencia || ""}
                 onChange={handleChange}
+                options={agenciasIata.map(a => ({ label: a.nombre, value: a.id_referencia }))}
                 editable={isEditing}
             />
             <InputField
@@ -107,7 +109,7 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
                 type="select"
                 value={formData.id_stock || documento.id_stock || ""}   
                 onChange={handleChange}
-                options={stockTypes}
+                options={stockTypes.map(s => ({ label: s.nombre, value: s.id }))}
                 editable={isEditing}
             />
             <h3 className="font-bold mt-6 mb-2">Guías Generadas:</h3>

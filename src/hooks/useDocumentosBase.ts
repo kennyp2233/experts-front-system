@@ -46,6 +46,9 @@ export interface DocumentoBase {
     id_referencia: number | null;
     id_stock: number | null;
     guias_madre: Guia[];
+    aerolinea: Aerolinea;
+    referencia: any;
+    stock: Stock;
     // Otros campos según la API...
 }
 
