@@ -69,7 +69,7 @@ interface UseDocumentosBaseReturn {
         secuencial_inicial: number;
         prefijo: number;
     }) => Promise<DocumentoBase | null>;
-    updateDocumento: (id: number, updatedFields: Partial<DocumentoBase>) => void;
+    updateDocumento: (updatedFields: Partial<DocumentoBase>) => void;
 }
 
 const useDocumentosBase = (apiBaseUrl: string): UseDocumentosBaseReturn => {
@@ -194,12 +194,38 @@ const useDocumentosBase = (apiBaseUrl: string): UseDocumentosBaseReturn => {
         [apiBaseUrl]
     );
 
-    const updateDocumento = useCallback((id: number, updatedFields: Partial<DocumentoBase>) => {
-        setDocumentosBase((prev) =>
-            prev.map((doc) => (doc.id === id ? { ...doc, ...updatedFields } : doc))
-        );
-    }, []);
-
+    const updateDocumento = useCallback(
+        async (updatedFields: Partial<DocumentoBase>) => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(`${apiBaseUrl}/documentos_base`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(updatedFields),
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.msg || 'Error al actualizar el documento base.');
+                }
+    
+                // Actualizar el estado local tras una respuesta exitosa
+                setDocumentosBase((prev) =>
+                    prev.map((doc) => (doc.id === updatedFields.id? { ...doc, ...updatedFields } : doc))
+                );
+            } catch (err: any) {
+                setError(err.message || 'Error desconocido.');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [apiBaseUrl]
+    );
+    
     return {
         documentosBase,
         loading,

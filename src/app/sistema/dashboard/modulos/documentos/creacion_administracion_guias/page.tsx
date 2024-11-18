@@ -121,9 +121,10 @@ const Page: React.FC = () => {
                     {selectedDocumento && (
                         <DocumentoBaseDetail
                             documento={selectedDocumento}
-                            onUpdate={() => {
-                                // Implementa la función de actualización si es necesario
-                            }}
+                            aerolineas={aerolineas}
+                            stockTypes={stockTypes}
+                            agenciasIata={agenciasIata}
+                            onUpdate={updateDocumento}
                         />
                     )}
                 </div>
