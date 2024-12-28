@@ -32,7 +32,11 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
-        setFormData(prev => ({ ...prev, [id]: value }));
+        setFormData(prev => ({
+            ...documento,  // Mantenemos todos los datos originales del documento
+            ...prev,      // Mantenemos cualquier cambio previo del formulario
+            [id]: value   // Actualizamos solo el campo modificado
+        }));
     };
 
     const handleEdit = () => {

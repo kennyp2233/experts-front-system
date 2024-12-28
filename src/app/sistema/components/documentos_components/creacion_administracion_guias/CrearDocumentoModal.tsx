@@ -151,14 +151,14 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
 
     return (
         <dialog id="crear_documento_modal" className="modal">
-            <div className="modal-box">
-                <ul className="steps w-full mb-4">
+            <div className="modal-box flex flex-col">
+                <ul className="steps w-full">
                     <li className={`step ${step >= 1 ? 'step-primary font-bold' : ''}`}>Datos Iniciales</li>
                     <li className={`step ${step === 2 ? 'step-primary font-bold' : ''}`}>Vista Previa de Guías</li>
                 </ul>
 
                 {step === 1 ? (
-                    <form method='dialog' onSubmit={e => e.preventDefault()}>
+                    <form method='dialog' className='overflow-y-auto' onSubmit={e => e.preventDefault()}>
                         <InputField
                             label="Prefijo"
                             id="prefijo"
