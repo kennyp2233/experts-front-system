@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
 
 export interface Guia {
+    id: number;
     id_documento_base: number;
     prefijo: number;
     secuencial: number;
+    
 }
 
 export interface Stock {
@@ -210,15 +212,15 @@ const useDocumentosBase = (apiBaseUrl: string): UseDocumentosBaseReturn => {
                     credentials: 'include',
                     body: JSON.stringify(updatedFields),
                 });
-    
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.msg || 'Error al actualizar el documento base.');
                 }
-    
+
                 // Actualizar el estado local tras una respuesta exitosa
                 setDocumentosBase((prev) =>
-                    prev.map((doc) => (doc.id === updatedFields.id? { ...doc, ...updatedFields } : doc))
+                    prev.map((doc) => (doc.id === updatedFields.id ? { ...doc, ...updatedFields } : doc))
                 );
             } catch (err: any) {
                 setError(err.message || 'Error desconocido.');
@@ -228,7 +230,7 @@ const useDocumentosBase = (apiBaseUrl: string): UseDocumentosBaseReturn => {
         },
         [apiBaseUrl]
     );
-    
+
     return {
         documentosBase,
         loading,

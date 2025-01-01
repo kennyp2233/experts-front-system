@@ -20,6 +20,7 @@ interface AuthContextProps {
   checkToken: () => Promise<boolean>;
   handleLogin: (username: string, password: string, recordar: boolean) => Promise<boolean>;
   handleLogout: () => Promise<void>;
+  isChecking: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -111,6 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkToken,
         handleLogin,
         handleLogout,
+        isChecking,
       }}
     >
       {children}

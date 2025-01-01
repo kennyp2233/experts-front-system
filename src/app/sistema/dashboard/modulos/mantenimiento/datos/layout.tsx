@@ -10,11 +10,8 @@ export default function Layout({
     return (
 
 
-        <section className="hero-content gap-0 flex-col justify-start h-full w-full max-w-screen-xl">
-            <ReturnButton
-                onClick={() => router.back()}
-                text="Regresar"
-            />
+        <section className="hero-content gap-0 flex-col justify-start h-full w-full max-w-screen-xl p-0">
+
             {children}
         </section>
     );

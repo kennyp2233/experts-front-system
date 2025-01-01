@@ -19,10 +19,13 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
     const [formData, setFormData] = useState<Partial<DocumentoBase>>({});
 
     useEffect(() => {
+        console.log('DocumentoBaseDetail: documento', documento);
+        const formattedDate = documento.fecha ?
+            new Date(documento.fecha).toISOString().split('T')[0] : '';
         // Reset formData cuando cambia el documento
         setFormData({
             id: documento.id,
-            fecha: documento.fecha,
+            fecha: formattedDate,
             id_aerolinea: documento.id_aerolinea,
             id_referencia: documento.id_referencia,
             id_stock: documento.id_stock,
@@ -32,10 +35,18 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
+        
+        // Mapeo de IDs del input a las propiedades del formData
+        const fieldMapping: { [key: string]: string } = {
+            'aerolinea': 'id_aerolinea',
+            'referencia': 'id_referencia',
+            'stock': 'id_stock',
+            'fecha': 'fecha'
+        };
+    
         setFormData(prev => ({
-            ...documento,  // Mantenemos todos los datos originales del documento
-            ...prev,      // Mantenemos cualquier cambio previo del formulario
-            [id]: value   // Actualizamos solo el campo modificado
+            ...prev,
+            [fieldMapping[id]]: value
         }));
     };
 
@@ -51,6 +62,11 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
     const handleSave = () => {
         onUpdate(formData);
         setIsEditing(false);
+    };
+
+    const formatDateForInput = (dateString: string) => {
+        if (!dateString) return '';
+        return new Date(dateString).toISOString().split('T')[0];
     };
 
     return (
@@ -85,7 +101,7 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
                 label="Fecha"
                 id="fecha"
                 type="date"
-                value={formData.fecha !== undefined ? formData.fecha : documento.fecha}
+                value={formatDateForInput(formData.fecha !== undefined ? formData.fecha : documento.fecha)}
                 onChange={handleChange}
                 editable={isEditing}
             />
@@ -93,7 +109,7 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
                 label="Aerolínea"
                 id="aerolinea"
                 type="select"
-                value={formData.id_aerolinea || documento.id_aerolinea || ""}     
+                value={formData.id_aerolinea || documento.id_aerolinea || ""}
                 onChange={handleChange}
                 options={aerolineas.map(a => ({ label: a.nombre, value: a.id_aerolinea }))}
                 editable={false} // Siempre no editable
@@ -101,17 +117,17 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
             <InputField
                 label="Referencia"
                 id="referencia"
-                type="text"
+                type="select"
                 value={formData.id_referencia || documento.id_referencia || ""}
                 onChange={handleChange}
-                options={agenciasIata.map(a => ({ label: a.nombre, value: a.id_referencia }))}
+                options={agenciasIata.map(a => ({ label: `${a.alias_shipper} (${a.iata_code_carrier})`, value: a.id_agencia_iata }))}
                 editable={isEditing}
             />
             <InputField
                 label="Tipo de Stock"
                 id="stock"
                 type="select"
-                value={formData.id_stock || documento.id_stock || ""}   
+                value={formData.id_stock || documento.id_stock || ""}
                 onChange={handleChange}
                 options={stockTypes.map(s => ({ label: s.nombre, value: s.id }))}
                 editable={isEditing}
@@ -120,7 +136,7 @@ const DocumentoBaseDetail: React.FC<DocumentoBaseDetailProps> = ({ documento, on
             <ul className="list-disc pl-4">
                 {documento.guias_madre.map((guia, index) => (
                     <li key={index}>
-                        {`Guía: ${guia.id_documento_base}, Fecha: ${guia.id_documento_base}, Aerolínea: ${guia.id_documento_base}, Referencia: ${guia.id_documento_base}, Stock: ${guia.id_documento_base}`}
+                        {`Guía: ${guia.id}, Fecha: ${guia.id_documento_base}, Aerolínea: ${guia.id_documento_base}, Referencia: ${guia.id_documento_base}, Stock: ${guia.id_documento_base}`}
                     </li>
                 ))}
             </ul>

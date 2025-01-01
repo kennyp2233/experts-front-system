@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import OtransecLogo from "../../icon/otransec_icon";
-import SenaeLogo from "../../icon/senae_icon";
+import OtransecLogo from "../icon/otransec_icon";
+import SenaeLogo from "../icon/senae_icon";
 
 export default function Colaboraciones({ className }: { className?: string }) {
     const [highlight, setHighlight] = useState(0);

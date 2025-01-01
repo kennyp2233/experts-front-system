@@ -27,8 +27,8 @@ const DocumentoBaseTable: React.FC<DocumentoBaseTableProps> = ({ documentosBase,
                         className="cursor-pointer hover:bg-gray-100"
                     >
                         <th>{documento.id}</th>
-                        <td>{documento.fecha}</td>
-                        <td>{documento.id_aerolinea}</td>
+                        <td>{new Date(documento.fecha).toISOString().split('T')[0]}</td>
+                        <td>{documento.aerolinea?.nombre ?? "SIN AEROLINEA"}</td>
 
                     </tr>
                 ))}

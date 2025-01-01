@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import LogoExperts from './icon/experts_icon';
-import BotonLlamativo from './landing/botonLlamativo';
+import BotonLlamativo from './botonLlamativo';
 
 
 const link = [

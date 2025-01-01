@@ -40,11 +40,7 @@ export default function Modulos() {
                     </li>
                 </ul>
             </div>
-            <ReturnButton
-                className=""
-                onClick={() => router.back()}
-                text="Regresar"
-            />
+  
             <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl">Modulos</h1>
             <div className="grid grid-cols-3 w-full gap-3 max-md:grid-cols-2 max-sm:grid-cols-1 ">
 
