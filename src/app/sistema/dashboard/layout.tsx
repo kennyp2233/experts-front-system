@@ -7,11 +7,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ProtectedRoute adminOnly={false}>
+        <ProtectedRoute allowedRoles={['user', 'admin']}> {/* Ajusta los roles permitidos según sea necesario */}
             <section className="hero-content flex-col justify-start w-[100dvw] h-full">
                 {children}
             </section>
         </ProtectedRoute>
-
     );
 }

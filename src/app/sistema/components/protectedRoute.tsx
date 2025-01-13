@@ -1,11 +1,14 @@
-import React, { useState } from 'react'; // Add this line
-
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../providers/authProvider';
-import { useEffect } from 'react';
 
-const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, adminOnly: boolean }) => {
-  const { isLoggedIn, isAdministrator, checkToken, isChecking } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: string[]; // Roles permitidos (opcional)
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles = [] }) => {
+  const { isLoggedIn, rol, checkToken, isChecking } = useAuth();
   const router = useRouter();
   const [hasChecked, setHasChecked] = useState(false);
 
@@ -20,12 +23,12 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
   useEffect(() => {
     if (hasChecked) { // Solo ejecutar después de la verificación inicial
       if (!isLoggedIn) {
-        router.push('/sistema');
-      } else if (adminOnly && !isAdministrator) {
-        router.push('/sistema');
+        router.push('/sistema'); // Redirige si no está autenticado
+      } else if (allowedRoles.length > 0 && !allowedRoles.includes(rol || '')) {
+        router.push('/sistema'); // Redirige si no tiene un rol permitido
       }
     }
-  }, [hasChecked, isLoggedIn, isAdministrator, router, adminOnly]);
+  }, [hasChecked, isLoggedIn, rol, router, allowedRoles]);
 
   // Mientras está verificando o aún no ha terminado la verificación inicial
   if (isChecking || !hasChecked) {
@@ -41,7 +44,7 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
   }
 
   // Si ya verificó y no está autenticado, mostrar loading mientras redirige
-  if (!isLoggedIn || (adminOnly && !isAdministrator)) {
+  if (!isLoggedIn || (allowedRoles.length > 0 && !allowedRoles.includes(rol || ''))) {
     return (
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
@@ -53,7 +56,7 @@ const ProtectedRoute = ({ children, adminOnly }: { children: React.ReactNode, ad
     );
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

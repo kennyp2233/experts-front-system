@@ -1,20 +1,19 @@
 'use client';
-// src/context/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { getMe, login, logout } from '@/api/usuarios/auth.api';
 import { dispatchMenssage } from '@/app/utils/menssageDispatcher';
 
 interface User {
   id: string;
-  isAdmin: boolean;
-  // Agrega otros campos según tu respuesta del backend
+  rol: string; // El rol dinámico del usuario
+  // Otros campos según la respuesta del backend
 }
 
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  isAdministrator: boolean;
-  setIsAdministrator: (value: boolean) => void;
+  rol: string | null; // Almacena el rol actual
+  setRol: (rol: string | null) => void;
   user: User | null;
   setUser: (user: User | null) => void;
   checkToken: () => Promise<boolean>;
@@ -27,7 +26,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isAdministrator, setIsAdministrator] = useState<boolean>(false);
+  const [rol, setRol] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isChecking, setIsChecking] = useState<boolean>(false);
 
@@ -39,19 +38,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok && response.user) {
         setUser(response.user);
         setIsLoggedIn(true);
-        setIsAdministrator(response.user.isAdmin);
+        setRol(response.user.rol); // Actualiza el rol dinámico
         return true;
       } else {
         setUser(null);
         setIsLoggedIn(false);
-        setIsAdministrator(false);
+        setRol(null);
         return false;
       }
     } catch (error: any) {
       console.error('Error al verificar el token:', error);
       setUser(null);
       setIsLoggedIn(false);
-      setIsAdministrator(false);
+      setRol(null);
       return false;
     } finally {
       setIsChecking(false);
@@ -62,12 +61,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await login(username, password, recordar);
       if (response.ok) {
-        // Después de iniciar sesión, verifica el token para obtener la información del usuario
-        const isValid = await checkToken();
+        const isValid = await checkToken(); // Verifica el token después del login
         if (isValid && user) {
-          if (user.isAdmin) {
-            dispatchMenssage('info', 'Has ingresado como admin');
-          }
+          dispatchMenssage('info', `Has ingresado con rol: ${user.rol}`);
         }
         return true;
       } else {
@@ -86,11 +82,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await logout();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
-      // Incluso si hay un error al cerrar sesión en el backend, continúa en el frontend
     } finally {
       setUser(null);
       setIsLoggedIn(false);
-      setIsAdministrator(false);
+      setRol(null);
       dispatchMenssage('fail', 'Se ha cerrado la sesión');
     }
   };
@@ -105,8 +100,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         isLoggedIn,
         setIsLoggedIn,
-        isAdministrator,
-        setIsAdministrator,
+        rol,
+        setRol,
         user,
         setUser,
         checkToken,
