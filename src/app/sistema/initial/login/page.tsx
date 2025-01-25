@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from "react";
-import { useAuth } from "../../../providers/authProvider";
-import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
+import { useAuth } from "../../../../providers/authProvider";
+import { dispatchMenssage } from "@/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";
 import { FaUser, FaLock, FaSignInAlt, FaUserPlus, FaEnvelope } from 'react-icons/fa';
 

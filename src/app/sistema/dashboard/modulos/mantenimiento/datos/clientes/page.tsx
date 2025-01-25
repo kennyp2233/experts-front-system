@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getClientes, postCliente, putCliente, deleteClientes } from "@/api/mantenimiento/clientes.api";
 
 export default function ClientesPage() {

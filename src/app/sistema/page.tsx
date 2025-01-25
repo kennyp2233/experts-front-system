@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 
 import Hero from './initial/hero';
 
-import { useAuth } from '../providers/authProvider';
+import { useAuth } from '../../providers/authProvider';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
 
 export default function Page() {
-  const { isLoggedIn, setIsLoggedIn, isAdministrator } = useAuth();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

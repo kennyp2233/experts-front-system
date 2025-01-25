@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/solid';
-import DocumentoBaseTable from '@/app/sistema/components/documentos_components/creacion_administracion_guias/DocumentoBaseTable';
-import DocumentoBaseDetail from '@/app/sistema/components/documentos_components/creacion_administracion_guias/DocumentoBaseDetail';
-import CrearDocumentoModal from '@/app/sistema/components/documentos_components/creacion_administracion_guias/CrearDocumentoModal';
+import DocumentoBaseTable from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseTable';
+import DocumentoBaseDetail from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseDetail';
+import CrearDocumentoModal from '@/components/sistema/documentos_components/creacion_administracion_guias/CrearDocumentoModal';
 import useDocumentosBase, { DocumentoBase } from '@/hooks/useDocumentosBase';
 import { baseUrl } from '@/api/mantenimiento/config.api';
 import { getAerolineas } from '@/api/mantenimiento/aerolineas.api';

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useAuth } from "@/app/providers/authProvider";
+import { useAuth } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
-import { dispatchMenssage } from "@/app/utils/menssageDispatcher";
+import { dispatchMenssage } from "@/utils/menssageDispatcher";
 
 import MantenimientoRoute from "./mantenimientoRoute";
-import ReturnButton from "@/app/sistema/components/returnButton";
-import Formulario from "@/app/sistema/components/formulario";
-import Tabla from "@/app/sistema/components/tabla";
+import Formulario from "../../formulario";
+import Tabla from "../../tabla";
 import ControlButtons from "./controllButtons"; // Asegúrate de que el nombre del archivo es correcto
 
 interface ModificationLabelId {

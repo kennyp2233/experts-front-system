@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getEmbarcadores, postEmbarcador, putEmbarcador, deleteEmbarcadores } from "@/api/mantenimiento/embarcadores.api";
 
 export default function EmbarcadoresPage() {

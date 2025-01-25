@@ -1,5 +1,5 @@
 'use client';
-import ProtectedRoute from "../components/protectedRoute";
+import ProtectedRoute from "@/components/sistema/protectedRoute";
 
 export default function RootLayout({
     children,

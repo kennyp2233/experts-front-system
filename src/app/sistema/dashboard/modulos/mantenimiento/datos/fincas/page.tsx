@@ -1,6 +1,6 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
 import { getFincasJoinAll, deleteFincas, postFinca, putFinca } from "@/api/mantenimiento/fincas.api";
 import { getProductos } from "@/api/mantenimiento/productos.api";
 import { getCatalogosTipoDocumento } from "@/api/mantenimiento/catalogos/catalogos_tipo_documento.api";

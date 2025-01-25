@@ -1,6 +1,6 @@
 'use client';
-import BotonesMenu from "../../components/BotonesMenu";
-import ReturnButton from "../../components/returnButton";
+import BotonesMenu from "@/components/sistema/BotonesMenu";
+import ReturnButton from "@/components/sistema/returnButton";
 import { useRouter } from "next/navigation";
 
 export default function Modulos() {

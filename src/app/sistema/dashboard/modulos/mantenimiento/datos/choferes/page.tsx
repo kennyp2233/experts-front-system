@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getChoferes, deleteChoferes, postChofer, putChofer } from "@/api/mantenimiento/choferes.api";
 export default function ClientesPage() {
     return (

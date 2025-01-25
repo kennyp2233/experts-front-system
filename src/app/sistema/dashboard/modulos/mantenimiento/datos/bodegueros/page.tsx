@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getBodegueros, deleteBodegueros, postBodeguero, putBodeguero } from "@/api/mantenimiento/bodegueros.api";
 export default function AerolineasPage() {
     return (

@@ -1,5 +1,6 @@
 'use client';
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getAcuerdosArancelarios } from "@/api/mantenimiento/acuerdos_arancelarios";
 import { getPaisesJoinAcuerdos, postPais, putPais, deletePaises } from "@/api/mantenimiento/paises.api";
 

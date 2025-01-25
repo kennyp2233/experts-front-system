@@ -1,5 +1,5 @@
 'use client';
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
 import {
     getUnidadesMedida,
     postUnidadMedida,

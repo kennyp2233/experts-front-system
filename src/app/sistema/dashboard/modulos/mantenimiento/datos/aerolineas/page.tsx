@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { deleteAerolineasJoinAll, getAerolineasJoinAll, putAerolineasJoinAll, postAerolineaJoinAll } from "@/api/mantenimiento/aerolineas.api";
 import { getDestinos } from "@/api/mantenimiento/destinos.api";
 import { getOrigenes } from "@/api/mantenimiento/origenes.api";

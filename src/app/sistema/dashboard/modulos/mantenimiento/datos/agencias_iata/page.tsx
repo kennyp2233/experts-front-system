@@ -1,6 +1,7 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
+
 import { getAgenciasIata, deleteAgenciasIata, postAgenciaIata, putAgenciaIata } from "@/api/mantenimiento/agencias_iata.api";
 
 export default function AerolineasPage() {

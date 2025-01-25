@@ -1,7 +1,7 @@
 'use client';
-import BotonDashboard from "../components/BotonesMenu";
+import BotonDashboard from "@/components/sistema/BotonesMenu";
 import { useRouter } from "next/navigation";
-import ProtectedRoute from "../components/protectedRoute";
+import ProtectedRoute from "@/components/sistema/protectedRoute";
 
 const Dashboard = () => {
     const router = useRouter();

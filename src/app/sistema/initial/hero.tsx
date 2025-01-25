@@ -1,6 +1,6 @@
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../providers/authProvider";
+import { useAuth } from "../../../providers/authProvider";
 import Stats from "./stats";
 import Image from "next/image";
 import React from "react";

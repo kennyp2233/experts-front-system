@@ -1,6 +1,6 @@
 'use client';
 
-import PaginaGenerica from "@/app/sistema/components/datos_components/PaginaGenerica";
+import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
 import { getOrigenesJoinPaisesAduanas, deleteOrigenes, postOrigen, putOrigen } from "@/api/mantenimiento/origenes.api";
 import { getPaises } from "@/api/mantenimiento/paises.api";
 import { getAduanas } from "@/api/mantenimiento/cae_aduanas.api";
