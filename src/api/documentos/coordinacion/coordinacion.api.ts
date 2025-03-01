@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { baseUrl } from '@/api/mantenimiento/config.api';
 
+axios.defaults.withCredentials = true;
+
 
 export interface CoordinationDocument {
     id: number;
@@ -45,6 +47,8 @@ export interface CoordinationDocument {
     //-----------------------------------
     createdAt: Date;
     updatedAt: Date;
+    //-----------------------------------
+    busqueda_guias_madres: number;
 }
 
 export interface PaginatedResponse<T> {
@@ -56,7 +60,7 @@ export interface PaginatedResponse<T> {
 
 export const coordinationApi = {
     getDocuments: async (page = 1, limit = 10): Promise<PaginatedResponse<CoordinationDocument>> => {
-        const response = await axios.get(`${baseUrl}?page=${page}&limit=${limit}`);
+        const response = await axios.get(`${baseUrl}/asignacion?page=${page}&limit=${limit}`);
         return response.data;
     },
 
@@ -66,12 +70,12 @@ export const coordinationApi = {
     },
 
     updateDocument: async (id: number, document: Partial<CoordinationDocument>): Promise<CoordinationDocument> => {
-        const response = await axios.put(`${baseUrl}/${id}`, document);
+        const response = await axios.put(`${baseUrl}/asignacion/${id}`, document);
         return response.data;
     },
 
     deleteDocument: async (id: number): Promise<{ message: string; documento: CoordinationDocument }> => {
-        const response = await axios.delete(`${baseUrl}/${id}`);
+        const response = await axios.delete(`${baseUrl}/asignacion/${id}`);
         return response.data;
     }
 };

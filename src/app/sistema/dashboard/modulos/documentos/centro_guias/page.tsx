@@ -34,7 +34,7 @@ export default function Coordinaciones() {
       </div>
 
       {/* Contenido Dinámico */}
-      <div className="p-6 bg-white shadow rounded-lg">
+      <div className="p-6 bg-base-100 shadow rounded-lg">
         {activeTab === "asignacion" && <Asignacion />}
         {activeTab === "gestion" && <GestionCoordinaciones />}
         {activeTab === "rapidas" && <CoordinacionesRapidas />}
