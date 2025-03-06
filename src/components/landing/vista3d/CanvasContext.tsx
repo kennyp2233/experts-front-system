@@ -19,11 +19,20 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [scrollY, setScrollY] = useState(0);
   const [deltaY, setDeltaY] = useState(0);
   const previousScrollYRef = useRef(0);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
+    if (mountedRef.current) return;
+    mountedRef.current = true;
+
     if (typeof window !== 'undefined') {
       const handleResize = () => {
-        setDimensions({ width: window.innerWidth, height: window.innerHeight });
+        // Obtener dimensiones precisas
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        // Aplicar inmediatamente para evitar retrasos
+        setDimensions({ width, height });
       };
 
       const handleScroll = () => {
@@ -34,14 +43,16 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         previousScrollYRef.current = currentScrollY;
       };
 
-      window.addEventListener('resize', handleResize);
-      window.addEventListener('scroll', handleScroll);
-
-      // Llamadas iniciales
+      // Ejecutar antes de la primera renderización
       handleResize();
       handleScroll();
 
+      // Configurar eventos con opciones de rendimiento
+      window.addEventListener('resize', handleResize, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
       return () => {
+        mountedRef.current = false;
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('scroll', handleScroll);
       };

@@ -8,22 +8,33 @@ import { CanvasContext } from './CanvasContext';
 
 const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const sceneRef = useRef(new THREE.Scene());
-    const cameraRef = useRef<THREE.OrthographicCamera>();
-    const rendererRef = useRef<THREE.WebGLRenderer>();
+    const sceneRef = useRef<THREE.Scene | null>(null);
+    const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
+    const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+    const requestRef = useRef<number | null>(null);
     const updatablesRef = useRef(new Set<() => void>());
+    const mountedRef = useRef(false);
 
     const { dimensions } = useContext(CanvasContext);
 
+    // Inicialización de la escena y limpieza
     useEffect(() => {
-        if (!containerRef.current) return;
+        if (!containerRef.current || mountedRef.current) return;
+        mountedRef.current = true;
+
+        // Crear nueva escena solo si no existe
+        if (!sceneRef.current) {
+            sceneRef.current = new THREE.Scene();
+        }
 
         const width = containerRef.current.clientWidth;
         const height = containerRef.current.clientHeight;
 
-        const frustumSize = Math.max(width, height) * 1.2;
+        // Calcular el frustum para que se ajuste mejor al viewport
+        const frustumSize = Math.max(width, height) * 1.0; // Factor reducido para mejor encuadre
         const aspect = width / height;
-        // Configurar cámara ortográfica
+
+        // Configurar cámara ortográfica con centro ajustado
         const camera = new THREE.OrthographicCamera(
             frustumSize * aspect / -2,
             frustumSize * aspect / 2,
@@ -32,6 +43,8 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             0.1,
             10000
         );
+
+        // Posicionar la cámara ligeramente hacia abajo para centrar los objetos
         camera.position.set(0, 0, 500);
         camera.lookAt(0, 0, 0);
         cameraRef.current = camera;
@@ -40,14 +53,22 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true,
-            preserveDrawingBuffer: true // Mejor para efectos visuales
+            preserveDrawingBuffer: true
         });
         renderer.setSize(width, height);
         renderer.setClearColor(0x000000, 0); // Fondo transparente
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limitar para rendimiento
-        containerRef.current.appendChild(renderer.domElement);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        if (containerRef.current) {
+            // Limpiar cualquier elemento existente
+            while (containerRef.current.firstChild) {
+                containerRef.current.removeChild(containerRef.current.firstChild);
+            }
+            containerRef.current.appendChild(renderer.domElement);
+        }
+
         rendererRef.current = renderer;
 
         // Añadir luz ambiente
@@ -56,14 +77,18 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 
         // Loop de animación
         const animate = () => {
-            requestAnimationFrame(animate);
-            // Ejecutar funciones de actualización registradas
             updatablesRef.current.forEach((updateFn) => updateFn());
-            renderer.render(sceneRef.current, camera);
-        };
-        animate();
 
-        // Usar ResizeObserver para detectar cambios en el contenedor mismo
+            if (rendererRef.current && sceneRef.current && cameraRef.current) {
+                rendererRef.current.render(sceneRef.current, cameraRef.current);
+            }
+
+            requestRef.current = requestAnimationFrame(animate);
+        };
+
+        requestRef.current = requestAnimationFrame(animate);
+
+        // Usar ResizeObserver para detectar cambios en el contenedor
         const resizeObserver = new ResizeObserver(() => {
             if (!containerRef.current) return;
 
@@ -71,7 +96,7 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             const h = containerRef.current.clientHeight;
 
             // Recalcular frustum para mantener proporción
-            const newFrustumSize = Math.max(w, h) * 1.2;
+            const newFrustumSize = Math.max(w, h) * 1.0; // Mantener el factor
             const newAspect = w / h;
 
             if (cameraRef.current) {
@@ -92,10 +117,33 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         }
 
         return () => {
+            mountedRef.current = false;
             resizeObserver.disconnect();
+
+            // Limpiar loop de animación
+            if (requestRef.current !== null) {
+                cancelAnimationFrame(requestRef.current);
+                requestRef.current = null;
+            }
+
+            // Limpiar memoria y DOM
             if (rendererRef.current) {
                 rendererRef.current.dispose();
+
+                if (containerRef.current && containerRef.current.contains(rendererRef.current.domElement)) {
+                    containerRef.current.removeChild(rendererRef.current.domElement);
+                }
+
+                rendererRef.current = null;
             }
+
+            // Limpiar escena
+            if (sceneRef.current) {
+                sceneRef.current.clear();
+            }
+
+            // Limpiar callbacks
+            updatablesRef.current.clear();
         };
     }, []);
 
@@ -109,8 +157,8 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     }, []);
 
     const contextValue: SceneContextProps = {
-        scene: sceneRef.current,
-        camera: cameraRef.current!,
+        scene: sceneRef.current || new THREE.Scene(),
+        camera: cameraRef.current as THREE.Camera,
         addUpdate,
         removeUpdate,
     };
@@ -128,6 +176,7 @@ const ThreeScene: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     right: 0,
                     bottom: 0,
                     zIndex: -1,
+                    pointerEvents: 'none' // Para permitir interacción con elementos debajo
                 }}
             />
             {children}

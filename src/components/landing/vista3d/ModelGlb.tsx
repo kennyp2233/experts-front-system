@@ -39,6 +39,7 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
     const { scrollY, dimensions } = useContext(CanvasContext);
     const modelRef = useRef<THREE.Group | null>(null);
     const lightRef = useRef<THREE.PointLight | null>(null);
+    const mountedRef = useRef(false);
 
     // Ref para controlar si el modelo ya ha sido cargado
     const modelLoadedRef = useRef(false);
@@ -58,7 +59,8 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
 
     // Cargar el modelo GLTF
     useEffect(() => {
-        if (!scene) return;
+        if (!scene || mountedRef.current) return;
+        mountedRef.current = true;
 
         const loader = new GLTFLoader();
 
@@ -92,7 +94,7 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
                 loadedModel.scale.set(scale, scale, scale);
 
                 // Optimizar materiales
-                loadedModel.traverse((node: { material: { roughness: number; metalness: number; }; }) => {
+                loadedModel.traverse((node: any) => {
                     if (node instanceof THREE.Mesh && node.material instanceof THREE.MeshStandardMaterial) {
                         node.material.roughness = 0.2;
                         node.material.metalness = 0.8;
@@ -114,6 +116,7 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
 
         // Limpieza al desmontar
         return () => {
+            mountedRef.current = false;
             if (modelRef.current) {
                 scene.remove(modelRef.current);
                 modelRef.current = null;
@@ -131,6 +134,7 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
     const targetRotY = useRef(THREE.MathUtils.degToRad(roty));
     const targetRotZ = useRef(THREE.MathUtils.degToRad(rotz));
     const anchorMaxXRef = useRef(anchorX);
+    const updateFunctionRef = useRef<() => void>();
 
     // Ajustar valores responsivos según el ancho de la ventana
     useEffect(() => {
@@ -152,14 +156,14 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
 
     // Registrar callback de actualización para animar el modelo
     useEffect(() => {
+        // Definir la función de actualización
         const update = () => {
             if (!modelRef.current) return;
 
             // Factor de suavizado para que los movimientos sean menos sensibles
             const scrollFactor = 0.08;
 
-            // Usar la diferencia de scroll con respecto al inicial (cuando se montó)
-            // pero con un factor de suavizado aplicado
+            // Usar la diferencia de scroll con respecto al inicial
             const normalizedScroll = (scrollYRef.current - initialScrollRef.current) * scrollFactor;
 
             // Actualizar targets según el tipo de scroll
@@ -188,8 +192,7 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
                     break;
             }
 
-            // Factor de amortiguación muy bajo para animaciones suaves
-            // Si quieres movimientos aún más suaves, reduce este valor
+            // Factor de amortiguación para animaciones suaves
             const dampingFactor = 0.02;
 
             // Aplicar interpolación suave
@@ -208,6 +211,9 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
             }
         };
 
+        // Guardar referencia para limpieza
+        updateFunctionRef.current = update;
+
         // Registrar la función de actualización
         if (addUpdate) {
             addUpdate(update);
@@ -215,8 +221,8 @@ const ModelGlb: React.FC<ModelGlbProps> = ({
 
         // Limpieza al desmontar
         return () => {
-            if (removeUpdate) {
-                removeUpdate(update);
+            if (removeUpdate && updateFunctionRef.current) {
+                removeUpdate(updateFunctionRef.current);
             }
         };
     }, [addUpdate, removeUpdate, scrollType, posx, posy, roty, rotz, anchorX, anchorY, anchorElement]);

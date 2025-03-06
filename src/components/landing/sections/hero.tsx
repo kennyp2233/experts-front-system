@@ -6,6 +6,8 @@ import { useState, useEffect, useRef, Suspense, RefObject } from 'react';
 import "./styles/hero.css";
 import React from "react";
 import Colaboraciones from "./colaboraciones";
+import LogisticsInfrastructure from "./LogisticInfraestructure";
+import GlobalDestinations from "./GlobalDestinations";
 const opcionesHero = [
     "esparce pasión",
     "cultiva sueños",
@@ -39,8 +41,11 @@ const Hero = React.forwardRef((props, ref) => {
     //mb-52
     return (
         <>
+            <section ref={ref as RefObject<HTMLElement> | null}
+                className="flex flex-col h-full w-full m-auto px-10 relative max-md:px-8 pt-48 min-h-[100vh]"
+                style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}
 
-            <section ref={ref as RefObject<HTMLElement> | null} className="flex flex-col h-full w-full m-auto px-10 relative max-md:px-8 pt-48 min-h-[100vh]" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 60%, rgba(0,0,0,1) 100%)' }}>
+            >
                 <Escena3D />
                 <h1 className="text-7xl text-center tracking-tighter font-light max-md:text-4xl" style={{ lineHeight: "1.1" }}>
                     Nuestra empresa ecuatoriana  <br />
@@ -63,6 +68,7 @@ const Hero = React.forwardRef((props, ref) => {
                 <p className="pt-10 text-2xl text-center tracking-tighter font-light max-md:text-xl">Servicios logísticos integrales para la exportación de flores frescas y de la más alta calidad.</p>
                 <Colaboraciones className="mt-auto" />
             </section>
+   
         </>
 
     )
