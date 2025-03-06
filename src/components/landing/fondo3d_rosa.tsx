@@ -1,3 +1,4 @@
+'use client'
 import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { EffectComposer, RenderPass, GaussianBlurPass, BoxBlurPass } from 'postprocessing';

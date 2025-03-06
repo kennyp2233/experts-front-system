@@ -5,28 +5,29 @@ import { dispatchMenssage } from '@/utils/menssageDispatcher';
 
 interface User {
   id: string;
-  rol: string; // El rol dinámico del usuario
+  roles: string[]; // Ahora roles es un array
   // Otros campos según la respuesta del backend
 }
 
 interface AuthContextProps {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  rol: string | null; // Almacena el rol actual
-  setRol: (rol: string | null) => void;
+  roles: string[]; // Ahora es un array de roles
+  setRoles: (roles: string[]) => void;
   user: User | null;
   setUser: (user: User | null) => void;
   checkToken: () => Promise<boolean>;
   handleLogin: (username: string, password: string, recordar: boolean) => Promise<boolean>;
   handleLogout: () => Promise<void>;
   isChecking: boolean;
+  hasRole: (requiredRoles: string | string[]) => boolean; // Nueva función para verificar roles
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [rol, setRol] = useState<string | null>(null);
+  const [roles, setRoles] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isChecking, setIsChecking] = useState<boolean>(false);
 
@@ -36,21 +37,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await getMe();
       if (response.ok && response.user) {
-        setUser(response.user);
+        const userData = response.user;
+
+        // Asegurarse de que roles sea siempre un array
+        const userRoles = Array.isArray(userData.roles)
+          ? userData.roles
+          : (userData.rol ? [userData.rol] : []); // Soporte para compatibilidad con versiones anteriores
+
+        setUser({
+          ...userData,
+          roles: userRoles
+        });
         setIsLoggedIn(true);
-        setRol(response.user.rol); // Actualiza el rol dinámico
+        setRoles(userRoles);
         return true;
       } else {
         setUser(null);
         setIsLoggedIn(false);
-        setRol(null);
+        setRoles([]);
         return false;
       }
     } catch (error: any) {
       console.error('Error al verificar el token:', error);
       setUser(null);
       setIsLoggedIn(false);
-      setRol(null);
+      setRoles([]);
       return false;
     } finally {
       setIsChecking(false);
@@ -63,16 +74,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok) {
         const isValid = await checkToken(); // Verifica el token después del login
         if (isValid && user) {
-          dispatchMenssage('info', `Has ingresado con rol: ${user.rol}`);
+          const rolesStr = roles.join(', ');
+          dispatchMenssage('info', `Has ingresado con roles: ${rolesStr}`);
         }
         return true;
       } else {
-        dispatchMenssage('fail', 'Credenciales inválidas');
+        dispatchMenssage('error', 'Credenciales inválidas');
         return false;
       }
     } catch (error: any) {
       console.error('Error al iniciar sesión:', error);
-      dispatchMenssage('fail', 'Error al iniciar sesión');
+      dispatchMenssage('error', 'Error al iniciar sesión');
       return false;
     }
   };
@@ -85,9 +97,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       setIsLoggedIn(false);
-      setRol(null);
-      dispatchMenssage('fail', 'Se ha cerrado la sesión');
+      setRoles([]);
+      dispatchMenssage('info', 'Se ha cerrado la sesión');
     }
+  };
+
+  // Nueva función para verificar si el usuario tiene los roles requeridos
+  const hasRole = (requiredRoles: string | string[]): boolean => {
+    if (!isLoggedIn || !roles.length) return false;
+
+    const requiredRolesArray = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+
+    // Verificar si el usuario tiene al menos uno de los roles requeridos
+    return requiredRolesArray.some(role => roles.includes(role));
   };
 
   useEffect(() => {
@@ -100,14 +122,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         isLoggedIn,
         setIsLoggedIn,
-        rol,
-        setRol,
+        roles,
+        setRoles,
         user,
         setUser,
         checkToken,
         handleLogin,
         handleLogout,
         isChecking,
+        hasRole
       }}
     >
       {children}

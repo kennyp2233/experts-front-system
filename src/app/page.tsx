@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import Hero from "../components/landing/sections/hero";
 import About from "../components/landing/sections/about";
 import Contact from "../components/landing/sections/contact";

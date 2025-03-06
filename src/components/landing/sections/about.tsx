@@ -1,22 +1,29 @@
 'use client'
-import { RefObject, useEffect, useRef } from 'react';
-import Rosa3D from '../rosa3d';
 
-import React from 'react';
+import React, { forwardRef, ForwardRefRenderFunction } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
+import Rosa3D from '../Rosa3D';
 const divs = [
     { title: 'Fidelidad', description: 'Comprometidos con nuestros clientes a largo plazo.' },
     { title: 'Excelencia', description: 'Brindamos un servicio de máxima calidad.' },
     { title: 'Creatividad', description: 'Soluciones innovadoras para cada reto logístico.' }
 ];
 
-const About = React.forwardRef((props, ref) => {
+interface AboutProps {
+    // Add any props here if needed
+}
+
+
+const About: ForwardRefRenderFunction<HTMLElement, AboutProps> = (props, ref) => {
 
 
     return (
         <>
 
             <section ref={ref as RefObject<HTMLElement> | null} className="max-w-screen-lg m-auto py-24 px-10 relative pt-[196px] min-h-[100vh] max-md:px-4 max-md:pt-28">
-                <Rosa3D />
+                <div className="absolute inset-0">
+                    <Rosa3D />
+                </div>
                 <h1 className="text-6xl text-center tracking-tighter font-bold max-md:text-4xl" >
                     Sobre nosotros
                 </h1>
@@ -36,6 +43,6 @@ const About = React.forwardRef((props, ref) => {
             </section >
         </>
     );
-});
-About.displayName = 'About';
-export default About;
+};
+
+export default forwardRef(About);

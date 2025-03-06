@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { dispatchMenssage } from "@/utils/menssageDispatcher";
 import React from "react";
 export default function NavBar() {
-    const { isLoggedIn, rol, handleLogout } = useAuth();
+    const { isLoggedIn, roles, handleLogout } = useAuth();
     const [theme, setTheme] = useState('cupcake');
     const router = useRouter();
     const toggleTheme = () => {
@@ -23,7 +23,7 @@ export default function NavBar() {
     return (
         <>
             <div className='text-primary'>{"logged " + isLoggedIn}</div>
-            <div className='text-primary'>{"admin " + rol}</div>
+            <div className='text-primary'>{"admin " + roles}</div>
             <div className="bg-base-100">
                 <div className="navbar max-w-screen-lg mx-auto ">
                     <div className="navbar-start">
@@ -64,7 +64,7 @@ export default function NavBar() {
 
                                 <div className="dropdown dropdown-end">
                                     <div className="indicator">
-                                        {rol === 'admin' && <span className="indicator-item indicator-center indicator-bottom badge badge-sm font-semibold badge-secondary">Admin</span>}
+                                        {roles.includes('admin') && <span className="indicator-item indicator-center indicator-bottom badge badge-sm font-semibold badge-secondary">Admin</span>}
                                         <div className="grid place-items-center">
                                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                                 <div className="w-10 rounded-full">
