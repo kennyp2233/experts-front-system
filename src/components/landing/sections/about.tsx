@@ -6,9 +6,6 @@ import Rosa3D from '../Rosa3D';
 import { COLORS } from '@/utils/theme';
 // Importar iconos de React Icons
 import { FaHandshake, FaAward, FaLightbulb } from 'react-icons/fa';
-import LogisticsInfrastructure from './LogisticInfraestructure';
-import GlobalDestinations from './GlobalDestinations';
-import ExperienceTimeline from './ExperienceTimeline';
 
 // Valores de la empresa con iconos simplificados
 const values = [
@@ -210,7 +207,7 @@ const About = forwardRef<HTMLElement>((_props, ref) => {
                     </motion.div>
                 </motion.div>
             </section>
- 
+
         </>
 
     );
