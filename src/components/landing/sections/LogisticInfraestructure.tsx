@@ -11,7 +11,9 @@ import {
     FaMapMarkedAlt,
     FaBuilding
 } from 'react-icons/fa';
+import dynamic from 'next/dynamic';
 
+const CoverageMap = dynamic(() => import('../CoverageMap'), { ssr: false });
 // Datos de instalaciones
 const facilitiesData = [
     {
@@ -19,7 +21,7 @@ const facilitiesData = [
         title: "Oficinas Centrales",
         location: "Sangolquí, Pichincha",
         description: "Nuestra oficina principal desde donde coordinamos todas las operaciones logísticas y brindamos atención personalizada a nuestros clientes.",
-        image: "/img/facilities/office.jpg", // Reemplazar con imágenes reales
+        image: "/img/oficina.png", // Reemplazar con imágenes reales
         icon: <FaBuilding size={24} />
     },
     {
@@ -27,7 +29,7 @@ const facilitiesData = [
         title: "Cuartos Fríos FlowerCargo",
         location: "Tababela, Quito (Aeropuerto)",
         description: "Instalaciones especializadas para el almacenamiento refrigerado de flores, manteniendo la temperatura óptima para preservar la frescura y calidad del producto.",
-        image: "/img/facilities/cold-room.jpg", // Reemplazar con imágenes reales
+        image: "/img/cuarto-frio.png", // Reemplazar con imágenes reales
         icon: <FaWarehouse size={24} />
     },
     {
@@ -35,7 +37,7 @@ const facilitiesData = [
         title: "Flota de Transporte Refrigerado",
         location: "Operación nacional",
         description: "Vehículos equipados con sistemas avanzados de refrigeración para mantener la cadena de frío durante todo el trayecto desde el productor hasta el aeropuerto.",
-        image: "/img/facilities/trucks.jpg", // Reemplazar con imágenes reales
+        image: "/img/camiones.jpg", // Reemplazar con imágenes reales
         icon: <FaTruckMoving size={24} />
     }
 ];
@@ -371,6 +373,7 @@ const LogisticsInfrastructure = forwardRef<HTMLElement>((_props, ref) => {
                 </div>
 
                 {/* Capacidades Adicionales */}
+
                 <motion.div
                     className="mt-16 bg-gradient-to-r from-gray-900/70 to-gray-800/70 rounded-xl p-8 backdrop-blur-sm"
                     initial={{ opacity: 0, y: 20 }}
@@ -386,29 +389,8 @@ const LogisticsInfrastructure = forwardRef<HTMLElement>((_props, ref) => {
                     </h3>
 
                     <div className="aspect-video relative rounded-lg overflow-hidden bg-gray-800">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <p className="text-lg text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
-                                Cobertura en principales zonas florícolas del Ecuador con <br />
-                                conexiones a más de 25 destinos internacionales
-                            </p>
-                        </div>
-
-                        <div className="absolute bottom-4 right-4 bg-gradient-to-r from-gray-900/90 to-gray-800/90 px-4 py-2 rounded-lg">
-                            <div className="flex space-x-4">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS.PRIMARY.MAIN }}></div>
-                                    <span className="text-sm" style={{ color: COLORS.TEXT.SECONDARY }}>Oficinas</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS.SECONDARY.MAIN }}></div>
-                                    <span className="text-sm" style={{ color: COLORS.TEXT.SECONDARY }}>Centros logísticos</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS.ACCENT.CREAM }}></div>
-                                    <span className="text-sm" style={{ color: COLORS.TEXT.SECONDARY }}>Rutas frecuentes</span>
-                                </div>
-                            </div>
-                        </div>
+                        {/* Reemplaza el placeholder con el componente del mapa */}
+                        <CoverageMap />
                     </div>
                 </motion.div>
 

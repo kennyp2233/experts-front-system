@@ -12,36 +12,47 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
   const { isLoggedIn, roles, checkToken, isChecking } = useAuth();
   const router = useRouter();
   const [hasChecked, setHasChecked] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
+  // Run only once on component mount to verify authentication
   useEffect(() => {
     const verify = async () => {
-      await checkToken();
-      setHasChecked(true);
+      try {
+        await checkToken();
+      } finally {
+        setHasChecked(true);
+      }
     };
-    verify();
-  }, [checkToken]);
+    
+    if (!hasChecked && !isChecking) {
+      verify();
+    }
+  }, [checkToken, hasChecked, isChecking]);
 
+  // Separate effect for navigation logic, runs only when auth state changes
   useEffect(() => {
-    if (hasChecked) { // Solo ejecutar después de la verificación inicial
-      if (!isLoggedIn) {
-        router.push('/sistema'); // Redirige si no está autenticado
-      } else if (allowedRoles.length > 0) {
-        // Asumiendo que 'rol' ahora es un array de roles
-        const userRoles = Array.isArray(roles) ? roles : [roles];
+    if (!hasChecked || redirecting) return;
 
-        // Verificar si el usuario tiene al menos uno de los roles permitidos
-        const hasAllowedRole = allowedRoles.some(role => userRoles.includes(role));
+    if (!isLoggedIn) {
+      setRedirecting(true);
+      router.push('/sistema');
+      return;
+    }
 
-        if (!hasAllowedRole) {
-          router.push('/sistema'); // Redirige si no tiene ningún rol permitido
-          dispatchMenssage('error', 'No tienes permiso para acceder a esta página');
-        }
+    if (allowedRoles.length > 0) {
+      const userRoles = Array.isArray(roles) ? roles : [roles];
+      const hasAllowedRole = allowedRoles.some(role => userRoles.includes(role));
+
+      if (!hasAllowedRole) {
+        setRedirecting(true);
+        dispatchMenssage('error', 'No tienes permiso para acceder a esta página');
+        router.push('/sistema');
       }
     }
-  }, [hasChecked, isLoggedIn, roles, router, allowedRoles]);
+  }, [hasChecked, isLoggedIn, roles, router, allowedRoles, redirecting]);
 
-  // Mientras está verificando o aún no ha terminado la verificación inicial
-  if (isChecking || !hasChecked) {
+  // Show loading spinner while checking or redirecting
+  if (isChecking || !hasChecked || redirecting) {
     return (
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
@@ -53,35 +64,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
     );
   }
 
-  // Si ya verificó y no está autenticado, mostrar loading mientras redirige
-  if (!isLoggedIn) {
-    return (
-      <div className="hero min-h-screen bg-base-200">
-        <div className="hero-content text-center">
-          <div className="max-w-md">
-            <span className="loading loading-ball loading-lg"></span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Si ya verificó y tiene un rol permitido, o no hay roles permitidos especificados
-  if (allowedRoles.length === 0 ||
-    (Array.isArray(roles) ? allowedRoles.some(role => roles.includes(role)) : allowedRoles.includes(roles as string))) {
-    return <>{children}</>;
-  }
-
-  // Si ya verificó pero no tiene un rol permitido, mostrar loading mientras redirige
-  return (
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content text-center">
-        <div className="max-w-md">
-          <span className="loading loading-ball loading-lg"></span>
-        </div>
-      </div>
-    </div>
-  );
+  // If all checks pass, render children
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

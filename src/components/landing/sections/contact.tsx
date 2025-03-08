@@ -35,30 +35,37 @@ const ContactForm = forwardRef<HTMLElement>((_props, ref) => {
     const [enviando, setEnviando] = useState(false);
     const [enviado, setEnviado] = useState(false);
 
-    // Manejo del envío del formulario
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setEnviando(true);
 
-        // Simular envío (reemplazar con lógica real de envío)
-        setTimeout(() => {
+        try {
+            const response = await fetch('/api/send_email', {  // <- Verifica esta URL
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre,
+                    email,
+                    telefono,
+                    empresa,
+                    servicio: servicesList.find(s => s.id === servicioSeleccionado)?.name || 'Otro',
+                    mensaje,
+                }),
+            });
+
+            if (response.ok) {
+                setEnviado(true);
+                setTimeout(() => setEnviado(false), 5000);
+            } else {
+                console.error('Error al enviar el correo');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
             setEnviando(false);
-            setEnviado(true);
-
-            // Resetear el formulario
-            setNombre('');
-            setEmpresa('');
-            setEmail('');
-            setTelefono('');
-            setServicioSeleccionado(null);
-            setMensaje('');
-
-            // Ocultar mensaje de éxito después de 5 segundos
-            setTimeout(() => {
-                setEnviado(false);
-            }, 5000);
-        }, 1500);
+        }
     };
+
 
     // Animaciones
     const containerVariants = {
