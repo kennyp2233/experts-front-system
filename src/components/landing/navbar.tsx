@@ -57,7 +57,7 @@ export default function Navbar({ sections }: { sections?: any[] }) {
     const path = usePathname();
     const handleBtnClick = () => {
         if (path !== '/sistema') {
-            window.location.href = 'http://200.105.251.174/experts/SignIn.aspx';
+            window.location.href = 'https://expertshcargo.com/experts/SignIn.aspx';
         }
     }
     return (
