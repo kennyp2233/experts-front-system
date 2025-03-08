@@ -2,7 +2,7 @@
 
 import React, { forwardRef, RefObject, useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import Rosa3D from '@/components/landing/Rosa3D';
+import Rosa3D from '../rosa3d';
 import { COLORS } from '@/utils/theme';
 // Importar iconos de React Icons
 import { FaHandshake, FaAward, FaLightbulb } from 'react-icons/fa';
