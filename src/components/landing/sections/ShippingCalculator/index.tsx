@@ -57,7 +57,7 @@ const ShippingCalculator: React.FC = () => {
                 'rusia': 3.80,
                 'otros': 4.00
             },
-            guideCost: 43,
+            guideCost: 100,
             securityThreshold: 100,
             securityCost: 25,
             fuelSurcharge: 0.5
@@ -71,7 +71,7 @@ const ShippingCalculator: React.FC = () => {
                 'rusia': 3.90,
                 'otros': 3.85
             },
-            guideCost: 25,
+            guideCost: 100,
             securityThreshold: 120,
             securityCost: 35,
             fuelSurcharge: 0.60
@@ -85,7 +85,7 @@ const ShippingCalculator: React.FC = () => {
                 'rusia': 3.85,
                 'otros': 3.90
             },
-            guideCost: 35,
+            guideCost: 100,
             securityThreshold: 110,
             securityCost: 30,
             fuelSurcharge: 0.55
