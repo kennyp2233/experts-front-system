@@ -1,7 +1,7 @@
 'use client';
 
 import React, { forwardRef, RefObject, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { COLORS } from '@/utils/theme';
 import {
     FaGlobeAmericas,
@@ -10,32 +10,41 @@ import {
     FaChartLine
 } from 'react-icons/fa';
 
-// Datos de regiones y destinos
+// Datos de regiones y destinos actualizados
 const regionsData = [
     {
         id: 1,
-        name: "América del Norte",
+        name: "América",
         markets: [
             {
                 country: "Estados Unidos",
-                cities: ["Miami", "Nueva York", "Los Ángeles", "Chicago"],
+                cities: ["Miami", "Los Ángeles", "Nueva York", "Chicago"],
                 stats: {
-                    percentage: 65,
-                    growth: "+8.5%",
-                    flights: 12
+                    percentage: 34,
+                    growth: "+4%",
+                    flights: 20
                 }
             },
             {
                 country: "Canadá",
                 cities: ["Toronto", "Montreal", "Vancouver"],
                 stats: {
-                    percentage: 12,
-                    growth: "+4.2%",
+                    percentage: 4,
+                    growth: "+3%",
+                    flights: 5
+                }
+            },
+            {
+                country: "Chile",
+                cities: ["Santiago"],
+                stats: {
+                    percentage: 2,
+                    growth: "+2%",
                     flights: 3
                 }
             }
         ],
-        description: "Estados Unidos es el principal destino de las flores ecuatorianas, con Miami como el principal punto de entrada. El mercado norteamericano valora especialmente las rosas de tallo largo y los bouquets mixtos.",
+        description: "Estados Unidos es el principal destino de las flores ecuatorianas (34%), seguido por Canadá (4%) y Chile (2%). Miami es el punto de entrada para la distribución en América.",
         icon: <FaPlane />
     },
     {
@@ -44,42 +53,24 @@ const regionsData = [
         markets: [
             {
                 country: "Países Bajos",
-                cities: ["Amsterdam", "Rotterdam"],
+                cities: ["Ámsterdam", "Rotterdam"],
                 stats: {
                     percentage: 20,
-                    growth: "+12.3%",
-                    flights: 5
+                    growth: "+7%",
+                    flights: 12
                 }
             },
             {
                 country: "España",
                 cities: ["Madrid", "Barcelona"],
                 stats: {
-                    percentage: 8,
-                    growth: "+5.7%",
-                    flights: 2
-                }
-            },
-            {
-                country: "Rusia",
-                cities: ["Moscú", "San Petersburgo"],
-                stats: {
-                    percentage: 7,
-                    growth: "+3.1%",
-                    flights: 2
-                }
-            },
-            {
-                country: "Italia",
-                cities: ["Roma", "Milán"],
-                stats: {
                     percentage: 5,
-                    growth: "+2.8%",
-                    flights: 2
+                    growth: "+2%",
+                    flights: 4
                 }
             }
         ],
-        description: "El mercado europeo es muy exigente en cuanto a calidad y sostenibilidad. Los Países Bajos funcionan como centro de redistribución para toda Europa. Las variedades premium y las flores de colores únicos son altamente valoradas.",
+        description: "Europa es un mercado significativo para las flores ecuatorianas, concentrando el 25% de las exportaciones. Los Países Bajos actúan como centro de redistribución y España muestra un crecimiento constante.",
         icon: <FaGlobeAmericas />
     },
     {
@@ -87,25 +78,16 @@ const regionsData = [
         name: "Asia",
         markets: [
             {
-                country: "Japón",
-                cities: ["Tokyo", "Osaka"],
+                country: "Kazajistán",
+                cities: ["Almatý", "Nursultán"],
                 stats: {
-                    percentage: 5,
-                    growth: "+15.7%",
-                    flights: 2
-                }
-            },
-            {
-                country: "China",
-                cities: ["Shanghai", "Beijing"],
-                stats: {
-                    percentage: 3,
-                    growth: "+22.3%",
-                    flights: 1
+                    percentage: 13,
+                    growth: "+5%",
+                    flights: 4
                 }
             }
         ],
-        description: "El mercado asiático está en rápido crecimiento, con Japón liderando las importaciones. El mercado asiático aprecia especialmente la calidad y las características únicas de las flores ecuatorianas, como las rosas de colores especiales.",
+        description: "En Asia, Kazajistán representa el 13% de las exportaciones de flores ecuatorianas, consolidándose como un mercado emergente.",
         icon: <FaRegStar />
     }
 ];
@@ -150,11 +132,25 @@ const GlobalDestinations = forwardRef<HTMLElement>((_props, ref) => {
             opacity: 1,
             y: 0,
             transition: {
-                delay: 0.2 + (i * 0.1),
-                duration: 0.5,
+                delay: 0.1 + (i * 0.05), // Aceleramos las transiciones
+                duration: 0.3,
                 ease: "easeOut"
             }
         })
+    };
+
+    const contentVariants = {
+        enter: { opacity: 0, y: 10 },
+        center: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.3 }
+        },
+        exit: {
+            opacity: 0,
+            y: -10,
+            transition: { duration: 0.2 }
+        }
     };
 
     const activeRegionData = regionsData.find(region => region.id === activeRegion) || regionsData[0];
@@ -198,46 +194,46 @@ const GlobalDestinations = forwardRef<HTMLElement>((_props, ref) => {
                 </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Sidebar de regiones */}
-                    <motion.div
-                        className="lg:col-span-3"
-                        variants={regionVariants}
-                    >
-                        <h3
-                            className="text-2xl font-bold mb-6"
-                            style={{ color: COLORS.TEXT.PRIMARY }}
+                    {/* Sidebar: Regiones y Estadísticas */}
+                    <div className="lg:col-span-3">
+                        <motion.div
+                            variants={regionVariants}
+                            className="mb-8"
                         >
-                            Regiones
-                        </h3>
+                            <h3
+                                className="text-2xl font-bold mb-6"
+                                style={{ color: COLORS.TEXT.PRIMARY }}
+                            >
+                                Regiones
+                            </h3>
+                            <div className="space-y-3">
+                                {regionsData.map(region => (
+                                    <button
+                                        key={region.id}
+                                        className={`w-full py-3 px-4 rounded-lg text-left flex items-center transition-all duration-300 ${activeRegion === region.id ? 'font-semibold' : ''}`}
+                                        style={{
+                                            backgroundColor: activeRegion === region.id
+                                                ? `${COLORS.PRIMARY.MAIN}30`
+                                                : 'rgba(255, 255, 255, 0.05)',
+                                            color: activeRegion === region.id
+                                                ? COLORS.PRIMARY.MAIN
+                                                : COLORS.TEXT.SECONDARY,
+                                            borderLeft: `3px solid ${activeRegion === region.id ? COLORS.PRIMARY.MAIN : 'transparent'}`
+                                        }}
+                                        onClick={() => setActiveRegion(region.id)}
+                                    >
+                                        <div className="mr-3">
+                                            {region.icon}
+                                        </div>
+                                        <span>{region.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
 
-                        <div className="space-y-3">
-                            {regionsData.map(region => (
-                                <button
-                                    key={region.id}
-                                    className={`w-full py-3 px-4 rounded-lg text-left flex items-center transition-all duration-300 ${activeRegion === region.id ? 'font-semibold' : ''
-                                        }`}
-                                    style={{
-                                        backgroundColor: activeRegion === region.id
-                                            ? `${COLORS.PRIMARY.MAIN}30`
-                                            : 'rgba(255, 255, 255, 0.05)',
-                                        color: activeRegion === region.id
-                                            ? COLORS.PRIMARY.MAIN
-                                            : COLORS.TEXT.SECONDARY,
-                                        borderLeft: `3px solid ${activeRegion === region.id ? COLORS.PRIMARY.MAIN : 'transparent'}`
-                                    }}
-                                    onClick={() => setActiveRegion(region.id)}
-                                >
-                                    <div className="mr-3">
-                                        {region.icon}
-                                    </div>
-                                    <span>{region.name}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Estadísticas globales */}
+                        {/* Estadísticas globales (sección estática) */}
                         <div
-                            className="mt-8 p-4 rounded-lg"
+                            className="p-4 rounded-lg"
                             style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                         >
                             <h4
@@ -251,7 +247,7 @@ const GlobalDestinations = forwardRef<HTMLElement>((_props, ref) => {
                                 <div>
                                     <div className="flex justify-between text-sm mb-1">
                                         <span style={{ color: COLORS.TEXT.HINT }}>Destinos totales</span>
-                                        <span style={{ color: COLORS.TEXT.PRIMARY }}>25+</span>
+                                        <span style={{ color: COLORS.TEXT.PRIMARY }}>86</span>
                                     </div>
                                     <div className="h-1 bg-gray-700 rounded-full overflow-hidden">
                                         <div
@@ -281,7 +277,7 @@ const GlobalDestinations = forwardRef<HTMLElement>((_props, ref) => {
                                 <div>
                                     <div className="flex justify-between text-sm mb-1">
                                         <span style={{ color: COLORS.TEXT.HINT }}>Crecimiento anual</span>
-                                        <span style={{ color: COLORS.TEXT.PRIMARY }}>+12.5%</span>
+                                        <span style={{ color: COLORS.TEXT.PRIMARY }}>+2%</span>
                                     </div>
                                     <div className="h-1 bg-gray-700 rounded-full overflow-hidden">
                                         <div
@@ -295,178 +291,192 @@ const GlobalDestinations = forwardRef<HTMLElement>((_props, ref) => {
                                 </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Contenido principal */}
                     <div className="lg:col-span-9">
                         {/* Descripción de la región */}
-                        <motion.div
-                            className="mb-8 p-6 rounded-xl bg-gradient-to-br from-gray-900/70 to-gray-800/70 backdrop-blur-sm"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h3
-                                className="text-2xl font-bold mb-4 flex items-center"
-                                style={{ color: COLORS.TEXT.PRIMARY }}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`region-description-${activeRegion}`}
+                                className="mb-8 p-6 rounded-xl bg-gradient-to-br from-gray-900/70 to-gray-800/70 backdrop-blur-sm"
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                variants={contentVariants}
                             >
-                                <div
-                                    className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
-                                    style={{
-                                        backgroundColor: `${COLORS.PRIMARY.MAIN}20`,
-                                        color: COLORS.PRIMARY.MAIN
-                                    }}
+                                <h3
+                                    className="text-2xl font-bold mb-4 flex items-center"
+                                    style={{ color: COLORS.TEXT.PRIMARY }}
                                 >
-                                    {activeRegionData.icon}
-                                </div>
-                                {activeRegionData.name}
-                            </h3>
-                            <p
-                                className="text-lg"
-                                style={{ color: COLORS.TEXT.SECONDARY }}
-                            >
-                                {activeRegionData.description}
-                            </p>
-                        </motion.div>
+                                    <div
+                                        className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                                        style={{
+                                            backgroundColor: `${COLORS.PRIMARY.MAIN}20`,
+                                            color: COLORS.PRIMARY.MAIN
+                                        }}
+                                    >
+                                        {activeRegionData.icon}
+                                    </div>
+                                    {activeRegionData.name}
+                                </h3>
+                                <p
+                                    className="text-lg"
+                                    style={{ color: COLORS.TEXT.SECONDARY }}
+                                >
+                                    {activeRegionData.description}
+                                </p>
+                            </motion.div>
+                        </AnimatePresence>
 
                         {/* Mercados principales */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {activeRegionData.markets.map((market, index) => (
-                                <motion.div
-                                    key={market.country}
-                                    className="rounded-xl p-6 bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-sm border border-transparent hover:border-gray-700 transition-all duration-300"
-                                    variants={marketVariants}
-                                    custom={index}
-                                >
-                                    <div className="flex justify-between items-start mb-4">
-                                        <h4
-                                            className="text-xl font-bold"
-                                            style={{ color: COLORS.TEXT.PRIMARY }}
-                                        >
-                                            {market.country}
-                                        </h4>
-                                        <div
-                                            className="text-sm font-bold px-3 py-1 rounded-full"
-                                            style={{
-                                                backgroundColor: `${COLORS.PRIMARY.MAIN}30`,
-                                                color: COLORS.PRIMARY.MAIN
-                                            }}
-                                        >
-                                            {market.stats.percentage}%
-                                        </div>
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <h5
-                                            className="text-sm font-medium mb-2"
-                                            style={{ color: COLORS.TEXT.HINT }}
-                                        >
-                                            PRINCIPALES CIUDADES
-                                        </h5>
-                                        <div className="flex flex-wrap gap-2">
-                                            {market.cities.map(city => (
-                                                <span
-                                                    key={city}
-                                                    className="text-sm py-1 px-2 rounded"
-                                                    style={{
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                                        color: COLORS.TEXT.SECONDARY
-                                                    }}
-                                                >
-                                                    {city}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <div
-                                                className="text-sm"
-                                                style={{ color: COLORS.TEXT.HINT }}
-                                            >
-                                                CRECIMIENTO
-                                            </div>
-                                            <div
-                                                className="text-lg font-bold"
-                                                style={{ color: COLORS.STATE.SUCCESS }}
-                                            >
-                                                {market.stats.growth}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div
-                                                className="text-sm"
-                                                style={{ color: COLORS.TEXT.HINT }}
-                                            >
-                                                VUELOS SEMANALES
-                                            </div>
-                                            <div
-                                                className="text-lg font-bold"
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`markets-container-${activeRegion}`}
+                                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                variants={contentVariants}
+                            >
+                                {activeRegionData.markets.map((market, index) => (
+                                    <motion.div
+                                        key={`${activeRegion}-${market.country}`}
+                                        className="rounded-xl p-6 bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-sm border border-transparent hover:border-gray-700 transition-all duration-300"
+                                        variants={marketVariants}
+                                        custom={index}
+                                    >
+                                        <div className="flex justify-between items-start mb-4">
+                                            <h4
+                                                className="text-xl font-bold"
                                                 style={{ color: COLORS.TEXT.PRIMARY }}
                                             >
-                                                {market.stats.flights}
+                                                {market.country}
+                                            </h4>
+                                            <div
+                                                className="text-sm font-bold px-3 py-1 rounded-full"
+                                                style={{
+                                                    backgroundColor: `${COLORS.PRIMARY.MAIN}30`,
+                                                    color: COLORS.PRIMARY.MAIN
+                                                }}
+                                            >
+                                                {market.stats.percentage}%
                                             </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
+
+                                        <div className="mb-4">
+                                            <h5
+                                                className="text-sm font-medium mb-2"
+                                                style={{ color: COLORS.TEXT.HINT }}
+                                            >
+                                                PRINCIPALES CIUDADES
+                                            </h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {market.cities.map(city => (
+                                                    <span
+                                                        key={`${activeRegion}-${market.country}-${city}`}
+                                                        className="text-sm py-1 px-2 rounded"
+                                                        style={{
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                                            color: COLORS.TEXT.SECONDARY
+                                                        }}
+                                                    >
+                                                        {city}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <div
+                                                    className="text-sm"
+                                                    style={{ color: COLORS.TEXT.HINT }}
+                                                >
+                                                    CRECIMIENTO
+                                                </div>
+                                                <div
+                                                    className="text-lg font-bold"
+                                                    style={{ color: COLORS.STATE.SUCCESS }}
+                                                >
+                                                    {market.stats.growth}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div
+                                                    className="text-sm"
+                                                    style={{ color: COLORS.TEXT.HINT }}
+                                                >
+                                                    VUELOS SEMANALES
+                                                </div>
+                                                <div
+                                                    className="text-lg font-bold"
+                                                    style={{ color: COLORS.TEXT.PRIMARY }}
+                                                >
+                                                    {market.stats.flights}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        </AnimatePresence>
 
                         {/* Estadísticas de entregas */}
-                        <motion.div
-                            className="mt-8 p-6 rounded-xl bg-gradient-to-r from-gray-900/70 to-gray-800/70 backdrop-blur-sm"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                            viewport={{ once: true }}
-                        >
-                            <h4
-                                className="text-xl font-bold mb-4"
-                                style={{ color: COLORS.TEXT.PRIMARY }}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`stats-${activeRegion}`}
+                                className="mt-8 p-6 rounded-xl bg-gradient-to-r from-gray-900/70 to-gray-800/70 backdrop-blur-sm"
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                variants={contentVariants}
                             >
-                                Eficiencia en Destinos {activeRegionData.name}
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="flex flex-col items-center">
-                                    <div
-                                        className="text-4xl font-bold mb-2"
-                                        style={{ color: COLORS.PRIMARY.MAIN }}
-                                    >
-                                        98%
+                                <h4
+                                    className="text-xl font-bold mb-4"
+                                    style={{ color: COLORS.TEXT.PRIMARY }}
+                                >
+                                    Eficiencia en Destinos {activeRegionData.name}
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="flex flex-col items-center">
+                                        <div
+                                            className="text-4xl font-bold mb-2"
+                                            style={{ color: COLORS.PRIMARY.MAIN }}
+                                        >
+                                            98%
+                                        </div>
+                                        <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
+                                            Entregas a tiempo
+                                        </div>
                                     </div>
-                                    <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
-                                        Entregas a tiempo
+                                    <div className="flex flex-col items-center">
+                                        <div
+                                            className="text-4xl font-bold mb-2"
+                                            style={{ color: COLORS.PRIMARY.MAIN }}
+                                        >
+                                            &lt;24h
+                                        </div>
+                                        <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
+                                            Tiempo de tránsito aeropuerto-cliente
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div
+                                            className="text-4xl font-bold mb-2"
+                                            style={{ color: COLORS.PRIMARY.MAIN }}
+                                        >
+                                            99%
+                                        </div>
+                                        <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
+                                            Satisfacción del cliente
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-col items-center">
-                                    <div
-                                        className="text-4xl font-bold mb-2"
-                                        style={{ color: COLORS.PRIMARY.MAIN }}
-                                    >
-                                        &lt;24h
-                                    </div>
-                                    <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
-                                        Tiempo de tránsito aeropuerto-cliente
-                                    </div>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <div
-                                        className="text-4xl font-bold mb-2"
-                                        style={{ color: COLORS.PRIMARY.MAIN }}
-                                    >
-                                        99%
-                                    </div>
-                                    <div className="text-center" style={{ color: COLORS.TEXT.SECONDARY }}>
-                                        Satisfacción del cliente
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </div>
-
-
             </motion.div>
         </section>
     );

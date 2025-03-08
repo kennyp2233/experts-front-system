@@ -21,7 +21,7 @@ const timelineEvents = [
         title: "Fundación de Experts Handling Cargo",
         description: "Inicio de operaciones el 4 de diciembre de 2008, estableciendo las bases para servicios logísticos especializados en el sector florícola.",
         icon: <FaRegCalendarAlt size={20} />,
-        image: "/img/timeline/foundation.jpg" // Imagen representativa
+        image: "/img/timeline/foundation.png" // Imagen representativa
     },
     {
         id: 2,
@@ -29,7 +29,7 @@ const timelineEvents = [
         title: "Expansión de Servicios",
         description: "Implementación de sistemas de monitoreo satelital y ampliación de la flota de transporte refrigerado.",
         icon: <FaChartLine size={20} />,
-        image: "/img/timeline/expansion.jpg" // Imagen representativa
+        image: "/img/timeline/expansion.png" // Imagen representativa
     },
     {
         id: 3,
@@ -37,7 +37,7 @@ const timelineEvents = [
         title: "Alianza Estratégica con FlowerCargo",
         description: "Establecimiento de alianza clave con el centro logístico de cuartos fríos en Tababela, Quito, para mejorar la capacidad de almacenamiento.",
         icon: <FaUserTie size={20} />,
-        image: "/img/timeline/partnership.jpg" // Imagen representativa
+        image: "/img/timeline/partnership.png" // Imagen representativa
     },
     {
         id: 4,
@@ -45,7 +45,7 @@ const timelineEvents = [
         title: "Modernización de Infraestructura",
         description: "Instalación de sistemas avanzados de control de temperatura y ampliación de las bases operativas para mayor cobertura.",
         icon: <FaWarehouse size={20} />,
-        image: "/img/timeline/infrastructure.jpg" // Imagen representativa
+        image: "/img/timeline/infrastructure.png" // Imagen representativa
     },
     {
         id: 5,
@@ -53,7 +53,7 @@ const timelineEvents = [
         title: "10 Años de Excelencia Logística",
         description: "Celebración de una década de operaciones exitosas, consolidando nuestra posición como expertos en logística de exportación floral.",
         icon: <FaTrophy size={20} />,
-        image: "/img/timeline/anniversary.jpg" // Imagen representativa
+        image: "/img/timeline/anniversary.png" // Imagen representativa
     },
     {
         id: 6,
@@ -61,7 +61,7 @@ const timelineEvents = [
         title: "Récord de Exportación",
         description: "Participación clave en la exportación de 28.779 toneladas de flores desde el aeropuerto de Quito durante la temporada de San Valentín, un hito histórico para el sector.",
         icon: <FaGlobeAmericas size={20} />,
-        image: "/img/timeline/record.jpg" // Imagen representativa
+        image: "/img/timeline/anniversary.png" // Imagen representativa
     }
 ];
 
@@ -69,8 +69,8 @@ const timelineEvents = [
 const statsData = [
     { label: "Años de Experiencia", value: "15+", icon: <FaRegCalendarAlt size={24} /> },
     { label: "Toneladas Exportadas", value: "30K+", icon: <FaChartLine size={24} /> },
-    { label: "Clientes Activos", value: "100+", icon: <FaUserTie size={24} /> },
-    { label: "Destinos Internacionales", value: "25+", icon: <FaGlobeAmericas size={24} /> }
+    { label: "Clientes Activos", value: "4+", icon: <FaUserTie size={24} /> },
+    { label: "Destinos Internacionales", value: "10+", icon: <FaGlobeAmericas size={24} /> }
 ];
 
 const ExperienceTimeline = forwardRef<HTMLElement>((_props, ref) => {
@@ -332,16 +332,7 @@ const ExperienceTimeline = forwardRef<HTMLElement>((_props, ref) => {
                         incorporando nuevas unidades a nuestra flota y ampliando nuestras bases
                         operativas para ofrecer un servicio cada vez más eficiente y completo.
                     </p>
-                    <button
-                        className="px-8 py-3 rounded-md font-medium text-lg transition-all duration-300 hover:-translate-y-1"
-                        style={{
-                            backgroundColor: COLORS.PRIMARY.MAIN,
-                            color: COLORS.TEXT.PRIMARY,
-                            boxShadow: '0 4px 10px rgba(167, 4, 4, 0.3)'
-                        }}
-                    >
-                        Conoce más sobre nosotros
-                    </button>
+
                 </motion.div>
             </motion.div>
         </section>
