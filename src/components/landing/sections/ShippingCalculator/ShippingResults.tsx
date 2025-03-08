@@ -61,7 +61,7 @@ const ShippingResults: React.FC<ShippingResultsProps> = ({
                     className="text-center max-w-xs"
                     style={{ color: COLORS.TEXT.SECONDARY }}
                 >
-                    Completa el formulario y presiona "Calcular" para obtener una estimación del costo de tu envío.
+                    Completa el formulario y presiona &quot;Calcular&quot; para obtener una estimación del costo de tu envío.
                 </p>
                 <div
                     className="mt-4 p-3 rounded-lg text-sm text-center"
