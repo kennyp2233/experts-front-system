@@ -13,9 +13,9 @@ import BotonLlamativo from './botonLlamativo';
 const link = [
     { href: '/sistema', label: 'Sistema' },
     { href: '/', label: 'Nuestra Empresa' },
-    { href: '/about', label: 'Servicios' },
+    { href: '/infrastructure', label: 'Infraestructura' },
+    { href: '/destinations', label: 'Destinos' },
     { href: '/contact', label: 'Contacto' },
-
 ];
 
 function classNames(...classes: string[]) {
@@ -26,7 +26,6 @@ export default function Navbar({ sections }: { sections?: any[] }) {
     const [refSelected, setRefSelected] = useState(0);
 
     const handleClick = (sectionRef: any) => {
-
         if (sectionRef.current) {
             sectionRef.current.scrollIntoView({ behavior: 'smooth' });
         }
@@ -63,14 +62,6 @@ export default function Navbar({ sections }: { sections?: any[] }) {
     }
     return (
         <>
-            {/*
-            This example requires updating your template:
-    
-            ```
-            <html class="h-full bg-gray-100">
-            <body class="h-full">
-            ```
-          */}
             <div className='fixed w-full backdrop-blur-[75px] z-20 max-md:bg-black'>
                 <Disclosure as="nav" className="bg-black text-left relative bg-offpurple/20 bg-transparent max-md:pr-2">
                     {({ open }) => (
