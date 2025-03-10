@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../../providers/authProvider";
 import { dispatchMenssage } from "@/utils/menssageDispatcher";
 import { useRouter } from "next/navigation";
@@ -38,10 +38,12 @@ export default function Login() {
         router.push('/sistema/initial/register');
     }
 
-    if (isLoggedIn) {
-        router.push('/sistema/dashboard');
-        return null;
-    }
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/sistema/dashboard');
+        }
+    }, [isLoggedIn]); // Se ejecuta solo cuando `isLoggedIn` cambia
+
 
     return (
         <div className="relative hero min-h-screen bg-base-200">
