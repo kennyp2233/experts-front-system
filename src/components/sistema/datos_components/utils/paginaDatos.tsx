@@ -77,8 +77,6 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
             }
         ];
 
-        // Añadir la ruta actual sin duplicar "Mantenimiento"
-        // Solo añadimos el nombre de la página actual si es diferente a "Mantenimiento"
         if (nombre.toLowerCase() !== "mantenimiento") {
             return [
                 ...baseRoutes,
