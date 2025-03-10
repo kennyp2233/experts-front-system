@@ -2,11 +2,13 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
 import { dispatchMenssage } from "@/utils/menssageDispatcher";
-
-import MantenimientoRoute from "./mantenimientoRoute";
-import Formulario from "../../formulario";
+import BaseRoute from "../../BaseRoute";
+import Formulario from "./formulario";
 import Tabla from "../../tabla";
-import ControlButtons from "./controllButtons"; // Asegúrate de que el nombre del archivo es correcto
+import ControlButtons from "./controllButtons";
+// Importar iconos de react-icons
+import { MdCancel, MdError, MdSettings } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
 
 interface ModificationLabelId {
     label: string;
@@ -41,28 +43,56 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
     formFields,
     modificationLabelId,
     formClassName = "",
-    formularioSegments = false,
     formClassNameOuter = "",
 }) => {
     const router = useRouter();
     const { checkToken } = useAuth();
+
+    // Estados básicos
     const [loading, setLoading] = useState(true);
     const [controlState, setControlState] = useState<ControlStateType>("default");
-
     const [data, setData] = useState<any[]>([]);
     const [tableData, setTableData] = useState<{ [key: string]: any }[]>([]);
+
+    // Estados relacionados con la selección
     const [selectedRow, setSelectedRow] = useState<number>(-1);
     const [selectedRowData, setSelectedRowData] = useState<any>({});
-    const [currentVisibleColumns, setCurrentVisibleColumns] = useState(visibleColumns);
-
-    const [formFieldsCreation, setFormFieldsCreation] = useState<any[]>([]);
-    const [formFieldsModification, setFormFieldsModification] = useState<any[]>([]);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
-    // Función para crear campos de formulario
+    // Estados para campos de formulario
+    const [formFieldsCreation, setFormFieldsCreation] = useState<any[]>([]);
+    const [formFieldsModification, setFormFieldsModification] = useState<any[]>([]);
+
+    // Crear la ruta de navegación correcta sin duplicados
+    const getBreadcrumbRoutes = useCallback(() => {
+        // Definición de rutas básicas
+        const baseRoutes = [
+            { name: "App", path: "/sistema" },
+            { name: "Dashboard", path: "/sistema/dashboard" },
+            { name: "Módulos", path: "/sistema/dashboard/modulos" },
+            {
+                name: "Mantenimiento",
+                path: "/sistema/dashboard/modulos/mantenimiento",
+                icon: <FaTools className="w-4 h-4" />
+            }
+        ];
+
+        // Añadir la ruta actual sin duplicar "Mantenimiento"
+        // Solo añadimos el nombre de la página actual si es diferente a "Mantenimiento"
+        if (nombre.toLowerCase() !== "mantenimiento") {
+            return [
+                ...baseRoutes,
+                { name: nombre, path: "", icon: icono }
+            ];
+        }
+
+        return baseRoutes;
+    }, [nombre, icono]);
+
+    // Crear campos de formulario con o sin ID de modificación
     const createFormFields = useCallback(
         (fields: any[], isModification = false): any[] => {
-            let newFields = fields.map((field) => ({
+            const newFields = fields.map(field => ({
                 ...field,
                 placeholder: `Ej: ${field.example}`,
             }));
@@ -81,7 +111,7 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         [modificationLabelId]
     );
 
-    // Actualizar datos
+    // Cargar/Actualizar datos
     const handleUpdateData = useCallback(async () => {
         try {
             const fetchedData = await fetchData();
@@ -92,26 +122,27 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         }
     }, [fetchData]);
 
-    // Manejo del envío del formulario
+    // Manejar envío del formulario según controlState
     const handleFormSubmit = useCallback(
         async (formState: any) => {
             try {
                 let response;
-                if (controlState === "crear") {
-                    response = await createData(formState);
-                } else if (controlState === "modificar") {
-                    response = await updateData(formState);
-                } else if (controlState === "eliminar") {
-                    response = await deleteData(selectedRows);
-                }
+                const actions = {
+                    "crear": () => createData(formState),
+                    "modificar": () => updateData(formState),
+                    "eliminar": () => deleteData(selectedRows)
+                };
+
+                response = await actions[controlState as keyof typeof actions]?.();
 
                 if (response?.ok) {
-                    const successMessages: { [key in ControlStateType]?: string } = {
+                    const successMessages = {
                         crear: "Registro creado con éxito",
                         modificar: "Registro modificado con éxito",
                         eliminar: "Registro eliminado con éxito",
                     };
-                    dispatchMenssage("success", successMessages[controlState] || "Operación exitosa");
+
+                    dispatchMenssage("success", successMessages[controlState as keyof typeof successMessages] || "Operación exitosa");
                     setControlState("default");
                     await handleUpdateData();
                 } else {
@@ -126,18 +157,17 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         [controlState, createData, updateData, deleteData, selectedRows, handleUpdateData, checkToken]
     );
 
-
-
     // Inicializar datos
     useEffect(() => {
         const initializeData = async () => {
             await handleUpdateData();
             setLoading(false);
         };
+
         initializeData();
     }, [handleUpdateData]);
 
-    // Configurar campos de formulario cuando los datos cambian
+    // Configurar campos de formulario
     useEffect(() => {
         if (data) {
             setFormFieldsCreation(createFormFields(formFields));
@@ -145,45 +175,33 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         }
     }, [data, createFormFields, formFields]);
 
-    // Componente para manejar estados de selección y cancelar
-    const EstadoSeleccionado: React.FC<{ mensaje: string; onCancelar: () => void }> = ({
-        mensaje,
-        onCancelar,
-    }) => (
+    // Componente para mensajes de selección
+    const EstadoSeleccionado = ({ mensaje, onCancelar }: { mensaje: string; onCancelar: () => void }) => (
         <>
             <h2 className="text-2xl self-center pt-8 max-sm:text-xl">{mensaje}</h2>
             <button className="btn btn-error w-fit self-center" onClick={onCancelar}>
-                <svg
-                    className="text-xl"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        fill="currentColor"
-                        d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 
-                        10-4.47 10-10S17.53 2 12 2m4.3 14.3a.996.996 0 0 1-1.41 0L12 
-                        13.41l-2.89 2.89a.996.996 0 1 1-1.41-1.41L10.59 
-                        12 7.7 9.11a.996.996 0 1 1 1.41-1.41L12 
-                        10.59l2.89-2.89a.996.996 0 1 1 1.41 1.41L13.41 
-                        12l2.89 2.89c.38.38.38 1.02 0 1.41z"
-                    ></path>
-                </svg>
+                <MdCancel className="text-xl" />
                 Cancelar
             </button>
         </>
     );
 
-    // Función para reiniciar el estado de control
+    // Resetear estados de control
     const resetControlState = useCallback(() => {
         setControlState("default");
         setSelectedRow(-1);
         setSelectedRows([]);
     }, []);
 
-    // Renderizado del formulario basado en el estado de control
+    // Renderizado condicional del formulario
     const renderForm = useMemo(() => {
+        const formProps = {
+            handleSubmit: handleFormSubmit,
+            handleUpdateData: handleUpdateData,
+            controlState: setControlState,
+            className: `w-fit self-center ${formClassNameOuter}`,
+        };
+
         switch (controlState) {
             case "crear":
                 return (
@@ -191,12 +209,9 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
                         <h2 className="text-xl self-start pt-8 max-sm:text-lg">Ingresar datos:</h2>
                         <Formulario
                             formType="crear"
-                            controlState={setControlState} // Tipo: (state: string) => void
                             formFields={formFieldsCreation}
                             classNameForm={`grid grid-cols-2 gap-4 max-sm:grid-cols-1 ${formClassName}`}
-                            className={`w-fit self-center ${formClassNameOuter}`}
-                            handleSubmit={handleFormSubmit}
-                            handleUpdateData={handleUpdateData}
+                            {...formProps}
                         />
                     </>
                 );
@@ -206,15 +221,12 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
                         <h2 className="text-xl self-start pt-8 max-sm:text-lg">Actualizar datos:</h2>
                         <Formulario
                             formType="modificar"
-                            controlState={setControlState} // Tipo: (state: string) => void
                             formFields={formFieldsModification}
                             classNameForm={`grid grid-cols-2 gap-4 max-sm:grid-cols-1 ${formClassName}`}
-                            className={`w-fit self-center ${formClassNameOuter}`}
                             initialValues={selectedRowData}
                             setSelectedRow={setSelectedRow}
                             selectedRow={selectedRow}
-                            handleSubmit={handleFormSubmit}
-                            handleUpdateData={handleUpdateData}
+                            {...formProps}
                         />
                     </>
                 ) : (
@@ -227,18 +239,14 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
                 return selectedRows.length > 0 ? (
                     <Formulario
                         formType="eliminar"
-                        controlState={setControlState} // Tipo: (state: string) => void
                         classNameForm=""
-                        className={`w-fit self-center ${formClassNameOuter}`}
                         selectedRows={selectedRows}
                         setSelectedRows={setSelectedRows}
-                        handleSubmit={handleFormSubmit}
-                        handleUpdateData={handleUpdateData}
                         TablaEliminados={
                             <Tabla
                                 visibleColumns={{
                                     [modificationLabelId.key]: modificationLabelId.label,
-                                    ...currentVisibleColumns,
+                                    ...visibleColumns,
                                 }}
                                 data={tableData.filter((row) =>
                                     selectedRows.includes(row[modificationLabelId.key])
@@ -250,6 +258,7 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
                                 controlState="eliminar"
                             />
                         }
+                        {...formProps}
                     />
                 ) : (
                     <EstadoSeleccionado
@@ -271,12 +280,13 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         selectedRow,
         selectedRowData,
         selectedRows,
-        currentVisibleColumns,
+        visibleColumns,
         modificationLabelId,
         tableData,
         resetControlState,
     ]);
 
+    // Mostrar skeleton loader mientras carga
     if (loading) {
         return (
             <div className="flex flex-col p-4 gap-4 w-full h-full">
@@ -288,8 +298,8 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
 
     return (
         <div className="hero-content flex-col justify-start h-full w-full max-w-screen-xl">
-            <MantenimientoRoute icon={icono} titulo={nombre} desde="sistema" />
-
+            {/* Usar BaseRoute con las rutas generadas */}
+            <BaseRoute routes={getBreadcrumbRoutes()} />
 
             <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">
                 {nombre}
@@ -323,7 +333,7 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
 
                 {tableData?.length > 0 ? (
                     <Tabla
-                        visibleColumns={currentVisibleColumns}
+                        visibleColumns={visibleColumns}
                         data={tableData}
                         selectedRow={selectedRow}
                         setSelectedRow={setSelectedRow}
