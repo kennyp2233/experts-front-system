@@ -9,13 +9,13 @@ import { usePathname } from 'next/navigation';
 import LogoExperts from './icon/experts_icon';
 import BotonLlamativo from './botonLlamativo';
 
-
+// Enlaces actualizados con IDs para navegación SEO
 const link = [
     { href: '/sistema', label: 'Sistema' },
-    { href: '/', label: 'Nuestra Empresa' },
-    { href: '/infrastructure', label: 'Infraestructura' },
-    { href: '/destinations', label: 'Destinos' },
-    { href: '/contact', label: 'Contacto' },
+    { href: '/', id: 'about', label: 'Nuestra Empresa' },
+    { href: '/infrastructure', id: 'infrastructure', label: 'Infraestructura' },
+    { href: '/destinations', id: 'destinations', label: 'Destinos' },
+    { href: '/contact', id: 'contact', label: 'Contacto' },
 ];
 
 function classNames(...classes: string[]) {
@@ -24,10 +24,17 @@ function classNames(...classes: string[]) {
 
 export default function Navbar({ sections }: { sections?: any[] }) {
     const [refSelected, setRefSelected] = useState(0);
+    const path = usePathname();
 
-    const handleClick = (sectionRef: any) => {
-        if (sectionRef.current) {
+    const handleClick = (sectionRef: any, sectionId?: string) => {
+        if (sectionRef && sectionRef.current) {
+            // Scroll hacia la sección
             sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+
+            // Actualizar la URL para SEO sin causar navegación adicional
+            if (sectionId && typeof window !== 'undefined') {
+                window.history.pushState(null, '', `/#${sectionId}`);
+            }
         }
     };
 
@@ -45,7 +52,22 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                     }
                 }
             });
+
+            // Actualizar el estado del elemento seleccionado
             setRefSelected(selected);
+
+            // Actualizar URL solo si el scroll fue iniciado por el usuario (no por programación)
+            const sectionItem = link[selected + 1]; // +1 porque el primer elemento es 'Sistema'
+            if (sectionItem && sectionItem.id && typeof window !== 'undefined') {
+                // Actualizar la URL de manera silenciosa
+                const currentPath = window.location.pathname;
+                const currentHash = window.location.hash;
+                const newHash = `#${sectionItem.id}`;
+
+                if (currentPath === '/' && currentHash !== newHash) {
+                    window.history.replaceState(null, '', newHash);
+                }
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -54,12 +76,12 @@ export default function Navbar({ sections }: { sections?: any[] }) {
         };
     }, [sections]);
 
-    const path = usePathname();
     const handleBtnClick = () => {
         if (path !== '/sistema') {
             window.location.href = 'https://expertshcargo.com/experts/SignIn.aspx';
         }
     }
+
     return (
         <>
             <div className='fixed w-full backdrop-blur-[75px] z-20 max-md:bg-black'>
@@ -79,16 +101,20 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                                 className='transition duration-300 ease-in-out md:hover:scale-110 max-md:scale-[0.8]'
                                             />
                                         </Link>
-
                                     </div>
 
                                     <div className="hidden md:flex md:justify-center md:items-center md:absolute md:inset-0">
                                         <div className="flex items-baseline space-x-4">
                                             {link.map((item) => (
                                                 (item.label !== 'Sistema' &&
-                                                    <button
+                                                    <Link
                                                         key={item.label}
-                                                        onClick={() => handleClick(sections?.[link.indexOf(item) - 1])}
+                                                        href={`${item.id ? `/#${item.id}` : item.href}`}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            const sectionIndex = link.indexOf(item) - 1;
+                                                            handleClick(sections?.[sectionIndex], item.id);
+                                                        }}
                                                         className={classNames(
                                                             refSelected === link.indexOf(item) - 1
                                                                 ? 'scale-105 font-semibold'
@@ -98,18 +124,15 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                                         style={refSelected === link.indexOf(item) - 1 ? { textShadow: '0px 0px 5px rgba(255, 255, 255, 1)' } : {}}
                                                     >
                                                         {item.label}
-                                                    </button>
+                                                    </Link>
                                                 )
                                             ))}
                                         </div>
                                     </div>
 
-
-
                                     <BotonLlamativo className='max-md:hidden' colorBase='#F42A2A' onClick={handleBtnClick}>
                                         Lanzar Sistema
                                     </BotonLlamativo>
-
 
                                     <div className="-mr-2 flex md:hidden">
                                         {/* Mobile menu button */}
@@ -123,9 +146,7 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                             )}
                                         </Disclosure.Button>
                                     </div>
-
                                 </div>
-
                             </div>
 
                             <Transition
@@ -141,15 +162,23 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                                 <Disclosure.Panel className="md:hidden">
                                     <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                         {link.map((item) => (
-
                                             <Disclosure.Button
                                                 key={item.label}
-                                                onClick={() => item.label === 'Sistema' ? handleBtnClick() : handleClick(sections?.[link.indexOf(item) - 1])}
+                                                as={Link}
+                                                href={`${item.id ? `/#${item.id}` : item.href}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    if (item.label === 'Sistema') {
+                                                        handleBtnClick();
+                                                    } else {
+                                                        const sectionIndex = link.indexOf(item) - 1;
+                                                        handleClick(sections?.[sectionIndex], item.id);
+                                                    }
+                                                }}
                                                 className={classNames(
                                                     refSelected === link.indexOf(item) - 1 ? 'bg-orange-900 text-white' : 'text-gray-300 hover:bg-orange-700 hover:text-white',
                                                     'w-full block rounded-md px-3 py-2 text-base font-medium'
                                                 )}
-
                                             >
                                                 {item.label}
                                             </Disclosure.Button>
@@ -162,9 +191,7 @@ export default function Navbar({ sections }: { sections?: any[] }) {
                 </Disclosure>
 
                 <hr className=' bottom-0 w-full h-px border-0 opacity-15 max-md:hidden' style={{ backgroundImage: 'linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 52.07%, rgba(255, 255, 255, 0) 100%)' }} />
-
             </div >
-
         </>
     )
 }

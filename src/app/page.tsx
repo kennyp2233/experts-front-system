@@ -1,37 +1,79 @@
 'use client';
-import Hero from "../components/landing/sections/hero";
-import About from "../components/landing/sections/about";
-import Contact from "../components/landing/sections/contact";
-import Navbar from "../components/landing/navbar";
-import { useRef } from "react";
-import React from "react";
-import LogisticsInfrastructure from "@/components/landing/sections/LogisticInfraestructure";
-import GlobalDestinations from "@/components/landing/sections/GlobalDestinations";
-import ExperienceTimeline from "@/components/landing/sections/ExperienceTimeline";
-import ShippingCalculator from "@/components/landing/sections/ShippingCalculator";
-export default function Page() {
-  // Crear 5 referencias para corresponder con los 5 enlaces de navegación
-  // (Sistema no necesita ref porque redirecciona a otra página)
-  const sectionRefs: React.RefObject<HTMLElement>[] = [
-    React.createRef(), // Nuestra Empresa (Hero)
-    React.createRef(), // Infraestructura (LogisticsInfrastructure)
-    React.createRef(), // Destinos (GlobalDestinations)
-    React.createRef(), // Contacto (Contact)
-  ];
+
+import { useRef, useState, useEffect } from 'react';
+import Navbar from '@/components/landing/navbar';
+import Hero from '@/components/landing/sections/hero';
+import About from '@/components/landing/sections/about';
+import LogisticsInfrastructure from '@/components/landing/sections/LogisticInfraestructure';
+import GlobalDestinations from '@/components/landing/sections/GlobalDestinations';
+import ContactForm from '@/components/landing/sections/contact';
+import ExperienceTimeline from '@/components/landing/sections/ExperienceTimeline';
+import useHashNavigation from '@/utils/hashNavigationHandler';
+
+export default function LandingPage() {
+  // Referencias para cada sección
+  const aboutRef = useRef<HTMLElement>(null);
+  const infrastructureRef = useRef<HTMLElement>(null);
+  const destinationsRef = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLElement>(null);
+
+  // Agrupar las referencias para el controlador de navegación
+  const sectionRefs = {
+    'about': aboutRef,
+    'infrastructure': infrastructureRef,
+    'destinations': destinationsRef,
+    'contact': contactRef,
+    'timeline': timelineRef
+  };
+
+  // Usar el controlador de navegación por hash
+  const { navigateToSection } = useHashNavigation(sectionRefs);
+
+  // Para la animación de "listo para navegar"
+  const [pageLoaded, setPageLoaded] = useState(false);
+
+  useEffect(() => {
+    // Marcar como cargado después de un breve retraso
+    const timer = setTimeout(() => {
+      setPageLoaded(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <>
-      <Navbar sections={sectionRefs} />
-      <div className="overflow-x-hidden">
-        {/* Asignar referencias a cada sección en el orden correcto */}
-        <Hero ref={sectionRefs[0]} />
-        <About /> {/* About puede quedarse sin ref si no está en la navegación */}
-        <LogisticsInfrastructure ref={sectionRefs[1]} />
-        <GlobalDestinations ref={sectionRefs[2]} />
-        <ExperienceTimeline /> {/* Timeline puede quedarse sin ref si no está en la navegación */}
-        <ShippingCalculator /> {/* Calculator puede quedarse sin ref si no está en la navegación */}
-        <Contact ref={sectionRefs[3]} />
-      </div>
-    </>
+    <main className="overflow-x-hidden">
+      <Navbar
+        sections={[aboutRef, infrastructureRef, destinationsRef, contactRef]}
+      />
+
+      <Hero />
+
+      {/* Sección About con ID para SEO */}
+      <section id="about">
+        <About ref={aboutRef} />
+      </section>
+
+      {/* Sección Timeline (integrada en About para SEO) */}
+      <section id="timeline">
+        <ExperienceTimeline ref={timelineRef} />
+      </section>
+
+      {/* Sección Infraestructura con ID para SEO */}
+      <section id="infrastructure">
+        <LogisticsInfrastructure ref={infrastructureRef} />
+      </section>
+
+      {/* Sección Destinos con ID para SEO */}
+      <section id="destinations">
+        <GlobalDestinations ref={destinationsRef} />
+      </section>
+
+      {/* Sección Contacto con ID para SEO */}
+      <section id="contact">
+        <ContactForm ref={contactRef} />
+      </section>
+    </main>
   );
 }
