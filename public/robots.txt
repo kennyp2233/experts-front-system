@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Allow: /#about
+Allow: /#infrastructure
+Allow: /#destinations
+Allow: /#contact
+Disallow: /api/
+Disallow: /sistema/initial/login/
+Disallow: /sistema/dashboard/
+
+# Secciones principales (URLs con fragmentos)
+# Aunque los crawlers no procesan fragmentos, esto puede ayudar a usuarios
+# que vean el robots.txt y a futuras herramientas que puedan soportar fragmentos
+Allow: /*#about
+Allow: /*#infrastructure
+Allow: /*#destinations
+Allow: /*#contact
+
+Sitemap: https://expertshcargo.com/sitemap.xml
+Host: https://expertshcargo.com
