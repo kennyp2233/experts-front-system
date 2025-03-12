@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 // src/app/page.tsx
 export const metadata = {
-  title: 'ExpertGuide | Servicios logísticos para exportación de flores de Ecuador',
+  title: 'Experts Handling Cargo | Servicios logísticos para exportación de flores de Ecuador',
   description: 'Empresa ecuatoriana especializada en logística de exportación de flores. Ofrecemos transporte refrigerado, almacenamiento en frío y coordinación de envíos internacionales.',
   keywords: 'exportación flores, logística Ecuador, transporte refrigerado, cadena de frío'
 };
