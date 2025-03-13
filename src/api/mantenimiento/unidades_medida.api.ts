@@ -2,7 +2,7 @@ import { baseUrl } from "./config.api";
 
 export async function getUnidadesMedida() {
     try {
-        const res = await fetch(baseUrl + '/unidadesMedida', {
+        const res = await fetch(baseUrl + '/catalogos/productos/unidad', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -19,7 +19,7 @@ export async function getUnidadesMedida() {
 
 export async function getUnidadMedida(id: number) {
     try {
-        const res = await fetch(baseUrl + '/unidadesMedida/' + id, {
+        const res = await fetch(baseUrl + '/catalogos/productos/unidad/' + id, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ export async function getUnidadMedida(id: number) {
 
 export async function postUnidadMedida(data: any) {
     try {
-        const res = await fetch(baseUrl + '/unidadesMedida', {
+        const res = await fetch(baseUrl + '/catalogos/productos/unidad', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ export async function postUnidadMedida(data: any) {
 
 export async function putUnidadMedida(unidadMedida: any) {
     try {
-        const res = await fetch(baseUrl + '/unidadesMedida', {
+        const res = await fetch(baseUrl + '/catalogos/productos/unidad', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ export async function putUnidadMedida(unidadMedida: any) {
 
 export async function deleteUnidadMedida(ids: number[]) {
     try {
-        const res = await fetch(baseUrl + '/unidadesMedida', {
+        const res = await fetch(baseUrl + '/catalogos/productos/unidad', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

@@ -1,7 +1,7 @@
 import { baseUrl } from "./config.api";
 
 export function getTiposEmbarqueJoinAll() {
-    return fetch(baseUrl + '/tiposEmbarque', {
+    return fetch(baseUrl + '/tipos_embarque', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -19,7 +19,7 @@ export function getTiposEmbarqueJoinAll() {
 }
 
 export function putTiposEmbarque(data: any) {
-    return fetch(baseUrl + '/tiposEmbarque', {
+    return fetch(baseUrl + '/tipos_embarque', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ export function putTiposEmbarque(data: any) {
 }
 
 export function postTiposEmbarque(data: any) {
-    return fetch(baseUrl + '/tiposEmbarque', {
+    return fetch(baseUrl + '/tipos_embarque', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ export function postTiposEmbarque(data: any) {
 }
 
 export function deleteTiposEmbarque(ids: number[]) {
-    return fetch(baseUrl + '/tiposEmbarque', {
+    return fetch(baseUrl + '/tipos_embarque', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'

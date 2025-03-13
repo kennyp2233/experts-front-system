@@ -1,5 +1,7 @@
 import { baseUrl } from "./config.api";
 
+
+
 export async function getAerolineasJoinAll() {
     try {
         const res = await fetch(baseUrl + '/aerolineas/joinAll', {
@@ -19,7 +21,7 @@ export async function getAerolineasJoinAll() {
 export async function putAerolineasJoinAll(aerolinea: any) {
     try {
         const response = await fetch(baseUrl + '/aerolineas/joinAll', {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },

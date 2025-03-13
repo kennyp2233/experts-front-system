@@ -1,7 +1,7 @@
 import { baseUrl } from '../mantenimiento/config.api';
 
 export async function login(usuario: string, pass: string, recordar: boolean) {
-    const res = await fetch(baseUrl + '/login', {
+    const res = await fetch(baseUrl + '/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -14,7 +14,7 @@ export async function login(usuario: string, pass: string, recordar: boolean) {
 }
 
 export async function register(usuario: string, email: string, pass: string, nombre: string, empresa: string, telefono: string, selectedRole: string, additionalData: any) {
-    const res = await fetch(baseUrl + '/register', {
+    const res = await fetch(baseUrl + '/auth/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ export async function register(usuario: string, email: string, pass: string, nom
 }
 
 export async function logout() {
-    const res = await fetch(baseUrl + '/logout', {
+    const res = await fetch(baseUrl + '/auth/logout', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export async function logout() {
 }
 
 export async function getMe() {
-    const res = await fetch(baseUrl + '/me', {
+    const res = await fetch(baseUrl + '/auth/me', {
         headers: {
             'Content-Type': 'application/json'
         },

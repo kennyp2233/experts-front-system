@@ -26,7 +26,7 @@ export default function EmbarcadoresPage() {
                 { label: "Ciudad", key: "ciudad", required: false, type: "text", example: "Quito" },
                 { label: "Provincia", key: "provincia", required: false, type: "text", example: "Pichincha" },
                 { label: "País", key: "pais", required: false, type: "text", example: "Ecuador" },
-                { label: "Código País", key: "codigo_pais", required: false, type: "number", example: "EC" },
+                { label: "Código País", key: "embarcador_codigo_pais", required: false, type: "number", example: "EC" },
                 { label: "Handling", key: "handling", required: false, type: "number", example: "1" },
                 { label: "Estado", key: "estado", required: false, type: "checkbox" },
             ]}
@@ -39,7 +39,7 @@ export default function EmbarcadoresPage() {
                 ciudad: "Ciudad",
                 provincia: "Provincia",
                 pais: "País",
-                codigo_pais: "Código País",
+                embarcador_codigo_pais: "Código País",
                 handling: "Handling",
                 estado: "Estado"
             }}

@@ -26,7 +26,7 @@ export default function ClientesPage() {
                 { label: "Email", key: "email", example: 'Email del cliente', type: 'text' },
                 { label: "Ciudad", key: "ciudad", example: 'Ciudad del cliente', type: 'text' },
                 { label: "Pais", key: "pais", example: 'Pais del cliente', type: 'text' },
-                { label: "Codigo Pais", key: "codigo_pais", example: 'Codigo Pais del cliente', type: 'text' },
+                { label: "Codigo Pais", key: "cliente_codigo_pais", example: 'Codigo Pais del cliente', type: 'text' },
 
                 { division: true, label: 'Manejo Fitos' },
                 { label: "Fito Sanitario Valor", key: "fitos_valor", example: '0.00', type: 'number', step: '0.01' },
@@ -55,7 +55,7 @@ export default function ClientesPage() {
                 email: "Email",
                 ciudad: "Ciudad",
                 pais: "Pais",
-                codigo_pais: "Codigo Pais",
+                cliente_codigo_pais: "Codigo Pais",
                 fitos_valor: "Fito Sanitario",
                 form_a: "Formulario A",
                 transport: "Transport",

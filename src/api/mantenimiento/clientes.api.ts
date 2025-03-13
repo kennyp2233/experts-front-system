@@ -37,7 +37,7 @@ export async function postCliente(cliente: any) {
 export async function putCliente(cliente: any) {
     try {
         const res = await fetch(baseUrl + '/clientes', {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },

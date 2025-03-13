@@ -21,14 +21,14 @@ export default function OrigenesPage() {
                 { label: "Código Origen", key: "codigo_origen", example: 'EC', type: 'text', required: true },
                 { label: "Nombre", key: "nombre", example: 'Aeropuerto de Quito', type: 'text', required: true },
                 { label: "Aeropuerto", key: "aeropuerto", example: 'Mariscal Sucre', type: 'text', required: true },
-                { label: "País", key: "paise", options: data[0], type: 'select', required: true },
+                { label: "País", key: "pais", options: data[0], type: 'select', required: true },
                 { label: "Aduana", key: "cae_aduana", options: data[1], type: 'select', required: true }
             ]}
             visibleColumns={{
                 codigo_origen: "Código Origen",
                 nombre: "Nombre",
                 aeropuerto: "Aeropuerto",
-                paise: "País",
+                pais: "País",
                 cae_aduana: "Cae Aduana"
             }}
             modificationLabelId={{ label: "ID Origen", key: "id_origen" }}

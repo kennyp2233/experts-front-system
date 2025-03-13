@@ -2,7 +2,7 @@ import { baseUrl } from "./config.api";
 
 export async function getConsignatarioJoinAll() {
     try {
-        const res = await fetch(baseUrl + '/consignatariosJoinAll', {
+        const res = await fetch(baseUrl + '/consignatarios', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -19,7 +19,7 @@ export async function getConsignatarioJoinAll() {
 
 export async function postConsignatarioJoinAll(data: any) {
     try {
-        const res = await fetch(baseUrl + '/consignatariosJoinAll', {
+        const res = await fetch(baseUrl + '/consignatarios', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export async function postConsignatarioJoinAll(data: any) {
 
 export async function updateConsignatarioJoinAll(data: any) {
     try {
-        const res = await fetch(baseUrl + '/consignatariosJoinAll', {
+        const res = await fetch(baseUrl + '/consignatarios', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ export async function updateConsignatarioJoinAll(data: any) {
 
 export async function deleteConsigantarioJoinAll(ids: any[]) {
     try {
-        const res = await fetch(baseUrl + '/consignatariosJoinAll', {
+        const res = await fetch(baseUrl + '/consignatarios', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

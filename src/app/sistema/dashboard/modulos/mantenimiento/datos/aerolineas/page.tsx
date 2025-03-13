@@ -2,7 +2,7 @@
 
 import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
 
-import { deleteAerolineasJoinAll, getAerolineasJoinAll, putAerolineasJoinAll, postAerolineaJoinAll } from "@/api/mantenimiento/aerolineas.api";
+import { deleteAerolineasJoinAll, getAerolineasJoinAll, putAerolineasJoinAll, postAerolineaJoinAll, getAerolineas } from "@/api/mantenimiento/aerolineas.api";
 import { getDestinos } from "@/api/mantenimiento/destinos.api";
 import { getOrigenes } from "@/api/mantenimiento/origenes.api";
 import { getCatalogosAerolineasModo, getCatalogosAerolineasMult } from "@/api/mantenimiento/catalogos/catalogos_aerolineas.api";
@@ -23,7 +23,7 @@ export default function AerolineasPage() {
             createData={postAerolineaJoinAll}
             updateData={putAerolineasJoinAll}
             deleteData={deleteAerolineasJoinAll}
-            catalogFetchers={[getOrigenes, getDestinos, getAerolineasJoinAll, getCatalogosAerolineasModo, getCatalogosAerolineasMult]}
+            catalogFetchers={[getOrigenes, getDestinos, getAerolineas, getCatalogosAerolineasModo, getCatalogosAerolineasMult]}
             formFieldsConfig={(data) => [
                 { division: true, label: 'General' },
                 { label: "Nombre", key: "nombre", example: 'KLM', type: 'text' },
@@ -52,15 +52,15 @@ export default function AerolineasPage() {
                 { label: "Aux2", key: "aux2_abrv", example: 'XXX', type: 'text' },
 
                 { division: true, label: 'Valores de Códigos' },
-                { label: "Costo Guía", key: "costo_guia_valor", example: '0.0000', type: 'number' },
-                { label: "Combustible", key: "combustible_valor", example: '0.0000', type: 'number' },
-                { label: "Seguridad", key: "seguridad_valor", example: '0.0000', type: 'number' },
-                { label: "Aux. Calculo", key: "aux_calculo_valor", example: '0.0000', type: 'number' },
-                { label: "Otros", key: "otros_valor", example: '0.0000', type: 'number' },
-                { label: "Aux1", key: "aux1_valor", example: '0.0000', type: 'number' },
-                { label: "Aux2", key: "aux2_valor", example: '0.0000', type: 'number' },
-                { label: "Tarifa Rate", key: "tarifa_rate", example: '0.00', type: 'number' },
-                { label: "PCA", key: "pca", example: '0.0000', type: 'number' },
+                { label: "Costo Guía", key: "costo_guia_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Combustible", key: "combustible_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Seguridad", key: "seguridad_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Aux. Calculo", key: "aux_calculo_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Otros", key: "otros_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Aux1", key: "aux1_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Aux2", key: "aux2_valor", example: '0.0000', type: 'number', step: '0.0001' },
+                { label: "Tarifa Rate", key: "tarifa_rate", example: '0.00', type: 'number', step: '0.01' },
+                { label: "PCA", key: "pca", example: '0.0000', type: 'number', step: '0.0001' },
 
                 { division: true, label: 'Multiplicador' },
                 { label: "Combustible Mult", key: "multiplicador1", type: 'select', options: data[4] },

@@ -18,7 +18,7 @@ export function getPaises() {
 }
 
 export function getPaisesJoinAcuerdos() {
-    return fetch(baseUrl + '/paises-acuerdos', {
+    return fetch(baseUrl + '/paises/join/acuerdos', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
