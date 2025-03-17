@@ -2,26 +2,30 @@
 
 import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
 
-import { getConsignatarioJoinAll, postConsignatarioJoinAll, updateConsignatarioJoinAll, deleteConsigantarioJoinAll } from "@/api/mantenimiento/consignatario.api";
-import { getClientes } from "@/api/mantenimiento/clientes.api";
-import { getEmbarcadores } from "@/api/mantenimiento/embarcadores.api";
-import { getDestinos } from "@/api/mantenimiento/destinos.api";
-import { getCatalogosTipoDocumento } from "@/api/mantenimiento/catalogos/catalogos_tipo_documento.api";
+import { consignatarioService } from "@/api/services/mantenimiento/consignatarioService";
+import { clientesService } from "@/api/services/mantenimiento/clientesService";
+import { embarcadoresService } from "@/api/services/mantenimiento/embarcadoresService";
+import { destinosService } from "@/api/services/mantenimiento/destinosSevice";
+import { catalogosTipoDocumentoService } from "@/api/services/catalogos/catalogosTipoDocService";
+import { FaTruck } from "react-icons/fa";
 
 export default function ConsignatarioPage() {
     return (
         <PaginaGenerica
             nombrePagina="Consignatario"
             iconoPagina={
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M3 4a2 2 0 0 0-2 2v11h2a3 3 0 0 0 3 3a3 3 0 0 0 3-3h6a3 3 0 0 0 3 3a3 3 0 0 0 3-3h2v-5l-3-4h-3V4m-7 2l4 4l-4 4v-3H4V9h6m7 .5h2.5l1.97 2.5H17M6 15.5A1.5 1.5 0 0 1 7.5 17A1.5 1.5 0 0 1 6 18.5A1.5 1.5 0 0 1 4.5 17A1.5 1.5 0 0 1 6 15.5m12 0a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5" />
-                </svg>
+                <FaTruck />
             }
-            fetchData={getConsignatarioJoinAll}
-            createData={postConsignatarioJoinAll}
-            updateData={updateConsignatarioJoinAll}
-            deleteData={deleteConsigantarioJoinAll}
-            catalogFetchers={[getClientes, getEmbarcadores, getDestinos, getCatalogosTipoDocumento]} // Fetch de los catálogos necesarios
+            fetchData={consignatarioService.getConsignatarios.bind(consignatarioService)}
+            createData={consignatarioService.postConsignatario.bind(consignatarioService)}
+            updateData={consignatarioService.putConsignatario.bind(consignatarioService)}
+            deleteData={consignatarioService.deleteConsignatarios.bind(consignatarioService)}
+            catalogFetchers={[
+                clientesService.getClientes.bind(clientesService),
+                embarcadoresService.getEmbarcadores.bind(embarcadoresService),
+                destinosService.getDestinos.bind(destinosService),
+                catalogosTipoDocumentoService.getCatalogosTipoDocumento.bind(catalogosTipoDocumentoService)
+            ]} // Fetch de los catálogos necesarios
             formFieldsConfig={(data) => [
                 { division: true, label: 'General' },
                 { label: "Nombre", key: "nombre_consignatario", example: 'Nombre del consignatario', type: 'text', required: true },

@@ -5,8 +5,7 @@ import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica
 import { aerolineasService } from "@/api/services/mantenimiento/aerolineasService";
 import { destinosService } from "@/api/services/mantenimiento/destinosSevice";
 import { origenesService } from "@/api/services/mantenimiento/origenesService";
-import { getCatalogosAerolineasModo, getCatalogosAerolineasMult } from "@/api/mantenimiento/catalogos/catalogos_aerolineas.api";
-
+import { catalogosAerolineaService } from "@/api/services/catalogos/catalogosAerolineaService";
 import { MdOutlineAirplanemodeActive } from "react-icons/md";
 export default function AerolineasPage() {
     return (
@@ -23,9 +22,9 @@ export default function AerolineasPage() {
                 origenesService.getOrigenes.bind(origenesService),
                 destinosService.getDestinos.bind(destinosService),
                 aerolineasService.getAll.bind(aerolineasService),
-                getCatalogosAerolineasModo,
-                getCatalogosAerolineasMult]
-            }
+                catalogosAerolineaService.getCatalogosAerolineasModo.bind(catalogosAerolineaService),
+                catalogosAerolineaService.getCatalogosAerolineasMult.bind(catalogosAerolineaService)
+            ]}
             formFieldsConfig={(data) => [
                 { division: true, label: 'General' },
                 { label: "Nombre", key: "nombre", example: 'KLM', type: 'text' },

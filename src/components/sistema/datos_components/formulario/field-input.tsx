@@ -26,16 +26,34 @@ export const FieldInput: React.FC<FieldInputProps> = ({ field, value, onChange }
                     >
                         <option value="" disabled>Seleccionar</option>
                         {field.options?.map((option: any, optIdx: any) => (
-                            <option
-                                key={optIdx}
-                                value={JSON.stringify(option)}
-                            >
-                                {Object.keys(option).includes('nombre')
-                                    ? (Object.keys(option).some(key => key.startsWith('codigo'))
-                                        ? option[Object.keys(option).find(key => key.startsWith('codigo')) || '']
-                                        : option.nombre)
-                                    : option[Object.keys(option)[0]]
-                                }
+                            <option key={optIdx} value={JSON.stringify(option)}>
+                                {(() => {
+                                    const keys = Object.keys(option);
+                                    const nombreKey = keys.find(key => key.toLowerCase().includes('nombre'));
+                                    const codigoKey = keys.find(key => key.toLowerCase().includes('codigo'));
+                                    let displayText = '';
+
+                                    if (nombreKey || codigoKey) {
+                                        if (nombreKey) {
+                                            // Se prioriza el valor del nombre
+                                            displayText = option[nombreKey];
+                                            if (codigoKey) {
+                                                displayText += ` (${option[codigoKey]})`;
+                                            }
+                                        } else if (codigoKey) {
+                                            // Si no existe nombre, se usa el código y se concatena el nombre (si se llegara a encontrar)
+                                            displayText = option[codigoKey];
+                                            if (nombreKey) {
+                                                displayText += ` (${option[nombreKey]})`;
+                                            }
+                                        }
+                                    } else {
+                                        // Si no se encuentran ni 'nombre' ni 'codigo', se usa el primer valor del objeto
+                                        displayText = option[keys[0]];
+                                    }
+
+                                    return displayText;
+                                })()}
                             </option>
                         ))}
                     </select>

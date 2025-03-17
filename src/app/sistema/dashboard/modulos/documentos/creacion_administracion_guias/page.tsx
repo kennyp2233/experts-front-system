@@ -6,10 +6,9 @@ import DocumentoBaseTable from '@/components/sistema/documentos_components/creac
 import DocumentoBaseDetail from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseDetail';
 import CrearDocumentoModal from '@/components/sistema/documentos_components/creacion_administracion_guias/CrearDocumentoModal';
 import { useDocumentosBase, DocumentoBase } from '@/hooks/useDocumentosBase';
-import { getAerolineas } from '@/api/mantenimiento/aerolineas.api';
-import { getStock } from '@/api/documentos/stock.api';
-import { getAgenciasIata } from '@/api/mantenimiento/agencias_iata.api';
-
+import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
+import { agenciaIataService } from '@/api/services/mantenimiento/agenciasIataService';
+import { catalogosStockService } from '@/api/services/catalogos/catalogosStockService';
 
 const Page: React.FC = () => {
     const {
@@ -31,17 +30,17 @@ const Page: React.FC = () => {
 
     useEffect(() => {
         // Obtener la lista de aerolíneas
-        getAerolineas().then((data) => {
+        aerolineasService.getAerolineas().then((data) => {
             setAerolineas(data);
             console.log(data);
         });
 
-        getStock().then((data) => {
+        catalogosStockService.getStockTypes().then((data) => {
             setStockTypes(data);
             console.log(data);
         });
 
-        getAgenciasIata().then((data) => {
+        agenciaIataService.getAgenciasIata().then((data) => {
             setAgenciasIata(data);
             console.log(data);
         });

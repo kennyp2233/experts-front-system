@@ -99,7 +99,7 @@ export default function Formulario({
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         field: FormField
     ) => {
-        let value = e.target.value;
+        let value: any = e.target.value;
 
         // Convertir a mayúsculas si corresponde
         if ((e.target.type === 'text' || e.target.type === 'textarea') && field.uppercase !== false) {
@@ -131,7 +131,7 @@ export default function Formulario({
 
         // Manejar checkbox
         if (e.target.type === 'checkbox') {
-            value = (e.target as HTMLInputElement).checked ? "1" : "0";
+            value = (e.target as HTMLInputElement).checked;
         }
 
         // Manejar select

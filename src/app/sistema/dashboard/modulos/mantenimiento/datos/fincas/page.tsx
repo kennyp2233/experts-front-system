@@ -1,25 +1,28 @@
 'use client';
 
 import PaginaGenerica from "@/components/sistema/datos_components/PaginaGenerica";
-import { getFincasJoinAll, deleteFincas, postFinca, putFinca } from "@/api/mantenimiento/fincas.api";
-import { getProductos } from "@/api/mantenimiento/productos.api";
-import { getCatalogosTipoDocumento } from "@/api/mantenimiento/catalogos/catalogos_tipo_documento.api";
-import { getChoferes } from "@/api/mantenimiento/choferes.api";
+import { fincasService } from "@/api/services/mantenimiento/fincasService";
+import { productosService } from "@/api/services/mantenimiento/productosService";
+import { catalogosTipoDocumentoService } from "@/api/services/catalogos/catalogosTipoDocService";
+import { choferesService } from "@/api/services/mantenimiento/choferesService";
+import { FaWarehouse } from "react-icons/fa";
 
 export default function FincasPage() {
     return (
         <PaginaGenerica
             nombrePagina="Fincas"
             iconoPagina={
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M17 16h-2v6h-3v-5H8v5H5v-6H3l7-6zM6 2l4 4H9v3H7V6H5v3H3V6H2zm12 1l5 5h-1v4h-3V9h-2v3h-1.66L14 10.87V8h-1z" />
-                </svg>
+                <FaWarehouse />
             }
-            fetchData={getFincasJoinAll}
-            createData={postFinca}
-            updateData={putFinca}
-            deleteData={deleteFincas}
-            catalogFetchers={[getProductos, getCatalogosTipoDocumento, getChoferes]} // Fetch de productos, tipo de documento y choferes
+            fetchData={fincasService.getFincasJoinAll.bind(fincasService)}
+            createData={fincasService.postFinca.bind(fincasService)}
+            updateData={fincasService.putFinca.bind(fincasService)}
+            deleteData={fincasService.deleteFincas.bind(fincasService)}
+            catalogFetchers={[
+                productosService.getProductos.bind(productosService),
+                catalogosTipoDocumentoService.getCatalogosTipoDocumento.bind(catalogosTipoDocumentoService),
+                choferesService.getChoferes.bind(choferesService)
+            ]} // Fetch de productos, tipo de documento y choferes
             formFieldsConfig={(data) => [
                 { division: true, label: 'Finca' },
                 { label: "Nombre", key: "nombre_finca", required: true, type: "text", example: "Nombre de la finca" },
