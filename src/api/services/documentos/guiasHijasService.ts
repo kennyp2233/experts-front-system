@@ -1,4 +1,4 @@
-// src/api/services/guiasHijasService.ts
+// src/api/services/documentos/guiasHijasService.ts
 import { BaseService } from '../baseService';
 import { apiClient, baseUrl } from '@/api/httpClient';
 import { PaginatedResponse } from './coordinacionesService';
@@ -48,15 +48,29 @@ class GuiasHijasService extends BaseService<GuiaHija> {
     /**
      * Verificar si existe una guía hija para una combinación finca-guía madre
      */
-    async verificarGuiaHija(idFinca: number, idGuiaMadre: number): Promise<{ exists: boolean; guiaHija?: GuiaHija }> {
-        return apiClient.get<{ exists: boolean; guiaHija?: GuiaHija }>(`${this.endpoint}/verificar/${idFinca}/${idGuiaMadre}`);
+    async verificarGuiaHija(idFinca: number, idDocumentoCoordinacion: number): Promise<{ exists: boolean; guiaHija?: GuiaHija }> {
+        return apiClient.get<{ exists: boolean; guiaHija?: GuiaHija }>(`${this.endpoint}/verificar/${idFinca}/${idDocumentoCoordinacion}`);
     }
 
     /**
      * Asignar una guía hija (crear)
      */
-    async asignarGuiaHija(data: { id_documento_coordinacion: number; id_finca: number; id_guia_madre: number }): Promise<GuiaHija> {
+    async asignarGuiaHija(data: { id_documento_coordinacion: number; id_finca: number; id_guia_madre?: number }): Promise<GuiaHija> {
         return apiClient.post<GuiaHija>(`${this.endpoint}/asignar`, data);
+    }
+
+    /**
+     * Prevalidar asignaciones masivas
+     */
+    async prevalidarAsignaciones(asignaciones: Array<{ id_documento_coordinacion: number; id_finca: number }>): Promise<any> {
+        return apiClient.post<any>(`${this.endpoint}/prevalidar`, asignaciones);
+    }
+
+    /**
+     * Confirmar asignaciones masivas
+     */
+    async confirmarAsignaciones(asignaciones: any[]): Promise<any> {
+        return apiClient.post<any>(`${this.endpoint}/confirmar`, asignaciones);
     }
 
     /**
