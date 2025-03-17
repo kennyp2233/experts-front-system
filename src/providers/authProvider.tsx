@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getMe, login, logout } from '@/api/usuarios/auth.api';
+import { authService } from '@/api/services/authService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 
 interface User {
@@ -35,14 +35,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isChecking) return false;
     setIsChecking(true);
     try {
-      const response = await getMe();
+      const response = await authService.getMe();
       if (response.ok && response.user) {
         const userData = response.user;
 
         // Asegurarse de que roles sea siempre un array
-        const userRoles = Array.isArray(userData.roles)
-          ? userData.roles
-          : (userData.rol ? [userData.rol] : []); // Soporte para compatibilidad con versiones anteriores
+        const userRoles = userData.roles; // Soporte para compatibilidad con versiones anteriores
 
         setUser({
           ...userData,
@@ -70,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleLogin = async (username: string, password: string, recordar: boolean): Promise<boolean> => {
     try {
-      const response = await login(username, password, recordar);
+      const response = await authService.login(username, password, recordar);
       if (response.ok) {
         const isValid = await checkToken(); // Verifica el token después del login
         if (isValid && user) {
@@ -91,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await authService.logout();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     } finally {

@@ -1,7 +1,8 @@
+// src/components/sistema/datos_components/pagina-generica/useCatalogosLoader.ts
 import { useState, useEffect, useCallback } from 'react';
 
 interface UseCatalogosLoaderProps {
-    catalogFetchers: (() => Promise<any>)[];
+    catalogFetchers: any[];
     formFieldsConfig: (data: any[]) => any[];
 }
 
@@ -22,6 +23,73 @@ export const useCatalogosLoader = ({
         }
     }, [error, catalogError]);
 
+    // Función para convertir cualquier tipo de fetcher a una función ejecutable segura
+    const safeFetcher = useCallback((fetcher: any): (() => Promise<any>) => {
+        // Caso 1: Es una función normal
+        if (typeof fetcher === 'function') {
+            return async () => {
+                try {
+                    return await fetcher();
+                } catch (err) {
+                    console.error("Error ejecutando función fetcher:", err);
+                    throw err;
+                }
+            };
+        }
+
+        // Caso 2: Es un método de un servicio
+        if (fetcher && typeof fetcher === 'object' && 'service' in fetcher && 'method' in fetcher) {
+            const { service, method } = fetcher;
+            return async () => {
+                if (typeof service[method] !== 'function') {
+                    throw new Error(`El método ${method} no existe en el servicio proporcionado`);
+                }
+                try {
+                    return await service[method].call(service);
+                } catch (err) {
+                    console.error(`Error ejecutando método ${method}:`, err);
+                    throw err;
+                }
+            };
+        }
+
+        // Caso 3: Es un objeto con una propiedad bind (método no enlazado)
+        if (fetcher && typeof fetcher === 'object' && fetcher.bind && typeof fetcher.bind === 'function') {
+            return async () => {
+                try {
+                    // Intentar vincular el objeto a su contexto y ejecutarlo
+                    return await fetcher();
+                } catch (err) {
+                    console.error("Error ejecutando método con bind:", err);
+                    throw err;
+                }
+            };
+        }
+
+        // Caso 4: Es un método de servicio directo que necesita su contexto
+        if (fetcher && typeof fetcher === 'object' && ('endpoint' in fetcher ||
+            (fetcher.__proto__ && 'endpoint' in fetcher.__proto__))) {
+            // Intentar obtener el método call para ejecutarlo en el contexto correcto
+            return async () => {
+                try {
+                    const boundMethod = typeof fetcher.bind === 'function'
+                        ? fetcher.bind(fetcher.__proto__)
+                        : fetcher;
+                    return await boundMethod();
+                } catch (err) {
+                    console.error("Error ejecutando método de servicio:", err);
+                    throw err;
+                }
+            };
+        }
+
+        // Si no es reconocible, devolvemos una función que lanza un error
+        console.error("Tipo de fetcher no reconocido:", fetcher);
+        return async () => {
+            throw new Error(`Tipo de fetcher no soportado: ${typeof fetcher}`);
+        };
+    }, []);
+
     // Función para cargar catálogos
     const fetchCatalogos = useCallback(async () => {
         if (catalogFetchers.length === 0) {
@@ -36,14 +104,16 @@ export const useCatalogosLoader = ({
         setLoading(true); // Asegurar que el loading se reinicia correctamente antes de cada intento
 
         try {
-            const catalogData = await Promise.all(
-                catalogFetchers.map((fetcher) =>
-                    fetcher().catch((err) => {
-                        console.error("Error en el catálogo:", err);
-                        throw new Error("Error al cargar los catálogos");
-                    })
-                )
-            );
+            // Convertir todos los fetchers a funciones seguras
+            const safeFetchers = catalogFetchers.map((fetcher, index) => {
+                const fn = safeFetcher(fetcher);
+                return fn().catch((err) => {
+                    console.error(`Error en el catálogo ${index}:`, err);
+                    throw new Error(`Error al cargar el catálogo ${index}`);
+                });
+            });
+
+            const catalogData = await Promise.all(safeFetchers);
 
             console.log("Datos de catálogos cargados:", catalogData);
 
@@ -70,53 +140,48 @@ export const useCatalogosLoader = ({
             console.log("Finalizando carga de catálogos.");
             setLoading(false); // Asegurar que loading se apaga después de cada intento, exitoso o fallido
         }
-    }, [catalogFetchers, formFieldsConfig]);
+    }, [catalogFetchers, formFieldsConfig, safeFetcher]);
 
-    // Efecto para cargar datos al montar el componente o cuando cambia retryCount
     useEffect(() => {
         let isMounted = true;
         let timeoutId: NodeJS.Timeout | null = null;
 
         const loadData = async () => {
             console.log("Iniciando carga de datos...");
-            setLoading(true); // Reiniciar loading antes de cada carga
-            setError(null); // Limpiar cualquier error previo
-            setCatalogError(null); // Limpiar error de catálogos antes de intentar cargar de nuevo
+            setLoading(true);
+            setError(null);
+            setCatalogError(null);
 
-            // Iniciar la carga de catálogos
             await fetchCatalogos();
 
-            // Si los datos se cargaron correctamente, cancelar el timeout
             if (isMounted) {
                 if (timeoutId) {
                     console.log("Datos cargados a tiempo, limpiando timeout.");
                     clearTimeout(timeoutId);
                 }
-                setLoading(false); // Desactivar loading cuando los datos se cargan correctamente
+                setLoading(false);
             }
         };
 
-        loadData(); // Ejecutar la función de carga al montar el componente
+        loadData();
 
-        // Establecer timeout para mostrar el mensaje de error si la operación tarda más de lo esperado
         timeoutId = setTimeout(() => {
             if (isMounted) {
                 console.warn("La carga de datos está tardando más de lo esperado.");
                 setError(
                     "La carga de datos está tardando más de lo esperado. Por favor, intenta nuevamente."
                 );
-                setLoading(false); // Desactivar loading si excede el tiempo esperado
+                setLoading(false);
             }
-        }, 5000); // Tiempo límite de 5 segundos
+        }, 5000);
 
         return () => {
-            isMounted = false; // Cancelar la operación si el componente se desmonta
-            if (timeoutId) {
-                clearTimeout(timeoutId); // Limpiar el timeout para evitar efectos colaterales
-            }
+            isMounted = false;
+            if (timeoutId) clearTimeout(timeoutId);
             console.log("Componente desmontado.");
         };
-    }, [retryCount, fetchCatalogos]);
+        // Se elimina fetchCatalogos del array de dependencias para evitar el re-render constante
+    }, [retryCount]);
 
     return {
         loading,

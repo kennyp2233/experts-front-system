@@ -61,7 +61,6 @@ export default function MantenimientoInit() {
         clientes: '/sistema/dashboard/modulos/mantenimiento/datos/clientes',
         agenciasIata: '/sistema/dashboard/modulos/mantenimiento/datos/agencias_iata',
         subAgencias: '/sistema/dashboard/modulos/mantenimiento/datos/subagencias',
-        regiones: '/sistema/dashboard/modulos/mantenimiento/datos/regiones',
         funcionariosAgrocalidad: '/sistema/dashboard/modulos/mantenimiento/datos/funcionarios_agrocalidad',
         bodegueros: '/sistema/dashboard/modulos/mantenimiento/datos/bodegueros',
         choferes: '/sistema/dashboard/modulos/mantenimiento/datos/choferes',
@@ -175,12 +174,6 @@ export default function MantenimientoInit() {
                     description="Gestión de sub agencias"
                 />
 
-                <BotonesMenu
-                    titulo="Regiones"
-                    icon={BiWorld}
-                    description="Gestión de regiones y zonas"
-                    onClick={() => router.push(routes.regiones)}
-                />
 
             </div>
 

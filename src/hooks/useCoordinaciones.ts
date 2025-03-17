@@ -1,6 +1,7 @@
 // src/hooks/useCoordination.ts
 import { useState, useCallback } from 'react';
-import { coordinationApi, CoordinationDocument, PaginatedResponse } from '@/api/documentos/coordinacion/coordinacion.api';
+import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
+
 interface UseCoordinationState {
     documents: CoordinationDocument[];
     loading: boolean;
@@ -27,7 +28,7 @@ export const useCoordination = () => {
     const fetchDocuments = useCallback(async (page = 1, limit = 10) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const response = await coordinationApi.getDocuments(page, limit);
+            const response = await coordinacionesService.getDocuments(page, limit);
             setState(prev => ({
                 ...prev,
                 documents: response.data,
@@ -50,7 +51,7 @@ export const useCoordination = () => {
     const createDocument = useCallback(async (document: Omit<CoordinationDocument, 'id'>) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const newDocument = await coordinationApi.createDocument(document);
+            const newDocument = await coordinacionesService.createDocument(document);
             setState(prev => ({
                 ...prev,
                 documents: [...prev.documents, newDocument],
@@ -70,7 +71,7 @@ export const useCoordination = () => {
     const updateDocument = useCallback(async (id: number, document: Partial<CoordinationDocument>) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const updatedDocument = await coordinationApi.updateDocument(id, document);
+            const updatedDocument = await coordinacionesService.updateDocument(id, document);
             setState(prev => ({
                 ...prev,
                 documents: prev.documents.map(doc =>
@@ -92,7 +93,7 @@ export const useCoordination = () => {
     const deleteDocument = useCallback(async (id: number) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            await coordinationApi.deleteDocument(id);
+            await coordinacionesService.deleteDocument(id);
             setState(prev => ({
                 ...prev,
                 documents: prev.documents.filter(doc => doc.id !== id),
