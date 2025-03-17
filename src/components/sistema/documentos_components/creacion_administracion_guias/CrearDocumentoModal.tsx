@@ -123,7 +123,7 @@ const CrearDocumentoModal: React.FC<CrearDocumentoModalProps> = ({
             }
 
             await onConfirm({
-                documento_base: { id_aerolinea: aerolinea.id_aerolinea, fecha, id_referencia: referencia.id_stock, id_stock: stock.id },
+                documento_base: { id_aerolinea: aerolinea.id_aerolinea, fecha, id_referencia: referencia.id_agencia_iata, id_stock: stock.id },
                 n_guias: cantidad,
                 secuencial_inicial,
                 prefijo

@@ -5,13 +5,11 @@ import { PlusCircleIcon } from '@heroicons/react/solid';
 import DocumentoBaseTable from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseTable';
 import DocumentoBaseDetail from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseDetail';
 import CrearDocumentoModal from '@/components/sistema/documentos_components/creacion_administracion_guias/CrearDocumentoModal';
-import useDocumentosBase, { DocumentoBase } from '@/hooks/useDocumentosBase';
-import { baseUrl } from '@/api/mantenimiento/config.api';
+import { useDocumentosBase, DocumentoBase } from '@/hooks/useDocumentosBase';
 import { getAerolineas } from '@/api/mantenimiento/aerolineas.api';
 import { getStock } from '@/api/documentos/stock.api';
 import { getAgenciasIata } from '@/api/mantenimiento/agencias_iata.api';
 
-const API_BASE_URL = baseUrl; // Reemplaza con tu URL base
 
 const Page: React.FC = () => {
     const {
@@ -24,7 +22,7 @@ const Page: React.FC = () => {
         crearDocumento,
         previewDocumento,
         updateDocumento,
-    } = useDocumentosBase(API_BASE_URL);
+    } = useDocumentosBase();
 
     const [selectedDocumento, setSelectedDocumento] = useState<DocumentoBase | null>(null);
     const [aerolineas, setAerolineas] = useState<any[]>([]);

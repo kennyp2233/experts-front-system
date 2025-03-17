@@ -1,119 +1,154 @@
-// src/hooks/useCoordination.ts
+// src/hooks/useCoordinaciones.ts
+// Este es un ejemplo de cómo podrías implementar un hook que utilice los servicios
+// No necesitas implementar esto para la página actual, ya estamos usando los servicios directamente
+
 import { useState, useCallback } from 'react';
 import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
+import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
 
-interface UseCoordinationState {
-    documents: CoordinationDocument[];
-    loading: boolean;
+interface UseCoordinacionesReturn {
+    coordinaciones: CoordinationDocument[];
+    isLoading: boolean;
     error: Error | null;
-    pagination: {
-        currentPage: number;
-        totalPages: number;
-        total: number;
-    };
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    fetchCoordinaciones: (page?: number, limit?: number) => Promise<void>;
+    createCoordinacion: (data: Omit<CoordinationDocument, 'id'>) => Promise<CoordinationDocument>;
+    updateCoordinacion: (id: number, data: Partial<CoordinationDocument>) => Promise<CoordinationDocument>;
+    deleteCoordinacion: (id: number) => Promise<void>;
+    asignarGuiaHija: (data: { id_documento_coordinacion: number; id_finca: number; id_guia_madre: number }) => Promise<GuiaHija>;
+    descargarPdfGuiaHija: (id: number) => Promise<Blob>;
 }
 
-export const useCoordination = () => {
-    const [state, setState] = useState<UseCoordinationState>({
-        documents: [],
-        loading: false,
-        error: null,
-        pagination: {
-            currentPage: 1,
-            totalPages: 1,
-            total: 0
-        }
+export const useCoordinaciones = (): UseCoordinacionesReturn => {
+    const [coordinaciones, setCoordinaciones] = useState<CoordinationDocument[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0
     });
 
-    const fetchDocuments = useCallback(async (page = 1, limit = 10) => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
+    // Obtener lista de coordinaciones
+    const fetchCoordinaciones = useCallback(async (page = 1, limit = 10) => {
+        setIsLoading(true);
+        setError(null);
         try {
             const response = await coordinacionesService.getDocuments(page, limit);
-            setState(prev => ({
-                ...prev,
-                documents: response.data,
-                pagination: {
-                    currentPage: response.currentPage,
-                    totalPages: response.totalPages,
-                    total: response.total
-                },
-                loading: false
-            }));
+            setCoordinaciones(response.data);
+            setPagination({
+                currentPage: response.currentPage,
+                totalPages: response.totalPages,
+                totalItems: response.total
+            });
         } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error as Error,
-                loading: false
-            }));
+            setError(error as Error);
+            console.error('Error al obtener coordinaciones:', error);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
-    const createDocument = useCallback(async (document: Omit<CoordinationDocument, 'id'>) => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
+    // Crear nueva coordinación
+    const createCoordinacion = useCallback(async (data: Omit<CoordinationDocument, 'id'>): Promise<CoordinationDocument> => {
+        setIsLoading(true);
         try {
-            const newDocument = await coordinacionesService.createDocument(document);
-            setState(prev => ({
-                ...prev,
-                documents: [...prev.documents, newDocument],
-                loading: false
-            }));
-            return newDocument;
+            const newCoordinacion = await coordinacionesService.createDocument(data);
+            // Opcional: actualizar el estado local si es necesario
+            setCoordinaciones(prev => [...prev, newCoordinacion]);
+            return newCoordinacion;
         } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error as Error,
-                loading: false
-            }));
+            setError(error as Error);
+            console.error('Error al crear coordinación:', error);
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
-    const updateDocument = useCallback(async (id: number, document: Partial<CoordinationDocument>) => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
+    // Actualizar coordinación existente
+    const updateCoordinacion = useCallback(async (id: number, data: Partial<CoordinationDocument>): Promise<CoordinationDocument> => {
+        setIsLoading(true);
         try {
-            const updatedDocument = await coordinacionesService.updateDocument(id, document);
-            setState(prev => ({
-                ...prev,
-                documents: prev.documents.map(doc =>
-                    doc.id === id ? updatedDocument : doc
-                ),
-                loading: false
-            }));
-            return updatedDocument;
+            const updatedCoordinacion = await coordinacionesService.updateDocument(id, data);
+            // Actualizar el estado local
+            setCoordinaciones(prev =>
+                prev.map(item => item.id === id ? updatedCoordinacion : item)
+            );
+            return updatedCoordinacion;
         } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error as Error,
-                loading: false
-            }));
+            setError(error as Error);
+            console.error('Error al actualizar coordinación:', error);
             throw error;
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
-    const deleteDocument = useCallback(async (id: number) => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
+    // Eliminar coordinación
+    const deleteCoordinacion = useCallback(async (id: number): Promise<void> => {
+        setIsLoading(true);
         try {
             await coordinacionesService.deleteDocument(id);
-            setState(prev => ({
-                ...prev,
-                documents: prev.documents.filter(doc => doc.id !== id),
-                loading: false
-            }));
+            // Actualizar el estado local
+            setCoordinaciones(prev => prev.filter(item => item.id !== id));
         } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error as Error,
-                loading: false
-            }));
+            setError(error as Error);
+            console.error('Error al eliminar coordinación:', error);
             throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    // Asignar guía hija
+    const asignarGuiaHija = useCallback(async (data: {
+        id_documento_coordinacion: number;
+        id_finca: number;
+        id_guia_madre: number
+    }): Promise<GuiaHija> => {
+        setIsLoading(true);
+        try {
+            const guiaHija = await guiasHijasService.asignarGuiaHija(data);
+            return guiaHija;
+        } catch (error) {
+            setError(error as Error);
+            console.error('Error al asignar guía hija:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    // Descargar PDF de guía hija
+    const descargarPdfGuiaHija = useCallback(async (id: number): Promise<Blob> => {
+        setIsLoading(true);
+        try {
+            const pdfBlob = await guiasHijasService.descargarPdfGuiaHija(id);
+            return pdfBlob;
+        } catch (error) {
+            setError(error as Error);
+            console.error('Error al descargar PDF:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
     return {
-        ...state,
-        fetchDocuments,
-        createDocument,
-        updateDocument,
-        deleteDocument
+        coordinaciones,
+        isLoading,
+        error,
+        currentPage: pagination.currentPage,
+        totalPages: pagination.totalPages,
+        totalItems: pagination.totalItems,
+        fetchCoordinaciones,
+        createCoordinacion,
+        updateCoordinacion,
+        deleteCoordinacion,
+        asignarGuiaHija,
+        descargarPdfGuiaHija
     };
 };
