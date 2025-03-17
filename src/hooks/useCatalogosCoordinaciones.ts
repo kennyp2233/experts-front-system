@@ -1,9 +1,11 @@
-// src/hooks/useCatalogs.ts
+// src/hooks/useCatalogosCoordinaciones.ts
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-axios.defaults.withCredentials = true;
-import { baseUrl } from '@/api/mantenimiento/config.api';
-
+import { consignatarioService } from '@/api/services/mantenimiento/consignatarioService';
+import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
+import { productosService } from '@/api/services/mantenimiento/productosService';
+import { agenciaIataService } from '@/api/services/mantenimiento/agenciasIataService';
+import { destinosService } from '@/api/services/mantenimiento/destinosSevice';
+import { origenesService } from '@/api/services/mantenimiento/origenesService';
 
 interface CatalogsState {
     consignatarios: any[];
@@ -39,25 +41,26 @@ export const useCatalogosCoordinaciones = () => {
                     destinosRes,
                     origenesRes
                 ] = await Promise.all([
-                    axios.get(`${baseUrl}/consignatariosJoinAll`),
-                    axios.get(`${baseUrl}/asignacion/aerolineas`),
-                    axios.get(`${baseUrl}/productos`),
-                    axios.get(`${baseUrl}/agencias_iata`),
-                    axios.get(`${baseUrl}/destinos`),
-                    axios.get(`${baseUrl}/origenes`)
+                    consignatarioService.getConsignatarios(),
+                    aerolineasService.getAerolineas(),
+                    productosService.getProductos(),
+                    agenciaIataService.getAgenciasIata(),
+                    destinosService.getDestinos(),
+                    origenesService.getOrigenes()
                 ]);
 
                 setState({
-                    consignatarios: consignatariosRes.data,
-                    aerolineas: aerolineasRes.data,
-                    productos: productosRes.data,
-                    agenciasIata: agenciasRes.data,
-                    destinos: destinosRes.data,
-                    origenes: origenesRes.data,
+                    consignatarios: consignatariosRes,
+                    aerolineas: aerolineasRes,
+                    productos: productosRes,
+                    agenciasIata: agenciasRes,
+                    destinos: destinosRes,
+                    origenes: origenesRes,
                     loading: false,
                     error: null
                 });
             } catch (error) {
+                console.error('Error al cargar catálogos:', error);
                 setState(prev => ({
                     ...prev,
                     loading: false,

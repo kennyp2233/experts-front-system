@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { CoordinationDocument } from '@/api/documentos/coordinacion/coordinacion.api';
+import { CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
 import { useCatalogosCoordinaciones } from '@/hooks/useCatalogosCoordinaciones';
 import { SelectField } from '@/components/common/SelectField';
-import { baseUrl } from '@/api/mantenimiento/config.api';
+import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 
 interface DocumentFormProps {
   initialData?: Partial<CoordinationDocument>;
@@ -52,11 +51,9 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
   const verificarGuiasMadres = async (aerolineaId: number) => {
     setCheckingGuides(true);
     try {
-      const response = await axios.get(`${baseUrl}/guia_madre/aerolinea`, {
-        params: { id: aerolineaId }
-      });
-      setGuiasMadres(response.data);
-      setGuiasMadresDisponibles(response.data.length > 0);
+      const response = await guiasMadreService.getGuiasMadrePorAerolinea(aerolineaId);
+      setGuiasMadres(response);
+      setGuiasMadresDisponibles(response.length > 0);
     } catch (error) {
       console.error('Error al consultar guías madres:', error);
       setGuiasMadres([]);

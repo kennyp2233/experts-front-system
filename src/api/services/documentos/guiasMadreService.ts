@@ -38,9 +38,7 @@ class GuiasMadreService extends BaseService<GuiaMadre> {
      * Obtener guías madre por ID de aerolínea
      */
     async getGuiasMadrePorAerolinea(aerolineaId: number): Promise<GuiaMadre[]> {
-        return apiClient.get<GuiaMadre[]>(`${this.endpoint}/aerolinea`, {
-            id: aerolineaId
-        });
+        return apiClient.get<GuiaMadre[]>(`${this.endpoint}/aerolinea/${aerolineaId}`);
     }
 
     /**
