@@ -1,36 +1,14 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
-import { dispatchMenssage } from "@/utils/menssageDispatcher";
 import BaseRoute from "../../BaseRoute";
-import Formulario from "./formulario";
+import Formulario from "../common/formulario";
 import Tabla from "../../tabla";
-import ControlButtons from "./controllButtons";
-// Importar iconos de react-icons
-import { MdCancel, MdError, MdSettings } from "react-icons/md";
-import { FaTools } from "react-icons/fa";
-
-interface ModificationLabelId {
-    label: string;
-    key: string;
-}
-
-interface PaginaDatosProps {
-    nombre: string;
-    icono: JSX.Element;
-    visibleColumns: { [key: string]: string };
-    fetchData: () => Promise<any>;
-    createData: (formData: any) => Promise<any>;
-    updateData: (formData: any) => Promise<any>;
-    deleteData: (selectedRows: any[]) => Promise<any>;
-    formFields: any[];
-    modificationLabelId: ModificationLabelId;
-    formClassName?: string;
-    formularioSegments?: boolean;
-    formClassNameOuter?: string;
-}
-
-type ControlStateType = "default" | "crear" | "modificar" | "eliminar";
+import ControlButtons from "../common/controllButtons";
+import { TablaSkeleton, EstadoSeleccionado } from "./components";
+import { useCrudOperations } from "./useCrudOperations";
+import { useBreadcrumbRoutes } from "./useBreadcrumbRoutes";
+import { ModificationLabelId, ControlStateType, PaginaDatosProps } from "./types";
 
 const PaginaDatos: React.FC<PaginaDatosProps> = ({
     nombre,
@@ -63,97 +41,26 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
     const [formFieldsCreation, setFormFieldsCreation] = useState<any[]>([]);
     const [formFieldsModification, setFormFieldsModification] = useState<any[]>([]);
 
-    // Crear la ruta de navegación correcta sin duplicados
-    const getBreadcrumbRoutes = useCallback(() => {
-        // Definición de rutas básicas
-        const baseRoutes = [
-            { name: "App", path: "/sistema" },
-            { name: "Dashboard", path: "/sistema/dashboard" },
-            { name: "Módulos", path: "/sistema/dashboard/modulos" },
-            {
-                name: "Mantenimiento",
-                path: "/sistema/dashboard/modulos/mantenimiento",
-                icon: <FaTools className="w-4 h-4" />
-            }
-        ];
+    // Generar rutas de breadcrumb
+    const breadcrumbRoutes = useBreadcrumbRoutes(nombre, icono);
 
-        if (nombre.toLowerCase() !== "mantenimiento") {
-            return [
-                ...baseRoutes,
-                { name: nombre, path: "", icon: icono }
-            ];
-        }
-
-        return baseRoutes;
-    }, [nombre, icono]);
-
-    // Crear campos de formulario con o sin ID de modificación
-    const createFormFields = useCallback(
-        (fields: any[], isModification = false): any[] => {
-            const newFields = fields.map(field => ({
-                ...field,
-                placeholder: `Ej: ${field.example}`,
-            }));
-
-            if (isModification) {
-                newFields.unshift({
-                    label: modificationLabelId.label,
-                    key: modificationLabelId.key,
-                    type: "number",
-                    disabled: true,
-                });
-            }
-
-            return newFields;
-        },
-        [modificationLabelId]
-    );
-
-    // Cargar/Actualizar datos
-    const handleUpdateData = useCallback(async () => {
-        try {
-            const fetchedData = await fetchData();
-            setData(fetchedData);
-            setTableData(fetchedData);
-        } catch (error) {
-            dispatchMenssage("error", "Error al obtener los datos");
-        }
-    }, [fetchData]);
-
-    // Manejar envío del formulario según controlState
-    const handleFormSubmit = useCallback(
-        async (formState: any) => {
-            try {
-                let response;
-                const actions = {
-                    "crear": () => createData(formState),
-                    "modificar": () => updateData(formState),
-                    "eliminar": () => deleteData(selectedRows)
-                };
-
-                response = await actions[controlState as keyof typeof actions]?.();
-
-                if (response?.ok) {
-                    const successMessages = {
-                        crear: "Registro creado con éxito",
-                        modificar: "Registro modificado con éxito",
-                        eliminar: "Registro eliminado con éxito",
-                    };
-
-                    dispatchMenssage("success", successMessages[controlState as keyof typeof successMessages] || "Operación exitosa");
-                    setControlState("default");
-                    await handleUpdateData();
-                } else {
-                    dispatchMenssage("error", response?.msg || "Error en la operación");
-                }
-            } catch (error) {
-                dispatchMenssage("error", "Ocurrió un error inesperado");
-            } finally {
-                checkToken();
-            }
-        },
-        [controlState, createData, updateData, deleteData, selectedRows, handleUpdateData, checkToken]
-    );
+    // Operaciones CRUD
+    const {
+        handleFormSubmit,
+        handleUpdateData,
+        createFormFields
+    } = useCrudOperations({
+        controlState,
+        createData,
+        updateData,
+        deleteData,
+        selectedRows,
+        fetchData,
+        setData,
+        setTableData,
+        setControlState,
+        checkToken
+    });
 
     // Inicializar datos
     useEffect(() => {
@@ -169,20 +76,9 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
     useEffect(() => {
         if (data) {
             setFormFieldsCreation(createFormFields(formFields));
-            setFormFieldsModification(createFormFields(formFields, true));
+            setFormFieldsModification(createFormFields(formFields, true, modificationLabelId));
         }
-    }, [data, createFormFields, formFields]);
-
-    // Componente para mensajes de selección
-    const EstadoSeleccionado = ({ mensaje, onCancelar }: { mensaje: string; onCancelar: () => void }) => (
-        <>
-            <h2 className="text-2xl self-center pt-8 max-sm:text-xl">{mensaje}</h2>
-            <button className="btn btn-error w-fit self-center" onClick={onCancelar}>
-                <MdCancel className="text-xl" />
-                Cancelar
-            </button>
-        </>
-    );
+    }, [data, createFormFields, formFields, modificationLabelId]);
 
     // Resetear estados de control
     const resetControlState = useCallback(() => {
@@ -191,11 +87,11 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
         setSelectedRows([]);
     }, []);
 
-    // Renderizado condicional del formulario
+    // Renderizado del formulario según el estado de control
     const renderForm = useMemo(() => {
         const formProps = {
             handleSubmit: handleFormSubmit,
-            handleUpdateData: handleUpdateData,
+            handleUpdateData,
             controlState: setControlState,
             className: `w-fit self-center ${formClassNameOuter}`,
         };
@@ -286,25 +182,22 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
 
     // Mostrar skeleton loader mientras carga
     if (loading) {
-        return (
-            <div className="flex flex-col p-4 gap-4 w-full h-full">
-                <div className="skeleton w-full h-1/3"></div>
-                <div className="skeleton w-full h-full"></div>
-            </div>
-        );
+        return <TablaSkeleton />;
     }
 
     return (
         <div className="hero-content flex-col justify-start h-full w-full max-w-screen-xl">
-            {/* Usar BaseRoute con las rutas generadas */}
-            <BaseRoute routes={getBreadcrumbRoutes()} />
+            {/* Breadcrumb */}
+            <BaseRoute routes={breadcrumbRoutes} />
 
+            {/* Título de la página */}
             <h1 className="text-3xl font-bold self-start pt-8 max-sm:text-xl flex gap-2">
                 {nombre}
                 <span className="my-auto">{icono}</span>
             </h1>
 
             <div className="flex flex-col w-full gap-3">
+                {/* Controles de operaciones (Crear, Modificar, Eliminar) */}
                 {controlState === "default" && (
                     <ControlButtons
                         handleCrear={() => {
@@ -325,8 +218,10 @@ const PaginaDatos: React.FC<PaginaDatosProps> = ({
                     />
                 )}
 
+                {/* Formulario condicional según controlState */}
                 {renderForm}
 
+                {/* Tabla de datos */}
                 <h2 className="text-xl self-start pt-8 max-sm:text-lg">{`${nombre}:`}</h2>
 
                 {tableData?.length > 0 ? (
