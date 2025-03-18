@@ -3,7 +3,7 @@ import { useAuth } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
 import BaseRoute from "../../BaseRoute";
 import Formulario from "../common/formulario";
-import Tabla from "../../tabla";
+import Tabla from "../tabla";
 import ControlButtons from "../common/controllButtons";
 import { TablaSkeleton, EstadoSeleccionado } from "./components";
 import { useCrudOperations } from "./useCrudOperations";

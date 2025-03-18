@@ -1,6 +1,6 @@
 'use client';
-import ProtectedRoute from "@/components/sistema/protectedRoute";
-import ReturnButton from "@/components/sistema/returnButton";
+import ProtectedRoute from "@/components/sistema/common/protectedRoute";
+import ReturnButton from "@/components/sistema/common/returnButton";
 import { useRouter } from "next/navigation";
 export default function RootLayout({
     children,

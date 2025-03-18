@@ -1,5 +1,5 @@
 'use client';
-import ReturnButton from "@/components/sistema/returnButton";
+import ReturnButton from "@/components/sistema/common/returnButton";
 import { useRouter } from "next/navigation";
 export default function Layout({
     children,

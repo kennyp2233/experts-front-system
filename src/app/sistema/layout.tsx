@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { Poppins } from "next/font/google";
 import "./styles/global.css";
-import NavBar from '@/components/sistema/navbar';
+import NavBar from '@/components/sistema/common/navbar';
 import { AuthProvider } from "../../providers/authProvider";
 import EventAlerts from "../../utils/eventAlerts";
+import "./globals.css";
 
 const inter = Poppins({
   subsets: ["latin"],

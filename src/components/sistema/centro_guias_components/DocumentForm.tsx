@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
 import { useCatalogosCoordinaciones } from '@/hooks/useCatalogosCoordinaciones';
-import { SelectField } from '@/components/common/SelectField';
+import { SelectField } from '@/components/sistema/common/SelectField';
 import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 
 interface DocumentFormProps {

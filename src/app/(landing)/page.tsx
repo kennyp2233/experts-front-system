@@ -1,8 +1,8 @@
 'use client';
-import Hero from "../components/landing/sections/hero";
-import About from "../components/landing/sections/about";
-import Contact from "../components/landing/sections/contact";
-import Navbar from "../components/landing/navbar";
+import Hero from "../../components/landing/sections/hero";
+import About from "../../components/landing/sections/about";
+import Contact from "../../components/landing/sections/contact";
+import Navbar from "../../components/landing/navbar";
 import { useRef } from "react";
 import React from "react";
 import LogisticsInfrastructure from "@/components/landing/sections/LogisticInfraestructure";
