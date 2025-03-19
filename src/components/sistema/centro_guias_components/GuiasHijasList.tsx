@@ -1,3 +1,4 @@
+// src/components/sistema/centro_guias_components/GuiasHijasList.tsx
 import React, { useState, useEffect } from 'react';
 import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
 import { fincasService } from '@/api/services/mantenimiento/fincasService';
@@ -40,7 +41,7 @@ export default function GuiasHijasList({
                 setFincas(fincasData);
 
                 // Cargar guías hijas
-                let guiasData;
+                let guiasData: GuiaHija[] = [];
                 if (fincaFilter) {
                     // Si hay filtro de finca, usamos endpoint específico
                     guiasData = await guiasHijasService.getGuiasHijasByFinca(fincaFilter);
@@ -54,8 +55,22 @@ export default function GuiasHijasList({
                 } else {
                     // Si no hay filtros, usamos endpoint paginado
                     const response = await guiasHijasService.getGuiasHijas(currentPage, 10);
+                    guiasData = response.data;
                     setGuiasHijas(response.data);
                     setTotalPages(response.totalPages);
+                }
+
+                // Enriquecer datos de guías con nombres de fincas
+                if (guiasData?.length > 0 && fincasData.length > 0) {
+                    const guiasEnriquecidas = guiasData.map((guia: GuiaHija) => {
+                        const finca = fincasData.find(f => f.id_finca === guia.id_finca);
+                        return {
+                            ...guia,
+                            fincaNombre: finca?.nombre || 'Desconocida',
+                            cooLabel: `COO-${guia.id_documento_coordinacion.toString().padStart(7, '0')}`
+                        };
+                    });
+                    setGuiasHijas(guiasEnriquecidas);
                 }
             } catch (error) {
                 console.error('Error al cargar guías hijas:', error);
@@ -67,22 +82,6 @@ export default function GuiasHijasList({
 
         fetchData();
     }, [currentPage, fincaFilter, guiaMadreFilter, filtroFinca, filtroGuiaMadre]);
-
-    // Enriquecer datos de guías con nombres de fincas
-    useEffect(() => {
-        if (guiasHijas.length > 0 && fincas.length > 0) {
-            const guiasEnriquecidas = guiasHijas.map(guia => {
-                const finca = fincas.find(f => f.id_finca === guia.id_finca);
-                return {
-                    ...guia,
-                    fincaNombre: finca?.nombre || 'Desconocida',
-                    cooLabel: `COO-${guia.id_documento_coordinacion.toString().padStart(7, '0')}`
-                };
-            });
-
-            setGuiasHijas(guiasEnriquecidas);
-        }
-    }, [fincas]);
 
     // Manejar descarga de PDF
     const handleDownloadPdf = async (guiaId: number) => {
@@ -119,6 +118,97 @@ export default function GuiasHijasList({
         setFincaFilter(undefined);
         setGuiaMadreFilter(undefined);
         setCurrentPage(1);
+    };
+
+    // Renderizar tabla de guías hijas
+    const renderGuiasTable = () => {
+        if (loading) {
+            return (
+                <div className="flex justify-center py-10">
+                    <span className="loading loading-spinner loading-lg"></span>
+                </div>
+            );
+        }
+
+        if (guiasHijas.length === 0) {
+            return (
+                <div className="alert alert-info">
+                    <AppIcons.Info className="w-6 h-6" />
+                    <span>No se encontraron guías hijas{fincaFilter ? ' para esta finca' : ''}{guiaMadreFilter ? ' para esta guía madre' : ''}.</span>
+                </div>
+            );
+        }
+
+        return (
+            <>
+                <div className="overflow-x-auto">
+                    <table className="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Finca</th>
+                                <th>Documento COO</th>
+                                <th>Fecha</th>
+                                <th className="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {guiasHijas.map((guia) => (
+                                <tr key={guia.id}>
+                                    <td>
+                                        <span className="font-mono">
+                                            {guia.anio}-{guia.secuencial.toString().padStart(4, '0')}
+                                        </span>
+                                    </td>
+                                    <td>{guia.fincaNombre}</td>
+                                    <td>{guia.cooLabel}</td>
+                                    <td>{new Date(guia.createdAt).toLocaleDateString()}</td>
+                                    <td className="text-center">
+                                        <button
+                                            className="btn btn-sm btn-primary"
+                                            onClick={() => handleDownloadPdf(guia.id)}
+                                            disabled={generating && selectedGuia === guia.id}
+                                        >
+                                            {generating && selectedGuia === guia.id ? (
+                                                <span className="loading loading-spinner loading-xs"></span>
+                                            ) : (
+                                                <AppIcons.Print className="w-4 h-4 mr-1" />
+                                            )}
+                                            PDF
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Paginación (solo si no hay filtros) */}
+                {!fincaFilter && !guiaMadreFilter && totalPages > 1 && (
+                    <div className="flex justify-center mt-4">
+                        <div className="join">
+                            <button
+                                className="join-item btn"
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                            >
+                                «
+                            </button>
+                            <button className="join-item btn">
+                                Página {currentPage} de {totalPages}
+                            </button>
+                            <button
+                                className="join-item btn"
+                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                            >
+                                »
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </>
+        );
     };
 
     return (
@@ -162,85 +252,7 @@ export default function GuiasHijasList({
                     </div>
                 )}
 
-                {loading ? (
-                    <div className="flex justify-center py-10">
-                        <span className="loading loading-spinner loading-lg"></span>
-                    </div>
-                ) : guiasHijas.length === 0 ? (
-                    <div className="alert alert-info">
-                        <AppIcons.Info className="w-6 h-6" />
-                        <span>No se encontraron guías hijas{fincaFilter ? ' para esta finca' : ''}{guiaMadreFilter ? ' para esta guía madre' : ''}.</span>
-                    </div>
-                ) : (
-                    <>
-                        <div className="overflow-x-auto">
-                            <table className="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th>Número</th>
-                                        <th>Finca</th>
-                                        <th>Documento COO</th>
-                                        <th>Fecha</th>
-                                        <th className="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {guiasHijas.map((guia) => (
-                                        <tr key={guia.id}>
-                                            <td>
-                                                <span className="font-mono">
-                                                    {guia.anio}-{guia.secuencial.toString().padStart(4, '0')}
-                                                </span>
-                                            </td>
-                                            <td>{guia.fincaNombre}</td>
-                                            <td>{guia.cooLabel}</td>
-                                            <td>{new Date(guia.createdAt).toLocaleDateString()}</td>
-                                            <td className="text-center">
-                                                <button
-                                                    className="btn btn-sm btn-primary"
-                                                    onClick={() => handleDownloadPdf(guia.id)}
-                                                    disabled={generating && selectedGuia === guia.id}
-                                                >
-                                                    {generating && selectedGuia === guia.id ? (
-                                                        <span className="loading loading-spinner loading-xs"></span>
-                                                    ) : (
-                                                        <AppIcons.Print className="w-4 h-4 mr-1" />
-                                                    )}
-                                                    PDF
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Paginación (solo si no hay filtros) */}
-                        {!fincaFilter && !guiaMadreFilter && totalPages > 1 && (
-                            <div className="flex justify-center mt-4">
-                                <div className="join">
-                                    <button
-                                        className="join-item btn"
-                                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                        disabled={currentPage === 1}
-                                    >
-                                        «
-                                    </button>
-                                    <button className="join-item btn">
-                                        Página {currentPage} de {totalPages}
-                                    </button>
-                                    <button
-                                        className="join-item btn"
-                                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        »
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </>
-                )}
+                {renderGuiasTable()}
             </div>
         </div>
     );
