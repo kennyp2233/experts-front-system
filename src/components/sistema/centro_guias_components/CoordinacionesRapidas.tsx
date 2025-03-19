@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { coordinacionesService } from "@/api/services/documentos/coordinacionesService";
 import { fincasService } from "@/api/services/mantenimiento/fincasService";
+import { productosService } from "@/api/services/mantenimiento/productosService";
 import { guiasHijasService } from "@/api/services/documentos/guiasHijasService";
 import { dispatchMenssage } from "@/utils/menssageDispatcher";
+import { AppIcons } from "@/utils/icons";
 
 interface CoordinacionData {
   id: number;
@@ -15,9 +17,19 @@ export default function CoordinacionesRapidas() {
   const [selectedFincas, setSelectedFincas] = useState<number[]>([]);
   const [coordinaciones, setCoordinaciones] = useState<CoordinacionData[]>([]);
   const [fincas, setFincas] = useState<any[]>([]);
+  const [productos, setProductos] = useState<any[]>([]);
   const [filteredFincas, setFilteredFincas] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [procesando, setProcesando] = useState<boolean>(false);
+
+  // Datos de producto y cantidades
+  const [selectedProducto, setSelectedProducto] = useState<string>("");
+  const [cantidades, setCantidades] = useState({
+    fulls: 0,
+    pcs: 0,
+    kgs: 0,
+    stems: 0
+  });
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -37,6 +49,10 @@ export default function CoordinacionesRapidas() {
         const fincasData = await fincasService.getFincas();
         setFincas(fincasData);
         setFilteredFincas(fincasData);
+
+        // Cargar productos
+        const productosData = await productosService.getProductos();
+        setProductos(productosData);
       } catch (error) {
         console.error("Error al cargar datos:", error);
         dispatchMenssage("error", "Error al cargar datos iniciales");
@@ -74,6 +90,15 @@ export default function CoordinacionesRapidas() {
     });
   };
 
+  // Manejar cambios en campos de cantidades
+  const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCantidades(prev => ({
+      ...prev,
+      [name]: value === '' ? 0 : parseFloat(value)
+    }));
+  };
+
   // Realizar asignación masiva
   const handleAsignacionMasiva = async () => {
     if (!cooSeleccionado || selectedFincas.length === 0) {
@@ -84,11 +109,17 @@ export default function CoordinacionesRapidas() {
     setProcesando(true);
     try {
       const cooId = parseInt(cooSeleccionado);
+      const productoId = selectedProducto ? parseInt(selectedProducto) : undefined;
 
       // Preparar datos para prevalidación
       const asignaciones = selectedFincas.map((fincaId) => ({
         id_documento_coordinacion: cooId,
-        id_finca: fincaId
+        id_finca: fincaId,
+        id_producto: productoId,
+        fulls: cantidades.fulls || undefined,
+        pcs: cantidades.pcs || undefined,
+        kgs: cantidades.kgs || undefined,
+        stems: cantidades.stems || undefined
       }));
 
       // Prevalidar asignaciones
@@ -114,6 +145,8 @@ export default function CoordinacionesRapidas() {
         setCooSeleccionado("");
         setSelectedFincas([]);
         setFincaSearchTerm("");
+        setSelectedProducto("");
+        setCantidades({ fulls: 0, pcs: 0, kgs: 0, stems: 0 });
       } else {
         dispatchMenssage("info", "No hay nuevas asignaciones para procesar");
       }
@@ -157,6 +190,91 @@ export default function CoordinacionesRapidas() {
 
             {cooSeleccionado && (
               <>
+                {/* Sección de Producto y Cantidades */}
+                <div className="card bg-base-200 p-4 mb-4">
+                  <h3 className="font-bold mb-4">Información del Producto</h3>
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="label-text font-medium">Producto (opcional)</span>
+                    </label>
+                    <select
+                      className="select select-bordered w-full"
+                      value={selectedProducto}
+                      onChange={(e) => setSelectedProducto(e.target.value)}
+                    >
+                      <option value="">Usar producto del documento COO</option>
+                      {productos.map((producto) => (
+                        <option key={producto.id_producto} value={producto.id_producto}>
+                          {producto.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Fulls</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="fulls"
+                        className="input input-bordered"
+                        value={cantidades.fulls === 0 ? '' : cantidades.fulls}
+                        onChange={handleCantidadChange}
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Piezas (Pcs)</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="pcs"
+                        className="input input-bordered"
+                        value={cantidades.pcs === 0 ? '' : cantidades.pcs}
+                        onChange={handleCantidadChange}
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Peso (Kgs)</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="kgs"
+                        className="input input-bordered"
+                        value={cantidades.kgs === 0 ? '' : cantidades.kgs}
+                        onChange={handleCantidadChange}
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Stems</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="stems"
+                        className="input input-bordered"
+                        value={cantidades.stems === 0 ? '' : cantidades.stems}
+                        onChange={handleCantidadChange}
+                        min="0"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="form-control mt-4">
                   <label className="label">
                     <span className="label-text font-medium">Buscar Fincas</span>
@@ -187,8 +305,8 @@ export default function CoordinacionesRapidas() {
                           <div
                             key={finca.id_finca}
                             className={`border rounded p-2 cursor-pointer hover:bg-base-200 transition-colors ${selectedFincas.includes(finca.id_finca)
-                                ? "bg-primary/10 border-primary"
-                                : ""
+                              ? "bg-primary/10 border-primary"
+                              : ""
                               }`}
                             onClick={() => handleFincaSelect(finca.id_finca)}
                           >

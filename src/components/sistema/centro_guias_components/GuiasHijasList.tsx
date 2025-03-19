@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
 import { fincasService } from '@/api/services/mantenimiento/fincasService';
+import { productosService } from '@/api/services/mantenimiento/productosService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
 
@@ -14,6 +15,7 @@ interface GuiasHijasListProps {
 interface GuiaHijaExtended extends GuiaHija {
     fincaNombre?: string;
     cooLabel?: string;
+    productoNombre?: string;
 }
 
 export default function GuiasHijasList({
@@ -23,6 +25,7 @@ export default function GuiasHijasList({
 }: GuiasHijasListProps) {
     const [guiasHijas, setGuiasHijas] = useState<GuiaHijaExtended[]>([]);
     const [fincas, setFincas] = useState<any[]>([]);
+    const [productos, setProductos] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
@@ -30,15 +33,22 @@ export default function GuiasHijasList({
     const [guiaMadreFilter, setGuiaMadreFilter] = useState<number | undefined>(filtroGuiaMadre);
     const [generating, setGenerating] = useState<boolean>(false);
     const [selectedGuia, setSelectedGuia] = useState<number | null>(null);
+    const [showCantidades, setShowCantidades] = useState<boolean>(false);
+    const [selectedGuiaCantidades, setSelectedGuiaCantidades] = useState<GuiaHijaExtended | null>(null);
 
     // Cargar datos iniciales y cada vez que cambia la página o filtros
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Cargar datos de fincas para mostrar nombres
-                const fincasData = await fincasService.getFincas();
+                // Cargar datos de fincas y productos para mostrar nombres
+                const [fincasData, productosData] = await Promise.all([
+                    fincasService.getFincas(),
+                    productosService.getProductos()
+                ]);
+
                 setFincas(fincasData);
+                setProductos(productosData);
 
                 // Cargar guías hijas
                 let guiasData: GuiaHija[] = [];
@@ -60,13 +70,15 @@ export default function GuiasHijasList({
                     setTotalPages(response.totalPages);
                 }
 
-                // Enriquecer datos de guías con nombres de fincas
-                if (guiasData?.length > 0 && fincasData.length > 0) {
+                // Enriquecer datos de guías con nombres de fincas y productos
+                if (guiasData?.length > 0) {
                     const guiasEnriquecidas = guiasData.map((guia: GuiaHija) => {
                         const finca = fincasData.find(f => f.id_finca === guia.id_finca);
+                        const producto = productosData.find(p => p.id_producto === guia.id_producto);
                         return {
                             ...guia,
                             fincaNombre: finca?.nombre || 'Desconocida',
+                            productoNombre: producto?.nombre || 'No especificado',
                             cooLabel: `COO-${guia.id_documento_coordinacion.toString().padStart(7, '0')}`
                         };
                     });
@@ -113,6 +125,12 @@ export default function GuiasHijasList({
         }
     };
 
+    // Mostrar modal de cantidades
+    const handleShowCantidades = (guia: GuiaHijaExtended) => {
+        setSelectedGuiaCantidades(guia);
+        setShowCantidades(true);
+    };
+
     // Limpiar filtros
     const handleClearFilters = () => {
         setFincaFilter(undefined);
@@ -147,6 +165,7 @@ export default function GuiasHijasList({
                             <tr>
                                 <th>Número</th>
                                 <th>Finca</th>
+                                <th>Producto</th>
                                 <th>Documento COO</th>
                                 <th>Fecha</th>
                                 <th className="text-center">Acciones</th>
@@ -161,21 +180,32 @@ export default function GuiasHijasList({
                                         </span>
                                     </td>
                                     <td>{guia.fincaNombre}</td>
+                                    <td>{guia.productoNombre}</td>
                                     <td>{guia.cooLabel}</td>
                                     <td>{new Date(guia.createdAt).toLocaleDateString()}</td>
                                     <td className="text-center">
-                                        <button
-                                            className="btn btn-sm btn-primary"
-                                            onClick={() => handleDownloadPdf(guia.id)}
-                                            disabled={generating && selectedGuia === guia.id}
-                                        >
-                                            {generating && selectedGuia === guia.id ? (
-                                                <span className="loading loading-spinner loading-xs"></span>
-                                            ) : (
-                                                <AppIcons.Print className="w-4 h-4 mr-1" />
-                                            )}
-                                            PDF
-                                        </button>
+                                        <div className="flex justify-center gap-2">
+                                            <button
+                                                className="btn btn-sm btn-info"
+                                                onClick={() => handleShowCantidades(guia)}
+                                                disabled={!guia.fulls && !guia.pcs && !guia.kgs && !guia.stems}
+                                            >
+                                                <AppIcons.Search className="w-4 h-4" />
+                                                Detalles
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-primary"
+                                                onClick={() => handleDownloadPdf(guia.id)}
+                                                disabled={generating && selectedGuia === guia.id}
+                                            >
+                                                {generating && selectedGuia === guia.id ? (
+                                                    <span className="loading loading-spinner loading-xs"></span>
+                                                ) : (
+                                                    <AppIcons.Print className="w-4 h-4 mr-1" />
+                                                )}
+                                                PDF
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -254,6 +284,87 @@ export default function GuiasHijasList({
 
                 {renderGuiasTable()}
             </div>
+
+            {/* Modal para mostrar cantidades */}
+            {showCantidades && selectedGuiaCantidades && (
+                <dialog className="modal modal-open">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Detalles de la Guía Hija</h3>
+
+                        <div className="py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span className="font-semibold block">Número:</span>
+                                    <span>{selectedGuiaCantidades.anio}-{selectedGuiaCantidades.secuencial}</span>
+                                </div>
+                                <div>
+                                    <span className="font-semibold block">Finca:</span>
+                                    <span>{selectedGuiaCantidades.fincaNombre}</span>
+                                </div>
+                                <div>
+                                    <span className="font-semibold block">Producto:</span>
+                                    <span>{selectedGuiaCantidades.productoNombre}</span>
+                                </div>
+                                <div>
+                                    <span className="font-semibold block">Documento COO:</span>
+                                    <span>{selectedGuiaCantidades.cooLabel}</span>
+                                </div>
+                            </div>
+
+                            <div className="divider">Cantidades</div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                {selectedGuiaCantidades.fulls !== undefined && selectedGuiaCantidades.fulls > 0 && (
+                                    <div>
+                                        <span className="font-semibold block">Fulls:</span>
+                                        <span>{selectedGuiaCantidades.fulls}</span>
+                                    </div>
+                                )}
+                                {selectedGuiaCantidades.pcs !== undefined && selectedGuiaCantidades.pcs > 0 && (
+                                    <div>
+                                        <span className="font-semibold block">Piezas (Pcs):</span>
+                                        <span>{selectedGuiaCantidades.pcs}</span>
+                                    </div>
+                                )}
+                                {selectedGuiaCantidades.kgs !== undefined && selectedGuiaCantidades.kgs > 0 && (
+                                    <div>
+                                        <span className="font-semibold block">Peso (Kgs):</span>
+                                        <span>{selectedGuiaCantidades.kgs}</span>
+                                    </div>
+                                )}
+                                {selectedGuiaCantidades.stems !== undefined && selectedGuiaCantidades.stems > 0 && (
+                                    <div>
+                                        <span className="font-semibold block">Stems:</span>
+                                        <span>{selectedGuiaCantidades.stems}</span>
+                                    </div>
+                                )}
+                                {!selectedGuiaCantidades.fulls && !selectedGuiaCantidades.pcs &&
+                                    !selectedGuiaCantidades.kgs && !selectedGuiaCantidades.stems && (
+                                        <div className="col-span-2 text-center py-2">
+                                            <span className="text-sm opacity-70">No hay información de cantidades registrada</span>
+                                        </div>
+                                    )}
+                            </div>
+                        </div>
+
+                        <div className="modal-action">
+                            <button
+                                className="btn"
+                                onClick={() => {
+                                    setShowCantidades(false);
+                                    setSelectedGuiaCantidades(null);
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop" onClick={() => {
+                        setShowCantidades(false);
+                        setSelectedGuiaCantidades(null);
+                    }}></div>
+                </dialog>
+            )}
         </div>
     );
 }

@@ -9,14 +9,32 @@ export interface GuiaHija {
     id_documento_coordinacion: number;
     id_guia_madre: number;
     id_finca: number;
+    id_producto?: number;
     numero_guia_hija: string;
     anio: number;
     secuencial: number;
+    fulls?: number;
+    pcs?: number;
+    kgs?: number;
+    stems?: number;
     createdAt: string;
     updatedAt: string;
     finca?: any;
     guia_madre?: any;
     documento_coordinacion?: any;
+    producto?: any;
+}
+
+// Interface para asignación de guía hija
+interface AsignacionGuiaHija {
+    id_documento_coordinacion: number;
+    id_finca: number;
+    id_guia_madre?: number;
+    id_producto?: number;
+    fulls?: number;
+    pcs?: number;
+    kgs?: number;
+    stems?: number;
 }
 
 class GuiasHijasService extends BaseService<GuiaHija> {
@@ -29,6 +47,13 @@ class GuiasHijasService extends BaseService<GuiaHija> {
      */
     async getGuiasHijas(page = 1, limit = 10): Promise<PaginatedResponse<GuiaHija>> {
         return apiClient.get<PaginatedResponse<GuiaHija>>(this.endpoint, { page, limit });
+    }
+
+    /**
+     * Obtener una guía hija por ID
+     */
+    async getGuiaHijaById(id: number): Promise<GuiaHija> {
+        return apiClient.get<GuiaHija>(`${this.endpoint}/${id}`);
     }
 
     /**
@@ -46,7 +71,7 @@ class GuiasHijasService extends BaseService<GuiaHija> {
     }
 
     /**
-     * Verificar si existe una guía hija para una combinación finca-guía madre
+     * Verificar si existe una guía hija para una combinación finca-documento coordinación
      */
     async verificarGuiaHija(idFinca: number, idDocumentoCoordinacion: number): Promise<{ exists: boolean; guiaHija?: GuiaHija }> {
         return apiClient.get<{ exists: boolean; guiaHija?: GuiaHija }>(`${this.endpoint}/verificar/${idFinca}/${idDocumentoCoordinacion}`);
@@ -55,14 +80,21 @@ class GuiasHijasService extends BaseService<GuiaHija> {
     /**
      * Asignar una guía hija (crear)
      */
-    async asignarGuiaHija(data: { id_documento_coordinacion: number; id_finca: number; id_guia_madre?: number }): Promise<GuiaHija> {
+    async asignarGuiaHija(data: AsignacionGuiaHija): Promise<GuiaHija> {
         return apiClient.post<GuiaHija>(`${this.endpoint}/asignar`, data);
+    }
+
+    /**
+     * Actualizar una guía hija existente
+     */
+    async actualizarGuiaHija(id: number, data: Partial<GuiaHija>): Promise<{ ok: boolean; msg: string; data: GuiaHija }> {
+        return apiClient.put<{ ok: boolean; msg: string; data: GuiaHija }>(`${this.endpoint}/${id}`, data);
     }
 
     /**
      * Prevalidar asignaciones masivas
      */
-    async prevalidarAsignaciones(asignaciones: Array<{ id_documento_coordinacion: number; id_finca: number }>): Promise<any> {
+    async prevalidarAsignaciones(asignaciones: AsignacionGuiaHija[]): Promise<any> {
         return apiClient.post<any>(`${this.endpoint}/prevalidar`, asignaciones);
     }
 

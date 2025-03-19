@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
 import { fincasService } from '@/api/services/mantenimiento/fincasService';
+import { productosService } from '@/api/services/mantenimiento/productosService';
 import { guiasHijasService } from '@/api/services/documentos/guiasHijasService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
@@ -11,6 +12,11 @@ interface AsignacionData {
     id_documento_coordinacion: number;
     id_finca: number;
     id_guia_madre?: number;
+    id_producto?: number;
+    fulls?: number;
+    pcs?: number;
+    kgs?: number;
+    stems?: number;
 }
 
 interface DocumentoCoordinacion extends Partial<CoordinationDocument> {
@@ -26,8 +32,16 @@ export default function AsignacionGuiasHijas() {
     // Estados
     const [documentos, setDocumentos] = useState<DocumentoCoordinacion[]>([]);
     const [fincas, setFincas] = useState<any[]>([]);
+    const [productos, setProductos] = useState<any[]>([]);
     const [selectedDocumento, setSelectedDocumento] = useState<DocumentoCoordinacion | null>(null);
     const [selectedFincas, setSelectedFincas] = useState<number[]>([]);
+    const [selectedProducto, setSelectedProducto] = useState<number | undefined>(undefined);
+    const [cantidades, setCantidades] = useState({
+        fulls: 0,
+        pcs: 0,
+        kgs: 0,
+        stems: 0
+    });
     const [fincaSearchTerm, setFincaSearchTerm] = useState<string>('');
     const [filteredFincas, setFilteredFincas] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -41,9 +55,10 @@ export default function AsignacionGuiasHijas() {
         const fetchCatalogs = async () => {
             setLoadingCatalogs(true);
             try {
-                const [documentosRes, fincasRes] = await Promise.all([
+                const [documentosRes, fincasRes, productosRes] = await Promise.all([
                     coordinacionesService.getDocuments(1, 100),
-                    fincasService.getFincas()
+                    fincasService.getFincas(),
+                    productosService.getProductos()
                 ]);
 
                 // Formatear documentos con etiquetas legibles
@@ -55,6 +70,7 @@ export default function AsignacionGuiasHijas() {
 
                 setDocumentos(formattedDocumentos);
                 setFincas(fincasRes);
+                setProductos(productosRes);
                 setFilteredFincas(fincasRes);
 
                 // Si hay un documento preseleccionado en la URL, seleccionarlo
@@ -64,6 +80,10 @@ export default function AsignacionGuiasHijas() {
                     );
                     if (selectedDoc) {
                         setSelectedDocumento(selectedDoc);
+                        // Pre-seleccionar el producto del documento de coordinación si existe
+                        if (selectedDoc.id_producto) {
+                            setSelectedProducto(selectedDoc.id_producto);
+                        }
                     }
                 }
             } catch (error) {
@@ -92,14 +112,36 @@ export default function AsignacionGuiasHijas() {
         }
     }, [fincaSearchTerm, fincas]);
 
+    // Manejar cambio en campos numéricos de cantidades
+    const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setCantidades(prev => ({
+            ...prev,
+            [name]: value === '' ? 0 : parseFloat(value)
+        }));
+    };
+
     // Manejar selección de documento
     const handleDocumentoSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const docId = parseInt(e.target.value);
         const selected = documentos.find(doc => doc.id === docId) || null;
         setSelectedDocumento(selected);
 
+        // Pre-seleccionar el producto del documento de coordinación si existe
+        if (selected && selected.id_producto) {
+            setSelectedProducto(selected.id_producto);
+        } else {
+            setSelectedProducto(undefined);
+        }
+
         // Reset de fincas seleccionadas al cambiar de documento
         setSelectedFincas([]);
+    };
+
+    // Manejar selección de producto
+    const handleProductoSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setSelectedProducto(value ? parseInt(value) : undefined);
     };
 
     // Manejar selección de finca
@@ -138,7 +180,12 @@ export default function AsignacionGuiasHijas() {
             const asignaciones: AsignacionData[] = selectedFincas.map(fincaId => ({
                 id_documento_coordinacion: selectedDocumento.id!,
                 id_finca: fincaId,
-                id_guia_madre: selectedDocumento.id_guia_madre
+                id_guia_madre: selectedDocumento.id_guia_madre,
+                id_producto: selectedProducto,
+                fulls: cantidades.fulls || undefined,
+                pcs: cantidades.pcs || undefined,
+                kgs: cantidades.kgs || undefined,
+                stems: cantidades.stems || undefined
             }));
 
             // Llamar a la API de pre-validación
@@ -176,6 +223,8 @@ export default function AsignacionGuiasHijas() {
             // Limpiar selecciones
             setSelectedDocumento(null);
             setSelectedFincas([]);
+            setSelectedProducto(undefined);
+            setCantidades({ fulls: 0, pcs: 0, kgs: 0, stems: 0 });
             setPreviewResults(null);
         } catch (error) {
             console.error('Error al confirmar asignaciones:', error);
@@ -189,6 +238,8 @@ export default function AsignacionGuiasHijas() {
     const handleReset = () => {
         setSelectedDocumento(null);
         setSelectedFincas([]);
+        setSelectedProducto(undefined);
+        setCantidades({ fulls: 0, pcs: 0, kgs: 0, stems: 0 });
         setPreviewResults(null);
         setStep('selection');
     };
@@ -231,6 +282,96 @@ export default function AsignacionGuiasHijas() {
 
                             {selectedDocumento && (
                                 <>
+                                    {/* Selección de producto y cantidades */}
+                                    <div className="card bg-base-200 p-4 mb-4">
+                                        <h3 className="font-bold mb-4">Información del Producto</h3>
+
+                                        <div className="form-control mb-4">
+                                            <label className="label">
+                                                <span className="label-text font-medium">Producto</span>
+                                            </label>
+                                            <select
+                                                className="select select-bordered w-full"
+                                                value={selectedProducto || ''}
+                                                onChange={handleProductoSelect}
+                                            >
+                                                <option value="">Seleccionar producto...</option>
+                                                {productos.map(producto => (
+                                                    <option key={producto.id_producto} value={producto.id_producto}>
+                                                        {producto.nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <label className="label">
+                                                <span className="label-text-alt text-info">
+                                                    Si no selecciona un producto, se usará el del documento de coordinación.
+                                                </span>
+                                            </label>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="form-control">
+                                                <label className="label">
+                                                    <span className="label-text">Fulls</span>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    name="fulls"
+                                                    className="input input-bordered"
+                                                    value={cantidades.fulls === 0 ? '' : cantidades.fulls}
+                                                    onChange={handleCantidadChange}
+                                                    min="0"
+                                                    step="1"
+                                                />
+                                            </div>
+
+                                            <div className="form-control">
+                                                <label className="label">
+                                                    <span className="label-text">Piezas (Pcs)</span>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    name="pcs"
+                                                    className="input input-bordered"
+                                                    value={cantidades.pcs === 0 ? '' : cantidades.pcs}
+                                                    onChange={handleCantidadChange}
+                                                    min="0"
+                                                    step="1"
+                                                />
+                                            </div>
+
+                                            <div className="form-control">
+                                                <label className="label">
+                                                    <span className="label-text">Peso (Kgs)</span>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    name="kgs"
+                                                    className="input input-bordered"
+                                                    value={cantidades.kgs === 0 ? '' : cantidades.kgs}
+                                                    onChange={handleCantidadChange}
+                                                    min="0"
+                                                    step="0.1"
+                                                />
+                                            </div>
+
+                                            <div className="form-control">
+                                                <label className="label">
+                                                    <span className="label-text">Stems</span>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    name="stems"
+                                                    className="input input-bordered"
+                                                    value={cantidades.stems === 0 ? '' : cantidades.stems}
+                                                    onChange={handleCantidadChange}
+                                                    min="0"
+                                                    step="1"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="divider">Selección de Fincas</div>
 
                                     {/* Búsqueda y selección de fincas */}
@@ -344,8 +485,30 @@ export default function AsignacionGuiasHijas() {
                             <span className="font-semibold">Documento de Coordinación:</span> {selectedDocumento?.cooLabel}
                             <br />
                             <span className="font-semibold">Fincas seleccionadas:</span> {selectedFincas.length}
+                            <br />
+                            <span className="font-semibold">Producto:</span> {
+                                selectedProducto
+                                    ? productos.find(p => p.id_producto === selectedProducto)?.nombre
+                                    : 'Se usará el del documento de coordinación'
+                            }
                         </div>
                     </div>
+
+                    {/* Detalles de cantidades */}
+                    {(cantidades.fulls > 0 || cantidades.pcs > 0 || cantidades.kgs > 0 || cantidades.stems > 0) && (
+                        <div className="alert alert-info mb-4">
+                            <AppIcons.Package className="w-6 h-6" />
+                            <div>
+                                <span className="font-semibold">Cantidades:</span>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-1">
+                                    {cantidades.fulls > 0 && <div>Fulls: {cantidades.fulls}</div>}
+                                    {cantidades.pcs > 0 && <div>Pcs: {cantidades.pcs}</div>}
+                                    {cantidades.kgs > 0 && <div>Kgs: {cantidades.kgs}</div>}
+                                    {cantidades.stems > 0 && <div>Stems: {cantidades.stems}</div>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Asignaciones existentes */}
                     {previewResults.asignacionesExistentes && previewResults.asignacionesExistentes.length > 0 && (
@@ -360,6 +523,8 @@ export default function AsignacionGuiasHijas() {
                                         <tr>
                                             <th>Finca</th>
                                             <th>Guía Hija</th>
+                                            <th>Producto</th>
+                                            <th>Cantidades</th>
                                             <th>Estado</th>
                                         </tr>
                                     </thead>
@@ -368,6 +533,15 @@ export default function AsignacionGuiasHijas() {
                                             <tr key={index}>
                                                 <td>{fincas.find(f => f.id_finca === asignacion.id_finca)?.nombre || 'Desconocida'}</td>
                                                 <td>{asignacion.numero_guia_hija || `${asignacion.anio}-${asignacion.secuencial}`}</td>
+                                                <td>
+                                                    {productos.find(p => p.id_producto === asignacion.id_producto)?.nombre || 'No especificado'}
+                                                </td>
+                                                <td className="text-xs">
+                                                    {asignacion.fulls > 0 && <div>Fulls: {asignacion.fulls}</div>}
+                                                    {asignacion.pcs > 0 && <div>Pcs: {asignacion.pcs}</div>}
+                                                    {asignacion.kgs > 0 && <div>Kgs: {asignacion.kgs}</div>}
+                                                    {asignacion.stems > 0 && <div>Stems: {asignacion.stems}</div>}
+                                                </td>
                                                 <td><span className="badge badge-warning">Ya asignada</span></td>
                                             </tr>
                                         ))}
@@ -390,6 +564,8 @@ export default function AsignacionGuiasHijas() {
                                         <tr>
                                             <th>Finca</th>
                                             <th>Guía Hija (Propuesta)</th>
+                                            <th>Producto</th>
+                                            <th>Cantidades</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -397,6 +573,15 @@ export default function AsignacionGuiasHijas() {
                                             <tr key={index}>
                                                 <td>{fincas.find(f => f.id_finca === asignacion.id_finca)?.nombre || 'Desconocida'}</td>
                                                 <td>{`${asignacion.anio}-${asignacion.secuencial}`}</td>
+                                                <td>
+                                                    {productos.find(p => p.id_producto === asignacion.id_producto)?.nombre || 'No especificado'}
+                                                </td>
+                                                <td className="text-xs">
+                                                    {asignacion.fulls > 0 && <div>Fulls: {asignacion.fulls}</div>}
+                                                    {asignacion.pcs > 0 && <div>Pcs: {asignacion.pcs}</div>}
+                                                    {asignacion.kgs > 0 && <div>Kgs: {asignacion.kgs}</div>}
+                                                    {asignacion.stems > 0 && <div>Stems: {asignacion.stems}</div>}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -423,7 +608,7 @@ export default function AsignacionGuiasHijas() {
                         <button
                             className="btn btn-primary"
                             onClick={handleConfirmAsignaciones}
-                            disabled={!previewResults.nuevasAsignaciones?.length || loading}
+                            disabled={loading || (!previewResults.nuevasAsignaciones?.length && !previewResults.asignacionesExistentes?.length)}
                         >
                             {loading ? (
                                 <>
