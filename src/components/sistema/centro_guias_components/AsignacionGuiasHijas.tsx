@@ -1,6 +1,8 @@
+// src/components/sistema/centro_guias_components/AsignacionGuiasHijas.tsx
 import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
 import { fincasService } from '@/api/services/mantenimiento/fincasService';
-import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { guiasHijasService } from '@/api/services/documentos/guiasHijasService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
@@ -8,43 +10,99 @@ import { AppIcons } from '@/utils/icons';
 interface AsignacionData {
     id_documento_coordinacion: number;
     id_finca: number;
+    id_guia_madre?: number;
+}
+
+interface DocumentoCoordinacion extends Partial<CoordinationDocument> {
+    cooLabel?: string;
+    consignatarioNombre?: string;
 }
 
 export default function AsignacionGuiasHijas() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const preselectedDocumentoId = searchParams?.get('documento');
+
     // Estados
+    const [documentos, setDocumentos] = useState<DocumentoCoordinacion[]>([]);
     const [fincas, setFincas] = useState<any[]>([]);
-    const [coordinaciones, setCoordinaciones] = useState<any[]>([]);
-    const [selectedCoordinacion, setSelectedCoordinacion] = useState<number | null>(null);
+    const [selectedDocumento, setSelectedDocumento] = useState<DocumentoCoordinacion | null>(null);
     const [selectedFincas, setSelectedFincas] = useState<number[]>([]);
+    const [fincaSearchTerm, setFincaSearchTerm] = useState<string>('');
+    const [filteredFincas, setFilteredFincas] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [validating, setValidating] = useState<boolean>(false);
     const [previewResults, setPreviewResults] = useState<any | null>(null);
     const [step, setStep] = useState<'selection' | 'preview' | 'success'>('selection');
+    const [loadingCatalogs, setLoadingCatalogs] = useState<boolean>(true);
 
     // Cargar catálogos
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
+        const fetchCatalogs = async () => {
+            setLoadingCatalogs(true);
             try {
-                const [fincasData, coordsData] = await Promise.all([
-                    fincasService.getFincas(),
-                    coordinacionesService.getDocuments(1, 100)
+                const [documentosRes, fincasRes] = await Promise.all([
+                    coordinacionesService.getDocuments(1, 100),
+                    fincasService.getFincas()
                 ]);
 
-                setFincas(fincasData);
-                setCoordinaciones(coordsData.data);
+                // Formatear documentos con etiquetas legibles
+                const formattedDocumentos = documentosRes.data.map(doc => ({
+                    ...doc,
+                    cooLabel: `COO-${doc.id.toString().padStart(7, '0')}`,
+                    consignatarioNombre: 'Pendiente' // Se actualizará después
+                }));
+
+                setDocumentos(formattedDocumentos);
+                setFincas(fincasRes);
+                setFilteredFincas(fincasRes);
+
+                // Si hay un documento preseleccionado en la URL, seleccionarlo
+                if (preselectedDocumentoId) {
+                    const selectedDoc = formattedDocumentos.find(
+                        doc => doc.id === parseInt(preselectedDocumentoId)
+                    );
+                    if (selectedDoc) {
+                        setSelectedDocumento(selectedDoc);
+                    }
+                }
             } catch (error) {
-                console.error('Error al cargar datos:', error);
-                dispatchMenssage('error', 'Error al cargar datos');
+                console.error('Error al cargar catálogos:', error);
+                dispatchMenssage('error', 'Error al cargar datos necesarios');
             } finally {
-                setLoading(false);
+                setLoadingCatalogs(false);
             }
         };
 
-        fetchData();
-    }, []);
+        fetchCatalogs();
+    }, [preselectedDocumentoId]);
 
-    // Manejar selección de fincas
+    // Filtrar fincas cuando cambia el término de búsqueda
+    useEffect(() => {
+        if (fincaSearchTerm.trim() === '') {
+            setFilteredFincas(fincas);
+        } else {
+            const searchTermLower = fincaSearchTerm.toLowerCase();
+            const filtered = fincas.filter(
+                finca =>
+                    finca.nombre?.toLowerCase().includes(searchTermLower) ||
+                    finca.codigo?.toLowerCase().includes(searchTermLower)
+            );
+            setFilteredFincas(filtered);
+        }
+    }, [fincaSearchTerm, fincas]);
+
+    // Manejar selección de documento
+    const handleDocumentoSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const docId = parseInt(e.target.value);
+        const selected = documentos.find(doc => doc.id === docId) || null;
+        setSelectedDocumento(selected);
+
+        // Reset de fincas seleccionadas al cambiar de documento
+        setSelectedFincas([]);
+    };
+
+    // Manejar selección de finca
     const handleFincaSelect = (fincaId: number) => {
         setSelectedFincas(prev => {
             if (prev.includes(fincaId)) {
@@ -55,42 +113,48 @@ export default function AsignacionGuiasHijas() {
         });
     };
 
-    // Manejar selección de coordinación
-    const handleCoordinacionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = parseInt(event.target.value);
-        setSelectedCoordinacion(isNaN(value) ? null : value);
+    // Seleccionar todas las fincas filtradas
+    const handleSelectAllFincas = () => {
+        if (filteredFincas.length === selectedFincas.length) {
+            // Si todas están seleccionadas, deseleccionar todas
+            setSelectedFincas([]);
+        } else {
+            // Seleccionar todas las que están filtradas
+            setSelectedFincas(filteredFincas.map(finca => finca.id_finca));
+        }
     };
 
-    // Función para previsualizar asignaciones
+    // Previsualizar asignaciones
     const handlePreviewAsignaciones = async () => {
-        if (!selectedCoordinacion || selectedFincas.length === 0) {
-            dispatchMenssage('error', 'Seleccione una coordinación y al menos una finca');
+        if (!selectedDocumento || selectedFincas.length === 0) {
+            dispatchMenssage('error', 'Seleccione un documento de coordinación y al menos una finca');
             return;
         }
 
         setValidating(true);
 
         try {
-            // Preparar datos para prevalidación
+            // Preparar datos para pre-validación
             const asignaciones: AsignacionData[] = selectedFincas.map(fincaId => ({
-                id_documento_coordinacion: selectedCoordinacion,
-                id_finca: fincaId
+                id_documento_coordinacion: selectedDocumento.id!,
+                id_finca: fincaId,
+                id_guia_madre: selectedDocumento.id_guia_madre
             }));
 
-            // Llamar a la API de prevalidación
+            // Llamar a la API de pre-validación
             const resultados = await guiasHijasService.prevalidarAsignaciones(asignaciones);
 
             setPreviewResults(resultados);
             setStep('preview');
         } catch (error) {
-            console.error('Error al prevalidar asignaciones:', error);
-            dispatchMenssage('error', 'Error al prevalidar asignaciones');
+            console.error('Error al pre-validar asignaciones:', error);
+            dispatchMenssage('error', 'Error al pre-validar asignaciones');
         } finally {
             setValidating(false);
         }
     };
 
-    // Función para confirmar asignaciones
+    // Confirmar asignaciones
     const handleConfirmAsignaciones = async () => {
         if (!previewResults) return;
 
@@ -103,11 +167,14 @@ export default function AsignacionGuiasHijas() {
                 ...(previewResults.nuevasAsignaciones || [])
             ]);
 
-            dispatchMenssage('success', `Se han asignado ${resultado.asignadas || 0} guías hijas correctamente`);
+            dispatchMenssage(
+                'success',
+                `Se han asignado ${resultado.asignadas || 0} guías hijas correctamente`
+            );
             setStep('success');
 
             // Limpiar selecciones
-            setSelectedCoordinacion(null);
+            setSelectedDocumento(null);
             setSelectedFincas([]);
             setPreviewResults(null);
         } catch (error) {
@@ -118,9 +185,9 @@ export default function AsignacionGuiasHijas() {
         }
     };
 
-    // Función para reiniciar el proceso
+    // Reiniciar el proceso
     const handleReset = () => {
-        setSelectedCoordinacion(null);
+        setSelectedDocumento(null);
         setSelectedFincas([]);
         setPreviewResults(null);
         setStep('selection');
@@ -133,67 +200,102 @@ export default function AsignacionGuiasHijas() {
                 <div className="card-body">
                     <h2 className="card-title">Asignación de Guías Hijas</h2>
                     <p className="text-sm opacity-70 mb-4">
-                        Seleccione un documento de coordinación (COO) y las fincas a las que desea asignar guías hijas.
+                        Este proceso asigna guías hijas vinculando fincas a un documento de coordinación (COO).
                     </p>
 
-                    {loading ? (
+                    {loadingCatalogs ? (
                         <div className="flex justify-center py-4">
                             <span className="loading loading-spinner loading-lg"></span>
                         </div>
                     ) : (
                         <>
+                            {/* Selección de documento */}
                             <div className="form-control mb-4">
                                 <label className="label">
                                     <span className="label-text font-medium">Documento de Coordinación (COO)</span>
                                 </label>
+
                                 <select
                                     className="select select-bordered w-full"
-                                    value={selectedCoordinacion || ''}
-                                    onChange={handleCoordinacionSelect}
+                                    value={selectedDocumento?.id || ''}
+                                    onChange={handleDocumentoSelect}
                                 >
                                     <option value="">Seleccionar documento...</option>
-                                    {coordinaciones.map(coo => (
-                                        <option key={coo.id} value={coo.id}>
-                                            COO-{coo.id.toString().padStart(7, '0')}
+                                    {documentos.map(doc => (
+                                        <option key={doc.id} value={doc.id}>
+                                            {doc.cooLabel} - {doc.consignatarioNombre}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
-                            {selectedCoordinacion && (
+                            {selectedDocumento && (
                                 <>
                                     <div className="divider">Selección de Fincas</div>
 
+                                    {/* Búsqueda y selección de fincas */}
                                     <div className="form-control">
-                                        <label className="label">
-                                            <span className="label-text font-medium">Fincas Disponibles</span>
-                                            <span className="label-text-alt">
-                                                {selectedFincas.length} seleccionadas
-                                            </span>
-                                        </label>
+                                        <div className="flex justify-between items-center">
+                                            <label className="label-text font-medium">Fincas Disponibles</label>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-sm opacity-70">
+                                                    {selectedFincas.length} / {filteredFincas.length} seleccionadas
+                                                </span>
+                                                <button
+                                                    className="btn btn-xs"
+                                                    onClick={handleSelectAllFincas}
+                                                >
+                                                    {selectedFincas.length === filteredFincas.length
+                                                        ? 'Deseleccionar todas'
+                                                        : 'Seleccionar todas'}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="input-group mb-2">
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar finca por nombre o código..."
+                                                className="input input-bordered w-full"
+                                                value={fincaSearchTerm}
+                                                onChange={(e) => setFincaSearchTerm(e.target.value)}
+                                            />
+                                            <button className="btn btn-square">
+                                                <AppIcons.Search className="w-5 h-5" />
+                                            </button>
+                                        </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2 max-h-80 overflow-y-auto p-2">
-                                            {fincas.map(finca => (
-                                                <div
-                                                    key={finca.id_finca}
-                                                    className={`border rounded-lg p-2 cursor-pointer hover:bg-base-200 transition-colors ${selectedFincas.includes(finca.id_finca) ? 'bg-primary/10 border-primary' : ''
-                                                        }`}
-                                                    onClick={() => handleFincaSelect(finca.id_finca)}
-                                                >
-                                                    <div className="flex items-center">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="checkbox checkbox-primary mr-2"
-                                                            checked={selectedFincas.includes(finca.id_finca)}
-                                                            onChange={() => { }} // Manejado por el onClick del div padre
-                                                        />
-                                                        <div>
-                                                            <p className="font-medium">{finca.nombre}</p>
-                                                            <p className="text-xs opacity-70">{finca.codigo || 'Sin código'}</p>
+                                            {filteredFincas.length === 0 ? (
+                                                <div className="col-span-full text-center py-4 text-sm opacity-70">
+                                                    No se encontraron fincas con ese término de búsqueda
+                                                </div>
+                                            ) : (
+                                                filteredFincas.map(finca => (
+                                                    <div
+                                                        key={finca.id_finca}
+                                                        className={`border rounded-lg p-2 cursor-pointer hover:bg-base-200 transition-colors ${selectedFincas.includes(finca.id_finca)
+                                                                ? 'bg-primary/10 border-primary'
+                                                                : ''
+                                                            }`}
+                                                        onClick={() => handleFincaSelect(finca.id_finca)}
+                                                    >
+                                                        <div className="flex items-center">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="checkbox checkbox-primary mr-2"
+                                                                checked={selectedFincas.includes(finca.id_finca)}
+                                                                onChange={() => { }} // Manejado por el onClick del div padre
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            />
+                                                            <div>
+                                                                <p className="font-medium">{finca.nombre}</p>
+                                                                <p className="text-xs opacity-70">{finca.codigo || 'Sin código'}</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ))
+                                            )}
                                         </div>
                                     </div>
 
@@ -209,7 +311,10 @@ export default function AsignacionGuiasHijas() {
                                                     Verificando...
                                                 </>
                                             ) : (
-                                                <>Previsualizar Asignaciones</>
+                                                <>
+                                                    <AppIcons.Search className="w-4 h-4 mr-1" />
+                                                    Pre-validar Asignaciones
+                                                </>
                                             )}
                                         </button>
                                     </div>
@@ -227,11 +332,20 @@ export default function AsignacionGuiasHijas() {
         return (
             <div className="card bg-base-100 shadow-xl">
                 <div className="card-body">
-                    <h2 className="card-title">Previsualización de Asignaciones</h2>
+                    <h2 className="card-title">Pre-validación de Asignaciones</h2>
 
                     <p className="text-sm opacity-70 mb-4">
-                        Revise las asignaciones antes de confirmar.
+                        Revise las asignaciones antes de confirmar la creación de guías hijas.
                     </p>
+
+                    <div className="alert alert-info mb-4">
+                        <AppIcons.Info className="w-6 h-6" />
+                        <div>
+                            <span className="font-semibold">Documento de Coordinación:</span> {selectedDocumento?.cooLabel}
+                            <br />
+                            <span className="font-semibold">Fincas seleccionadas:</span> {selectedFincas.length}
+                        </div>
+                    </div>
 
                     {/* Asignaciones existentes */}
                     {previewResults.asignacionesExistentes && previewResults.asignacionesExistentes.length > 0 && (
@@ -291,6 +405,13 @@ export default function AsignacionGuiasHijas() {
                         </div>
                     )}
 
+                    {previewResults.nuevasAsignaciones?.length === 0 && previewResults.asignacionesExistentes?.length === 0 && (
+                        <div className="alert alert-warning">
+                            <AppIcons.Warning className="w-6 h-6" />
+                            <span>No hay asignaciones para procesar. Todas las fincas seleccionadas ya tienen guías asignadas o hay un problema con la configuración.</span>
+                        </div>
+                    )}
+
                     <div className="card-actions justify-end mt-6">
                         <button
                             className="btn btn-outline"
@@ -310,7 +431,10 @@ export default function AsignacionGuiasHijas() {
                                     Confirmando...
                                 </>
                             ) : (
-                                <>Confirmar Asignaciones</>
+                                <>
+                                    <AppIcons.Check className="w-4 h-4 mr-1" />
+                                    Confirmar Asignaciones
+                                </>
                             )}
                         </button>
                     </div>
@@ -329,12 +453,18 @@ export default function AsignacionGuiasHijas() {
                     </div>
                     <h2 className="card-title">¡Asignación Completada!</h2>
                     <p>Las guías hijas han sido asignadas correctamente.</p>
-                    <div className="card-actions justify-center mt-6">
+                    <div className="card-actions justify-center mt-6 gap-2">
                         <button
                             className="btn btn-primary"
                             onClick={handleReset}
                         >
                             Realizar Nueva Asignación
+                        </button>
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => router.push('/sistema/dashboard/modulos/documentos/centro_guias?tab=guias-hijas')}
+                        >
+                            Ver Guías Hijas
                         </button>
                     </div>
                 </div>
