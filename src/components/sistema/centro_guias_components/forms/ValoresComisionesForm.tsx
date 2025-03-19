@@ -1,123 +1,68 @@
-// src/components/sistema/documentos_components/forms/ValoresComisionesForm.tsx
+// src/components/sistema/centro_guias_components/forms/ValoresComisionesForm.tsx
 import React from 'react';
-
-interface ValorFieldProps {
-    label: string;
-    name: string;
-    value: number;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    disabled?: boolean;
-    showCurrency?: boolean;
-}
-
-const ValorField: React.FC<ValorFieldProps> = ({
-    label,
-    name,
-    value,
-    onChange,
-    disabled = false,
-    showCurrency = true
-}) => {
-    return (
-        <div className="form-control">
-            <label className="label">
-                <span className="label-text">{label}</span>
-            </label>
-            {showCurrency ? (
-                <label className="input-group">
-                    <span className="font-mono">$</span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        name={name}
-                        className="input input-bordered w-full"
-                        value={value}
-                        onChange={onChange}
-                        disabled={disabled}
-                    />
-                </label>
-            ) : (
-                <input
-                    type="number"
-                    step="0.01"
-                    name={name}
-                    className="input input-bordered w-full"
-                    value={value}
-                    onChange={onChange}
-                    disabled={disabled}
-                />
-            )}
-        </div>
-    );
-};
+import { useFormContext } from 'react-hook-form';
+import { NumberField } from '@/components/sistema/common/form';
 
 interface ValoresComisionesFormProps {
-    formData: any;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
 }
 
 export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
-    formData,
-    onChange,
     disabled = false
 }) => {
+    // No necesitamos extraer formData ni onChange ya que React Hook Form
+    // maneja todo esto a través del contexto y los métodos del formulario
+    const { formState: { errors } } = useFormContext();
+
     return (
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {/* Costo Guía */}
-                <ValorField
-                    label="Costo Guía"
+                <NumberField
                     name="costo_guia_valor"
-                    value={formData.costo_guia_valor}
-                    onChange={onChange}
+                    label="Costo Guía"
                     disabled={disabled}
+                    showCurrency={true}
                 />
 
                 {/* Combustible */}
-                <ValorField
-                    label="Combustible"
+                <NumberField
                     name="combustible_valor"
-                    value={formData.combustible_valor}
-                    onChange={onChange}
+                    label="Combustible"
                     disabled={disabled}
+                    showCurrency={true}
                 />
 
                 {/* Seguridad */}
-                <ValorField
-                    label="Seguridad"
+                <NumberField
                     name="seguridad_valor"
-                    value={formData.seguridad_valor}
-                    onChange={onChange}
+                    label="Seguridad"
                     disabled={disabled}
+                    showCurrency={true}
                 />
 
                 {/* Tarifa Rate */}
-                <ValorField
-                    label="Tarifa Rate"
+                <NumberField
                     name="tarifa_rate"
-                    value={formData.tarifa_rate}
-                    onChange={onChange}
+                    label="Tarifa Rate"
                     disabled={disabled}
+                    showCurrency={true}
                 />
 
                 {/* Char Weight */}
-                <ValorField
-                    label="Char Weight"
+                <NumberField
                     name="char_weight"
-                    value={formData.char_weight}
-                    onChange={onChange}
+                    label="Char Weight"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* Otros */}
-                <ValorField
-                    label="Otros Valores"
+                <NumberField
                     name="otros_valor"
-                    value={formData.otros_valor}
-                    onChange={onChange}
+                    label="Otros Valores"
                     disabled={disabled}
+                    showCurrency={true}
                 />
             </div>
 
@@ -125,61 +70,49 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Form A */}
-                <ValorField
-                    label="Form A"
+                <NumberField
                     name="form_a"
-                    value={formData.form_a}
-                    onChange={onChange}
+                    label="Form A"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* Transport */}
-                <ValorField
-                    label="Transport"
+                <NumberField
                     name="transport"
-                    value={formData.transport}
-                    onChange={onChange}
+                    label="Transport"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* PCA */}
-                <ValorField
-                    label="PCA"
+                <NumberField
                     name="pca"
-                    value={formData.pca}
-                    onChange={onChange}
+                    label="PCA"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* Fitos */}
-                <ValorField
-                    label="Fitos"
+                <NumberField
                     name="fitos"
-                    value={formData.fitos}
-                    onChange={onChange}
+                    label="Fitos"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* Termografo */}
-                <ValorField
-                    label="Termógrafo"
+                <NumberField
                     name="termografo"
-                    value={formData.termografo}
-                    onChange={onChange}
+                    label="Termógrafo"
                     disabled={disabled}
                     showCurrency={false}
                 />
 
                 {/* MCA */}
-                <ValorField
-                    label="MCA"
+                <NumberField
                     name="mca"
-                    value={formData.mca}
-                    onChange={onChange}
+                    label="MCA"
                     disabled={disabled}
                     showCurrency={false}
                 />
