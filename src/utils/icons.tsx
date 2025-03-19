@@ -23,12 +23,14 @@ import {
     MdDashboard, MdOutlineLocalShipping, MdOutlineAddCircle,
     MdDirectionsBoat, MdAirplanemodeActive, MdDescription,
     MdInventory, MdAssignment, MdAssignmentTurnedIn, MdAssignmentLate,
-    MdFormatListBulleted, MdOutlineSettings, MdHistory
+    MdFormatListBulleted, MdOutlineSettings, MdHistory,
+    MdWarning
 } from 'react-icons/md';
 
 import {
     BiSolidPlaneAlt, BiPackage, BiExport, BiImport,
-    BiBarcode, BiCode, BiScan, BiPrinter
+    BiBarcode, BiCode, BiScan, BiPrinter,
+    BiError
 } from 'react-icons/bi';
 
 import {
@@ -40,6 +42,7 @@ import {
     HiOutlineDocumentText, HiOutlineDocumentDuplicate,
     HiOutlineClipboardList, HiOutlineClipboardCheck
 } from 'react-icons/hi';
+import { CheckCircleIcon, InformationCircleIcon } from '@heroicons/react/solid';
 
 // Exportamos todos los iconos que usamos en la aplicación
 export const AppIcons = {
@@ -121,7 +124,14 @@ export const AppIcons = {
 
     // Exportación/Importación
     Export: BiExport,
-    Import: BiImport
+    Import: BiImport,
+
+    Info: InformationCircleIcon,
+    CheckCircle: CheckCircleIcon,
+
+    Error: BiError,
+    Warning: MdWarning
+
 };
 
 // Componente Icon que simplifica el uso de iconos
