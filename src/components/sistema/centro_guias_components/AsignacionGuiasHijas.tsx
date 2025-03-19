@@ -275,8 +275,8 @@ export default function AsignacionGuiasHijas() {
                                                     <div
                                                         key={finca.id_finca}
                                                         className={`border rounded-lg p-2 cursor-pointer hover:bg-base-200 transition-colors ${selectedFincas.includes(finca.id_finca)
-                                                                ? 'bg-primary/10 border-primary'
-                                                                : ''
+                                                            ? 'bg-primary/10 border-primary'
+                                                            : ''
                                                             }`}
                                                         onClick={() => handleFincaSelect(finca.id_finca)}
                                                     >
@@ -289,8 +289,8 @@ export default function AsignacionGuiasHijas() {
                                                                 onClick={(e) => e.stopPropagation()}
                                                             />
                                                             <div>
-                                                                <p className="font-medium">{finca.nombre}</p>
-                                                                <p className="text-xs opacity-70">{finca.codigo || 'Sin código'}</p>
+                                                                <p className="font-medium">{finca.nombre_finca}</p>
+                                                                <p className="text-xs opacity-70">{finca.codigo_finca || 'Sin código'}</p>
                                                             </div>
                                                         </div>
                                                     </div>

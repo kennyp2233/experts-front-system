@@ -92,10 +92,11 @@ export default function CreacionDocumentoCoordinacion() {
                 if (guiaDetallada.documento_base?.id_aerolinea) {
                     const aerolineaId = guiaDetallada.documento_base.id_aerolinea;
                     // Buscar la aerolínea completa con su plantilla
-                    const aerolineaCompleta: any = aerolineasService.findOneComplete(aerolineaId);
+                    const aerolineaCompleta = await aerolineasService.findOneComplete(aerolineaId);
 
                     if (aerolineaCompleta) {
                         // Preparar valores por defecto para rutas basados en la plantilla de la aerolínea
+                        console.log('Aerolínea completa:', aerolineaCompleta);
                         const rutasDefecto = {
                             from1: aerolineaCompleta.from1?.toString() || '',
                             to1: aerolineaCompleta.to1?.toString() || '',
@@ -329,6 +330,7 @@ export default function CreacionDocumentoCoordinacion() {
                                     onChange={handleInputChange}
                                     destinos={destinos}
                                     aerolineas={aerolineas}
+                                    origenes={origenes}
                                 />
                             </div>
                         )}

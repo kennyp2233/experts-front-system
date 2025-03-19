@@ -6,6 +6,7 @@ interface RutasSectionProps {
     onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     destinos: any[];
     aerolineas: any[];
+    origenes: any[];
     disabled?: boolean;
 }
 
@@ -14,8 +15,10 @@ export const RutasForm: React.FC<RutasSectionProps> = ({
     onChange,
     destinos,
     aerolineas,
+    origenes,
     disabled = false
 }) => {
+    console.log('RutasForm', { formData, destinos, aerolineas, disabled });
     return (
         <>
             {/* Ruta 1 */}
@@ -24,6 +27,24 @@ export const RutasForm: React.FC<RutasSectionProps> = ({
                 <div className="grid md:grid-cols-2 gap-4">
                     {/* Origen */}
                     <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Origen</span>
+                        </label>
+                        <select
+                            name="by1"
+                            className="select select-bordered w-full"
+                            value={formData.from1 || ''}
+                            onChange={onChange}
+                            disabled={disabled}
+                        >
+                            <option value="">Seleccionar un origenes</option>
+                            {origenes.map(a => (
+                                <option key={a.id_origen} value={a.id_origen}>
+                                    {a.nombre} {a.codigo_origen ? `(${a.codigo_origen})` : ''}
+                                </option>
+                            ))}
+                        </select>
+
                         <label className="label">
                             <span className="label-text">Aerolínea</span>
                         </label>

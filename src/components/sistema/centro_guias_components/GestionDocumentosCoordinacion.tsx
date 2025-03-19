@@ -107,23 +107,52 @@ export default function GestionDocumentosCoordinacion() {
         fetchDocumentos();
     }, [currentPage, filtro, estadoFiltro, sorting]);
 
-    // Enriquecer datos con información de catálogos
     useEffect(() => {
-        if (documentos.length > 0 && consignatarios.length > 0 && productos.length > 0) {
-            const enrichedData = documentos.map(doc => {
-                const consignatario = consignatarios.find(c => c.id_consignatario === doc.id_consignatario);
-                const producto = productos.find(p => p.id_producto === doc.id_producto);
+        const fetchDocumentos = async () => {
+            setLoading(true);
+            try {
+                // Construir filtros
+                const filters: any = {};
+                if (filtro) {
+                    if (!isNaN(Number(filtro))) {
+                        filters.id = Number(filtro);
+                    }
+                }
+                if (estadoFiltro !== 'todos') {
+                    filters.estado = estadoFiltro;
+                }
+                filters.sortField = sorting.field;
+                filters.sortDirection = sorting.direction;
 
-                return {
-                    ...doc,
-                    consignatarioNombre: consignatario?.nombre || 'No asignado',
-                    productoNombre: producto?.nombre || 'No asignado'
-                };
-            });
+                const response = await coordinacionesService.getDocuments(currentPage, 10, filters);
 
-            setDocumentos(enrichedData);
-        }
-    }, [consignatarios, productos, documentos]);
+                // Enriquecer documentos con la información de catálogos
+                const formattedData = response.data.map(doc => {
+                    const consignatario = consignatarios.find(c => c.id_consignatario === doc.id_consignatario);
+                    const producto = productos.find(p => p.id_producto === doc.id_producto);
+                    return {
+                        ...doc,
+                        consignatarioNombre: consignatario ? consignatario.nombre : 'No asignado',
+                        productoNombre: producto ? producto.nombre : 'No asignado',
+                        estadoLabel: doc.createdAt ? "Activo" : "Pendiente",
+                        cooLabel: `COO-${doc.id.toString().padStart(7, '0')}`
+                    };
+                });
+
+                setDocumentos(formattedData);
+                setTotalPages(response.totalPages);
+                setError(null);
+            } catch (err) {
+                console.error('Error al cargar documentos de coordinación:', err);
+                setError('No se pudieron cargar los documentos de coordinación');
+                dispatchMenssage('error', 'Error al cargar los documentos de coordinación');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDocumentos();
+    }, [currentPage, filtro, estadoFiltro, sorting, consignatarios, productos]);
 
     // Ver detalles de un documento
     const handleViewDetails = (id: number) => {
