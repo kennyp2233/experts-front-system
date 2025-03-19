@@ -110,7 +110,6 @@ export const DocumentoCoordinacionForm: React.FC<DocumentoCoordinacionFormProps>
     disabled = false
 }) => {
     const { consignatarios, productos, agenciasIata, destinos, origenes, aerolineas } = catalogs;
-
     return (
         <div className="grid md:grid-cols-2 gap-4">
             {/* Consignatario */}
@@ -120,7 +119,7 @@ export const DocumentoCoordinacionForm: React.FC<DocumentoCoordinacionFormProps>
                 type="select"
                 value={formData.id_consignatario}
                 onChange={onChange}
-                options={consignatarios.map(c => ({ value: c.id_consignatario, label: c.nombre }))}
+                options={consignatarios.map(c => ({ value: c.id_consignatario, label: c.nombre_consignatario }))}
                 error={errors.id_consignatario}
                 required
                 disabled={disabled}

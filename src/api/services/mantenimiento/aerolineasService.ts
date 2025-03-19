@@ -2,41 +2,13 @@
 import { BaseService } from '../baseService';
 import { apiClient } from '../../httpClient';
 
-// Definir interface para Aerolinea
-export interface Aerolinea {
-    id_aerolinea: number;
-    nombre: string;
-    ci_ruc: string;
-    direccion: string;
-    telefono: string;
-    email: string;
-    ciudad: string;
-    pais: string;
-    contacto: string;
-    id_modo: number;
-    maestra_guias_hijas: any[];
-    codigo: string;
-    prefijo_awb: string;
-    codigo_cae: string;
-    estado_activo: boolean;
-    from1: string;
-    to1: string;
-    by1: string;
-    to2: string;
-    by2: string;
-    to3: string;
-    by3: string;
-    afiliado_cass: string;
-    guias_virtuales: any[];
-}
-
-class AerolineasService extends BaseService<Aerolinea> {
+class AerolineasService extends BaseService<any> {
     constructor() {
         super('/aerolineas');
     }
 
-    async getAerolineas(): Promise<Aerolinea[]> {
-        return apiClient.get<Aerolinea[]>(this.endpoint);
+    async getAerolineas(): Promise<any[]> {
+        return apiClient.get<any[]>(this.endpoint);
     }
 
     /**
@@ -46,18 +18,22 @@ class AerolineasService extends BaseService<Aerolinea> {
         return apiClient.get<any[]>(`${this.endpoint}/joinAll`);
     }
 
+    async findOneComplete(id: number): Promise<any> {
+        return apiClient.get<any>(`${this.endpoint}/joinAll/${id}`);
+    }
+
     /**
      * Actualizar aerolínea con relaciones (PATCH)
      */
-    async updateAerolineaJoinAll(aerolinea: Partial<Aerolinea>): Promise<Aerolinea> {
-        return apiClient.patch<Aerolinea>(`${this.endpoint}/joinAll`, aerolinea);
+    async updateAerolineaJoinAll(aerolinea: Partial<any>): Promise<any> {
+        return apiClient.patch<any>(`${this.endpoint}/joinAll`, aerolinea);
     }
 
     /**
      * Crear aerolínea con relaciones
      */
-    async createAerolineaJoinAll(aerolinea: Partial<Aerolinea>): Promise<Aerolinea> {
-        return apiClient.post<Aerolinea>(`${this.endpoint}/joinAll`, aerolinea);
+    async createAerolineaJoinAll(aerolinea: Partial<any>): Promise<any> {
+        return apiClient.post<any>(`${this.endpoint}/joinAll`, aerolinea);
     }
 
     /**

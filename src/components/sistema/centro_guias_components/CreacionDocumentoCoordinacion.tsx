@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
+import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
+import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
+
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
 import { AerolineaGuiaSelector } from './forms/AerolineaGuiaSelector';
@@ -25,6 +28,7 @@ export default function CreacionDocumentoCoordinacion() {
 
     // Guía madre seleccionada
     const [selectedGuiaMadre, setSelectedGuiaMadre] = useState<any>(null);
+    const [loadingGuiaDetails, setLoadingGuiaDetails] = useState<boolean>(false);
 
     // Datos del formulario con valores iniciales
     const [formData, setFormData] = useState({
@@ -70,7 +74,7 @@ export default function CreacionDocumentoCoordinacion() {
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Manejar selección de guía madre
-    const handleGuiaSelected = (guia: any) => {
+    const handleGuiaSelected = async (guia: any) => {
         setSelectedGuiaMadre(guia);
 
         if (guia) {
@@ -79,30 +83,66 @@ export default function CreacionDocumentoCoordinacion() {
                 id_guia_madre: guia.id
             }));
 
-            // Buscar detalles de la aerolínea para pre-llenar valores si está disponible
-            if (guia.aerolinea?.id_aerolinea) {
-                const aerolineaId = guia.aerolinea.id_aerolinea;
-                const aerolinea = aerolineas.find(a => a.id_aerolinea === aerolineaId);
+            setLoadingGuiaDetails(true);
+            try {
+                // Obtener detalles completos de la guía madre, incluyendo el documento base y la aerolínea
+                const guiaDetallada = await guiasMadreService.getGuiaMadreById(guia.id);
 
-                if (aerolinea?.aerolineas_plantilla) {
-                    const plantilla = aerolinea.aerolineas_plantilla;
+                // Verificar si la guía tiene documento_base y aerolinea
+                if (guiaDetallada.documento_base?.id_aerolinea) {
+                    const aerolineaId = guiaDetallada.documento_base.id_aerolinea;
+                    // Buscar la aerolínea completa con su plantilla
+                    const aerolineaCompleta: any = aerolineasService.findOneComplete(aerolineaId);
 
-                    // Actualizar valores de la plantilla en el formulario
-                    setFormData(prev => ({
-                        ...prev,
-                        costo_guia_valor: plantilla.costo_guia_valor || 0,
-                        combustible_valor: plantilla.combustible_valor || 0,
-                        seguridad_valor: plantilla.seguridad_valor || 0,
-                        aux_calculo_valor: plantilla.aux_calculo_valor || 0,
-                        otros_valor: plantilla.otros_valor || 0,
-                        aux1_valor: plantilla.aux1_valor || 0,
-                        aux2_valor: plantilla.aux2_valor || 0,
-                        tarifa_rate: plantilla.tarifa_rate || 0,
-                        from1: aerolinea.id_aerolinea.toString() // Configurar aerolínea como origen
-                    }));
+                    if (aerolineaCompleta) {
+                        // Preparar valores por defecto para rutas basados en la plantilla de la aerolínea
+                        const rutasDefecto = {
+                            from1: aerolineaCompleta.from1?.toString() || '',
+                            to1: aerolineaCompleta.to1?.toString() || '',
+                            by1: aerolineaCompleta.by1?.toString() || '',
+                            to2: aerolineaCompleta.to2?.toString() || '',
+                            by2: aerolineaCompleta.by2?.toString() || '',
+                            to3: aerolineaCompleta.to3?.toString() || '',
+                            by3: aerolineaCompleta.by3?.toString() || '',
+                        };
+
+                        // Si la aerolínea tiene plantilla, usamos sus valores
+                        if (aerolineaCompleta.aerolineas_plantilla) {
+                            const plantilla = aerolineaCompleta.aerolineas_plantilla;
+
+                            // Actualizar datos del formulario con valores de la plantilla
+                            setFormData(prev => ({
+                                ...prev,
+                                ...rutasDefecto,
+                                costo_guia_valor: plantilla.costo_guia_valor || 0,
+                                combustible_valor: plantilla.combustible_valor || 0,
+                                seguridad_valor: plantilla.seguridad_valor || 0,
+                                aux_calculo_valor: plantilla.aux_calculo_valor || 0,
+                                otros_valor: plantilla.otros_valor || 0,
+                                aux1_valor: plantilla.aux1_valor || 0,
+                                aux2_valor: plantilla.aux2_valor || 0,
+                                tarifa_rate: plantilla.tarifa_rate || 0,
+                                pca: plantilla.pca || 0,
+                            }));
+
+                            dispatchMenssage('info', 'Se cargaron los valores de la plantilla de la aerolínea');
+                        } else {
+                            // Si no tiene plantilla, solo actualizamos las rutas
+                            setFormData(prev => ({
+                                ...prev,
+                                ...rutasDefecto
+                            }));
+                        }
+                    }
                 }
+            } catch (error) {
+                console.error('Error al cargar detalles de la guía madre:', error);
+                dispatchMenssage('error', 'No se pudieron cargar los detalles completos de la guía madre');
+            } finally {
+                setLoadingGuiaDetails(false);
             }
         } else {
+            // Reiniciar formulario si no hay guía seleccionada
             setFormData(prev => ({
                 ...prev,
                 id_guia_madre: 0
@@ -250,6 +290,13 @@ export default function CreacionDocumentoCoordinacion() {
                             <AerolineaGuiaSelector onGuiaSelected={handleGuiaSelected} />
                             {errors.id_guia_madre && (
                                 <p className="text-error text-sm mt-2">{errors.id_guia_madre}</p>
+                            )}
+
+                            {loadingGuiaDetails && (
+                                <div className="flex items-center mt-2">
+                                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                                    <span className="text-sm">Cargando información de la aerolínea...</span>
+                                </div>
                             )}
                         </div>
 

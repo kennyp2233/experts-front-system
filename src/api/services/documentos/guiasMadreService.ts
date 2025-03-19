@@ -11,6 +11,17 @@ export interface GuiaMadre {
     fecha_prestamo?: string;
     fecha_devolucion?: string;
     observaciones_prestamo?: string;
+    documento_base: {
+        id: number;
+        aerolinea: {
+            id_aerolinea: number;
+            nombre: string;
+            codigo: string;
+        }
+        id_aerolinea: number;
+        fecha: string;
+    }
+
     createdAt: string;
     updatedAt: string;
 }
