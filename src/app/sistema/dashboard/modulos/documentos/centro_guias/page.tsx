@@ -39,12 +39,15 @@ export default function CentroGuiasPage() {
     }, [tabParam, TABS]);
 
     // Actualizar la URL cuando cambia la pestaña
-    const handleTabChange = (tab: React.SetStateAction<string>) => {
+    const handleTabChange = (tab: React.SetStateAction<string>, docId?: string) => {
         setActiveTab(tab);
 
+        // Usar docId si se proporciona, o documentoId del estado actual
+        const documentIdToUse = docId || documentoId;
+
         // Mantener el parámetro documento si está presente y se va a asignación de guías
-        if (tab === TABS.ASIGNACION_GUIAS && documentoId) {
-            router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}&documento=${documentoId}`, { scroll: false });
+        if (tab === TABS.ASIGNACION_GUIAS && documentIdToUse) {
+            router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}&documento=${documentIdToUse}`, { scroll: false });
         } else {
             router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}`, { scroll: false });
         }

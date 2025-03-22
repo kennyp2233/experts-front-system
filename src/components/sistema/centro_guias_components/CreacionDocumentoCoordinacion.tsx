@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
-import { useCatalogosCoordinaciones } from '@/hooks/useCatalogosCoordinaciones';
+import { useCatalogosCoordinaciones } from '@/components/sistema/centro_guias_components/hooks/useCatalogosCoordinaciones';
 
 // Importamos los componentes de formulario refactorizados
 import { Form } from '@/components/sistema/common/form';
