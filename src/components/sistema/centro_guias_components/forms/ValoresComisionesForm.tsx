@@ -5,16 +5,16 @@ import { NumberField } from '@/components/sistema/common/form';
 
 interface ValoresComisionesFormProps {
     disabled?: boolean;
+    showCardLayout?: boolean;
 }
 
 export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
-    disabled = false
+    disabled = false,
+    showCardLayout = false
 }) => {
-    // No necesitamos extraer formData ni onChange ya que React Hook Form
-    // maneja todo esto a través del contexto y los métodos del formulario
     const { formState: { errors } } = useFormContext();
 
-    return (
+    const renderContent = () => (
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {/* Costo Guía */}
@@ -23,6 +23,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Costo Guía"
                     disabled={disabled}
                     showCurrency={true}
+                    min={0}
                 />
 
                 {/* Combustible */}
@@ -31,6 +32,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Combustible"
                     disabled={disabled}
                     showCurrency={true}
+                    min={0}
                 />
 
                 {/* Seguridad */}
@@ -39,6 +41,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Seguridad"
                     disabled={disabled}
                     showCurrency={true}
+                    min={0}
                 />
 
                 {/* Tarifa Rate */}
@@ -47,6 +50,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Tarifa Rate"
                     disabled={disabled}
                     showCurrency={true}
+                    min={0}
                 />
 
                 {/* Char Weight */}
@@ -55,6 +59,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Char Weight"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* Otros */}
@@ -63,6 +68,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Otros Valores"
                     disabled={disabled}
                     showCurrency={true}
+                    min={0}
                 />
             </div>
 
@@ -75,6 +81,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Form A"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* Transport */}
@@ -83,6 +90,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Transport"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* PCA */}
@@ -91,6 +99,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="PCA"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* Fitos */}
@@ -99,6 +108,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Fitos"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* Termografo */}
@@ -107,6 +117,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="Termógrafo"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
                 />
 
                 {/* MCA */}
@@ -115,8 +126,57 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     label="MCA"
                     disabled={disabled}
                     showCurrency={false}
+                    min={0}
+                />
+
+                {/* Tax */}
+                <NumberField
+                    name="tax"
+                    label="Tax"
+                    disabled={disabled}
+                    showCurrency={false}
+                    min={0}
+                />
+
+                {/* Auxiliary 1 Value */}
+                <NumberField
+                    name="aux1_valor"
+                    label="Aux 1"
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
+                />
+
+                {/* Auxiliary 2 Value */}
+                <NumberField
+                    name="aux2_valor"
+                    label="Aux 2"
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
+                />
+
+                {/* Auxiliary Calculation Value */}
+                <NumberField
+                    name="aux_calculo_valor"
+                    label="Aux Cálculo"
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
                 />
             </div>
         </>
     );
+
+    // Render with or without card layout
+    if (showCardLayout) {
+        return (
+            <div className="card bg-base-200 p-6">
+                <h3 className="font-bold mb-4">Valores y Comisiones</h3>
+                {renderContent()}
+            </div>
+        );
+    }
+
+    return renderContent();
 };

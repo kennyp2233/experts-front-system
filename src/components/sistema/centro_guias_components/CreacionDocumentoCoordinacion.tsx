@@ -1,4 +1,4 @@
-// src/components/sistema/centro_guias_components/CreacionDocumentoCoordinacionRefactorizado.tsx
+// src/components/sistema/centro_guias_components/CreacionDocumentoCoordinacion.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -57,7 +57,7 @@ const schema = yup.object({
 // Tipo para los valores del formulario
 type FormValues = yup.InferType<typeof schema>;
 
-export default function CreacionDocumentoCoordinacionRefactorizado() {
+export default function CreacionDocumentoCoordinacion() {
   const router = useRouter();
   const {
     consignatarios,
@@ -73,6 +73,7 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
   // Estado para el manejo de errores y carga
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formReady, setFormReady] = useState(false);
 
   // Configurar React Hook Form con validación Yup
   const methods = useForm<FormValues>({
@@ -100,12 +101,15 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
     }
   });
 
-  // Manejar la selección de una guía madre
-  const handleGuiaSelected = (guia: any) => {
-    if (!guia) return;
+  // Manejar la selección de una guía madre y cargar datos de la aerolínea
+  const handleGuiaSelected = (guia: any, aerolineaData: any) => {
+    if (!guia) {
+      setFormReady(false);
+      return;
+    }
 
-    // Actualizar el ID de la guía madre en el formulario
-    methods.setValue('id_guia_madre', guia.id);
+    // Marcar que el formulario ya tiene los datos necesarios para el resto de secciones
+    setFormReady(true);
   };
 
   // Manejar el envío del formulario
@@ -122,8 +126,10 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
         fecha_asignacion: new Date(data.fecha_asignacion)
       };
 
+
+      const { selectedAerolineaId, ...filteredDocumentoData } = documentoData as any;
       // Llamar a la API para crear el documento
-      const response = await coordinacionesService.createDocument(documentoData as any);
+      const response = await coordinacionesService.createDocument(filteredDocumentoData as any);
 
       dispatchMenssage('success', 'Documento de Coordinación creado correctamente');
 
@@ -178,7 +184,7 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
               </div>
 
               {/* SECCIÓN 2: DATOS PRINCIPALES DEL DOCUMENTO */}
-              {methods.watch('id_guia_madre') && (
+              {methods.watch('id_guia_madre') && formReady && (
                 <div className="card bg-base-200 p-4 mb-6">
                   <h3 className="font-bold mb-4">Información Principal del Documento</h3>
                   <DocumentoCoordinacionForm
@@ -195,7 +201,7 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
               )}
 
               {/* SECCIÓN 3: RUTAS */}
-              {methods.watch('id_guia_madre') && (
+              {methods.watch('id_guia_madre') && formReady && (
                 <div className="card bg-base-200 p-4 mb-6">
                   <h3 className="font-bold mb-4">Rutas</h3>
                   <RutasForm
@@ -207,7 +213,7 @@ export default function CreacionDocumentoCoordinacionRefactorizado() {
               )}
 
               {/* SECCIÓN 4: VALORES Y COMISIONES */}
-              {methods.watch('id_guia_madre') && (
+              {methods.watch('id_guia_madre') && formReady && (
                 <div className="card bg-base-200 p-4 mb-6">
                   <h3 className="font-bold mb-4">Valores y Comisiones</h3>
                   <p className="text-sm opacity-70 mb-4">

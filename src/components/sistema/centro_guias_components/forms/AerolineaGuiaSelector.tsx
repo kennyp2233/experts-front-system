@@ -1,6 +1,6 @@
 // src/components/sistema/centro_guias_components/forms/AerolineaGuiaSelector.tsx
 import React, { useState, useEffect } from 'react';
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
 import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 import { AppIcons } from '@/utils/icons';
@@ -8,7 +8,7 @@ import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { FormField } from '@/components/sistema/common/form';
 
 interface AerolineaGuiaSelectorProps {
-    onGuiaSelected?: (guia: any) => void;
+    onGuiaSelected?: (guia: any, aerolineaData?: any) => void;
     initialGuiaId?: number;
     disabled?: boolean;
 }
@@ -18,15 +18,17 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
     initialGuiaId,
     disabled = false
 }) => {
-    const { control, setValue, watch } = useFormContext();
+    const { setValue, watch } = useFormContext();
     const selectedAerolineaId = watch('selectedAerolineaId');
     const selectedGuiaId = watch('id_guia_madre');
 
     const [aerolineas, setAerolineas] = useState<any[]>([]);
     const [guias, setGuias] = useState<any[]>([]);
     const [selectedGuia, setSelectedGuia] = useState<any | null>(null);
+    const [selectedAerolineaData, setSelectedAerolineaData] = useState<any | null>(null);
     const [loading, setLoading] = useState(false);
     const [loadingGuiaDetails, setLoadingGuiaDetails] = useState(false);
+    const [loadingAerolineaDetails, setLoadingAerolineaDetails] = useState(false);
 
     // Cargar aerolíneas
     useEffect(() => {
@@ -53,13 +55,10 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                         setSelectedGuia(guia);
                         setValue('id_guia_madre', guia.id);
 
-                        if (onGuiaSelected) {
-                            onGuiaSelected(guia);
-                        }
-
                         // Si la guía tiene asociada una aerolínea a través del documento base
                         if (guia.documento_base?.id_aerolinea) {
                             setValue('selectedAerolineaId', guia.documento_base.id_aerolinea);
+                            fetchAerolineaDetails(guia.documento_base.id_aerolinea);
                         }
                     }
                 } catch (error) {
@@ -69,15 +68,24 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
 
             fetchInitialGuia();
         }
-    }, [initialGuiaId, setValue, onGuiaSelected]);
+    }, [initialGuiaId, setValue]);
 
     // Cargar guías cuando cambia la aerolínea seleccionada
     useEffect(() => {
-        if (!selectedAerolineaId) return;
+        if (!selectedAerolineaId) {
+            setGuias([]);
+            setSelectedGuia(null);
+            setSelectedAerolineaData(null);
+            return;
+        }
 
         const fetchGuias = async () => {
             setLoading(true);
             try {
+                // Cargar detalles de la aerolínea seleccionada
+                await fetchAerolineaDetails(selectedAerolineaId);
+
+                // Cargar guías disponibles para esta aerolínea
                 const guiasData = await guiasMadreService.getGuiasMadrePorAerolinea(selectedAerolineaId);
 
                 // Filtrar solo las disponibles
@@ -98,6 +106,74 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
         fetchGuias();
     }, [selectedAerolineaId]);
 
+    // Función para cargar detalles completos de la aerolínea
+    const fetchAerolineaDetails = async (aerolineaId: number) => {
+        setLoadingAerolineaDetails(true);
+        try {
+            const aerolineaData = await aerolineasService.findOneComplete(aerolineaId);
+            setSelectedAerolineaData(aerolineaData);
+
+            // Inicializar valores del formulario con los datos de la plantilla de la aerolínea
+            if (aerolineaData) {
+                if (aerolineaData.costo_guia_valor !== undefined) {
+                    setValue('costo_guia_valor', aerolineaData.costo_guia_valor);
+                }
+                if (aerolineaData.combustible_valor !== undefined) {
+                    setValue('combustible_valor', aerolineaData.combustible_valor);
+                }
+                if (aerolineaData.seguridad_valor !== undefined) {
+                    setValue('seguridad_valor', aerolineaData.seguridad_valor);
+                }
+                if (aerolineaData.aux_calculo_valor !== undefined) {
+                    setValue('aux_calculo_valor', aerolineaData.aux_calculo_valor);
+                }
+                if (aerolineaData.otros_valor !== undefined) {
+                    setValue('otros_valor', aerolineaData.otros_valor);
+                }
+                if (aerolineaData.aux1_valor !== undefined) {
+                    setValue('aux1_valor', aerolineaData.aux1_valor);
+                }
+                if (aerolineaData.aux2_valor !== undefined) {
+                    setValue('aux2_valor', aerolineaData.aux2_valor);
+                }
+                if (aerolineaData.tarifa_rate !== undefined) {
+                    setValue('tarifa_rate', aerolineaData.tarifa_rate);
+                }
+
+                // Inicializar valores de rutas si existen
+                if (aerolineaData.from1 !== undefined) {
+                    setValue('from1', aerolineaData.from1);
+                }
+                if (aerolineaData.to1 !== undefined) {
+                    setValue('to1', aerolineaData.to1);
+                }
+                if (aerolineaData.by1 !== undefined) {
+                    setValue('by1', aerolineaData.by1);
+                }
+                if (aerolineaData.to2 !== undefined) {
+                    setValue('to2', aerolineaData.to2);
+                }
+                if (aerolineaData.by2 !== undefined) {
+                    setValue('by2', aerolineaData.by2);
+                }
+                if (aerolineaData.to3 !== undefined) {
+                    setValue('to3', aerolineaData.to3);
+                }
+                if (aerolineaData.by3 !== undefined) {
+                    setValue('by3', aerolineaData.by3);
+                }
+            }
+
+            return aerolineaData;
+        } catch (error) {
+            console.error('Error al cargar detalles de la aerolínea:', error);
+            dispatchMenssage('error', 'Error al cargar plantilla de la aerolínea');
+            return null;
+        } finally {
+            setLoadingAerolineaDetails(false);
+        }
+    };
+
     // Cuando cambia la guía seleccionada
     useEffect(() => {
         if (!selectedGuiaId) {
@@ -112,7 +188,7 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                 setSelectedGuia(guia);
 
                 if (onGuiaSelected) {
-                    onGuiaSelected(guia);
+                    onGuiaSelected(guia, selectedAerolineaData);
                 }
             } catch (error) {
                 console.error('Error al cargar detalles de la guía:', error);
@@ -126,18 +202,7 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
         if (!selectedGuia || selectedGuia.id !== selectedGuiaId) {
             cargarDetallesGuia();
         }
-    }, [selectedGuiaId, onGuiaSelected]);
-
-    const handleChangeGuia = (guiaId: string) => {
-        if (!guiaId) {
-            setSelectedGuia(null);
-            if (onGuiaSelected) {
-                onGuiaSelected(null);
-            }
-        } else {
-            // Los detalles se cargarán en el useEffect que observa selectedGuiaId
-        }
-    };
+    }, [selectedGuiaId, onGuiaSelected, selectedAerolineaData]);
 
     return (
         <div className="space-y-4">
@@ -152,7 +217,15 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                 }))}
                 disabled={disabled}
                 placeholder="Seleccione una aerolínea"
+                
             />
+
+            {loadingAerolineaDetails && (
+                <div className="flex items-center justify-center py-2">
+                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                    <span className="text-sm">Cargando plantilla de la aerolínea...</span>
+                </div>
+            )}
 
             {/* Selección de Guía Madre */}
             {selectedAerolineaId && (
@@ -166,27 +239,16 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                             <span>Cargando guías...</span>
                         </div>
                     ) : (
-                        <Controller
+                        <FormField
                             name="id_guia_madre"
-                            control={control}
-                            render={({ field }) => (
-                                <select
-                                    className="select select-bordered w-full"
-                                    value={field.value || ''}
-                                    onChange={(e) => {
-                                        field.onChange(e);
-                                        handleChangeGuia(e.target.value);
-                                    }}
-                                    disabled={guias.length === 0 || disabled}
-                                >
-                                    <option value="">Seleccione una guía madre</option>
-                                    {guias.map(guia => (
-                                        <option key={guia.id} value={guia.id}>
-                                            {guia.prefijo}-{guia.secuencial}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
+                            label="Guía Madre"
+                            type="select"
+                            options={guias.map(guia => ({
+                                value: guia.id,
+                                label: `${guia.prefijo}-${guia.secuencial}`
+                            }))}
+                            disabled={guias.length === 0 || disabled}
+                            placeholder="Seleccione una guía madre"
                         />
                     )}
                 </div>
@@ -222,6 +284,18 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                 <div className="flex items-center mt-2">
                     <span className="loading loading-spinner loading-sm mr-2"></span>
                     <span className="text-sm">Cargando información de la guía...</span>
+                </div>
+            )}
+
+            {/* Información de la Plantilla de Aerolínea */}
+            {selectedAerolineaData && (
+                <div className="alert alert-info bg-info/10 border-info mt-4">
+                    <AppIcons.Info className="w-6 h-6" />
+                    <div>
+                        <span className="font-semibold">Plantilla de Aerolínea Cargada:</span>
+                        <br />
+                        Se han inicializado los valores de comisión y rutas con la plantilla de la aerolínea.
+                    </div>
                 </div>
             )}
         </div>

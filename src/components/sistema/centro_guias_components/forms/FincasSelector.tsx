@@ -1,25 +1,28 @@
 // src/components/sistema/centro_guias_components/forms/FincasSelector.tsx
 import React, { useState, useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch, Controller } from 'react-hook-form';
 import { AppIcons } from '@/utils/icons';
 
 interface FincasSelectorProps {
     fincas: any[];
     disabled?: boolean;
+    showCardLayout?: boolean;
 }
 
 export const FincasSelector: React.FC<FincasSelectorProps> = ({
     fincas,
-    disabled = false
+    disabled = false,
+    showCardLayout = false
 }) => {
     // Utilizando React Hook Form para acceder al contexto del formulario
-    const { setValue, control } = useFormContext();
+    const { setValue, control, formState: { errors } } = useFormContext();
     const selectedFincas = useWatch({ name: 'selectedFincas', control }) || [];
+    const error = errors.selectedFincas?.message as string;
 
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredFincas, setFilteredFincas] = useState(fincas);
 
-    // Filtrar fincas cuando cambia el término de búsqueda
+    // Filtrar fincas cuando cambia el término de búsqueda o la lista de fincas
     useEffect(() => {
         if (searchTerm.trim() === '') {
             setFilteredFincas(fincas);
@@ -27,8 +30,10 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
             const searchTermLower = searchTerm.toLowerCase();
             const filtered = fincas.filter(
                 finca =>
-                    finca.nombre?.toLowerCase().includes(searchTermLower) ||
-                    finca.codigo?.toLowerCase().includes(searchTermLower)
+                    (finca.nombre?.toLowerCase().includes(searchTermLower)) ||
+                    (finca.nombre_finca?.toLowerCase().includes(searchTermLower)) ||
+                    (finca.codigo?.toLowerCase().includes(searchTermLower)) ||
+                    (finca.codigo_finca?.toLowerCase().includes(searchTermLower))
             );
             setFilteredFincas(filtered);
         }
@@ -51,7 +56,7 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
 
         if (allSelected) {
             // Deseleccionar solo las fincas filtradas
-            const newSelection = selectedFincas.filter((id: any) => !allFilteredFincaIds.includes(id));
+            const newSelection = selectedFincas.filter((id: number) => !allFilteredFincaIds.includes(id));
             setValue('selectedFincas', newSelection, { shouldValidate: true });
         } else {
             // Seleccionar todas las fincas filtradas (mantener las que ya estaban seleccionadas)
@@ -60,7 +65,7 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
         }
     };
 
-    return (
+    const renderContent = () => (
         <div className="form-control">
             <div className="flex justify-between items-center">
                 <label className="label-text font-medium">Fincas Disponibles</label>
@@ -72,7 +77,7 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
                         type="button"
                         className="btn btn-xs"
                         onClick={handleSelectAll}
-                        disabled={disabled}
+                        disabled={disabled || filteredFincas.length === 0}
                     >
                         {filteredFincas.length > 0 &&
                             filteredFincas.every(finca => selectedFincas.includes(finca.id_finca))
@@ -96,7 +101,20 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2 max-h-80 overflow-y-auto p-2">
+            {/* Campo oculto para la validación */}
+            <Controller
+                name="selectedFincas"
+                control={control}
+                render={({ field }) => (
+                    <input type="hidden" {...field} />
+                )}
+            />
+
+            {error && (
+                <div className="text-error text-sm mt-1 mb-2">{error}</div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2 max-h-80 overflow-y-auto p-2 border rounded-lg">
                 {filteredFincas.length === 0 ? (
                     <div className="col-span-full text-center py-4 text-sm opacity-70">
                         No se encontraron fincas con ese término de búsqueda
@@ -131,4 +149,16 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
             </div>
         </div>
     );
+
+    // Render with or without card layout
+    if (showCardLayout) {
+        return (
+            <div className="card bg-base-200 p-6">
+                <h3 className="font-bold mb-4">Selección de Fincas</h3>
+                {renderContent()}
+            </div>
+        );
+    }
+
+    return renderContent();
 };
