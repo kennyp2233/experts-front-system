@@ -7,8 +7,8 @@ import { AppIcons } from '@/utils/icons';
 
 // Componentes principales
 import CreacionDocumentoCoordinacion from '@/components/sistema/centro_guias_components/CreacionDocumentoCoordinacion';
-import GestorDocumentosCoordinacion from '@/components/sistema/centro_guias_components/GestorDocumentosCoordinacion';
-import AsignacionGuiasHijas from '@/components/sistema/centro_guias_components/AsignacionGuiasHijas';
+import { GestorDocumentosCoordinacion } from '@/components/sistema/centro_guias_components/GestorDocumentosCoordinacion';
+import { AsignacionGuiasHijas } from '@/components/sistema/centro_guias_components/AsignacionGuiasHijas';
 import CoordinacionMasiva from '@/components/sistema/centro_guias_components/CoordinacionMasiva';
 
 // Disponible en repositorio existente

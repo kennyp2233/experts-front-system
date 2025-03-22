@@ -39,7 +39,7 @@ interface RefactoredAsignacionGuiasHijasProps {
     onComplete?: () => void;
 }
 
-export const RefactoredAsignacionGuiasHijas: React.FC<RefactoredAsignacionGuiasHijasProps> = ({
+export const AsignacionGuiasHijas: React.FC<RefactoredAsignacionGuiasHijasProps> = ({
     documentoId,
     onComplete
 }) => {
