@@ -1,6 +1,7 @@
 // src/components/sistema/centro_guias_components/forms/AerolineaGuiaSelector.tsx
 import React, { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
 import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 import { AppIcons } from '@/utils/icons';
@@ -34,7 +35,7 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
     useEffect(() => {
         const fetchAerolineas = async () => {
             try {
-                const data = await aerolineasService.getAerolineas();
+                const data = await coordinacionesService.getAerolineas();
                 setAerolineas(data);
             } catch (error) {
                 console.error('Error al cargar aerolíneas:', error);
@@ -217,7 +218,7 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
                 }))}
                 disabled={disabled}
                 placeholder="Seleccione una aerolínea"
-                
+
             />
 
             {loadingAerolineaDetails && (
@@ -230,9 +231,7 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
             {/* Selección de Guía Madre */}
             {selectedAerolineaId && (
                 <div className="form-control">
-                    <label className="label">
-                        <span className="label-text font-medium">Guía Madre</span>
-                    </label>
+
                     {loading ? (
                         <div className="flex items-center space-x-2">
                             <span className="loading loading-spinner loading-sm"></span>
