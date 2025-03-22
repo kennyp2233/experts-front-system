@@ -1,21 +1,37 @@
-// src/components/sistema/centro_guias_components/GestionDocumentosCoordinacion.tsx
+// src/app/sistema/dashboard/modulos/documentos/centro_guias/components/GestorDocumentosCoordinacion.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { coordinacionesService, CoordinationDocument } from '@/api/services/documentos/coordinacionesService';
+import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { consignatarioService } from '@/api/services/mantenimiento/consignatarioService';
 import { productosService } from '@/api/services/mantenimiento/productosService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
+
+// Componentes
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import DocumentoCoordinacionDetailView from './DocumentoCoordinacionDetailView';
 import GuiasHijasList from './GuiasHijasList';
 
-interface EnhancedCoordinationDocument extends CoordinationDocument {
+// Tipo para documentos de coordinación con información adicional
+interface EnhancedCoordinationDocument {
+    id: number;
+    id_consignatario: number;
+    id_producto: number;
+    id_guia_madre: number;
+    fecha_vuelo: Date;
+    createdAt: Date;
     consignatarioNombre?: string;
     productoNombre?: string;
     estadoLabel?: string;
     cooLabel?: string;
+    [key: string]: any;
 }
 
-export default function GestionDocumentosCoordinacion() {
+interface GestorDocumentosCoordinacionProps {
+    onAssignGuides: (documentId: number) => void;
+}
+
+export default function GestorDocumentosCoordinacion({ onAssignGuides }: GestorDocumentosCoordinacionProps) {
     const router = useRouter();
 
     // Estados
@@ -66,9 +82,6 @@ export default function GestionDocumentosCoordinacion() {
                 if (filtro) {
                     if (!isNaN(Number(filtro))) {
                         filters.id = Number(filtro);
-                    } else {
-                        // Implementar filtro por nombre de consignatario o producto si se necesita
-                        // (Requeriría modificación en el backend)
                     }
                 }
 
@@ -84,52 +97,10 @@ export default function GestionDocumentosCoordinacion() {
                 const response = await coordinacionesService.getDocuments(currentPage, 10, filters);
 
                 // Transformar datos para mostrar información legible
-                const formattedData = response.data.map(doc => ({
-                    ...doc,
-                    consignatarioNombre: 'Pendiente', // Se actualizará después
-                    productoNombre: 'Pendiente', // Se actualizará después
-                    estadoLabel: doc.createdAt ? "Activo" : "Pendiente",
-                    cooLabel: `COO-${doc.id.toString().padStart(7, '0')}`
-                }));
-
-                setDocumentos(formattedData);
-                setTotalPages(response.totalPages);
-                setError(null);
-            } catch (err) {
-                console.error('Error al cargar documentos de coordinación:', err);
-                setError('No se pudieron cargar los documentos de coordinación');
-                dispatchMenssage('error', 'Error al cargar los documentos de coordinación');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDocumentos();
-    }, [currentPage, filtro, estadoFiltro, sorting]);
-
-    useEffect(() => {
-        const fetchDocumentos = async () => {
-            setLoading(true);
-            try {
-                // Construir filtros
-                const filters: any = {};
-                if (filtro) {
-                    if (!isNaN(Number(filtro))) {
-                        filters.id = Number(filtro);
-                    }
-                }
-                if (estadoFiltro !== 'todos') {
-                    filters.estado = estadoFiltro;
-                }
-                filters.sortField = sorting.field;
-                filters.sortDirection = sorting.direction;
-
-                const response = await coordinacionesService.getDocuments(currentPage, 10, filters);
-
-                // Enriquecer documentos con la información de catálogos
                 const formattedData = response.data.map(doc => {
                     const consignatario = consignatarios.find(c => c.id_consignatario === doc.id_consignatario);
                     const producto = productos.find(p => p.id_producto === doc.id_producto);
+
                     return {
                         ...doc,
                         consignatarioNombre: consignatario ? consignatario.nombre : 'No asignado',
@@ -199,11 +170,10 @@ export default function GestionDocumentosCoordinacion() {
     // Renderizar vista de lista
     if (viewMode === 'list') {
         return (
-            <div className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                    <div className="flex flex-wrap justify-between items-center mb-6">
-                        <h2 className="text-xl font-semibold">Gestión de Documentos de Coordinación</h2>
-
+            <Card className="bg-base-100 shadow-lg">
+                <CardHeader className="pb-2">
+                    <div className="flex flex-wrap justify-between items-center">
+                        <CardTitle className="text-xl font-semibold">Gestor de Documentos de Coordinación</CardTitle>
                         <button
                             className="btn btn-primary"
                             onClick={() => router.push('/sistema/dashboard/modulos/documentos/centro_guias?tab=crear-documento')}
@@ -211,7 +181,9 @@ export default function GestionDocumentosCoordinacion() {
                             <AppIcons.Add className="w-4 h-4 mr-1" /> Nuevo Documento
                         </button>
                     </div>
+                </CardHeader>
 
+                <CardContent>
                     {/* Filtros */}
                     <div className="flex flex-wrap gap-3 mb-6">
                         <div className="form-control flex-1 max-w-xs">
@@ -260,55 +232,35 @@ export default function GestionDocumentosCoordinacion() {
                                 <table className="table w-full">
                                     <thead>
                                         <tr>
-                                            <th
-                                                className="cursor-pointer"
-                                                onClick={() => handleSort('id')}
-                                            >
+                                            <th className="cursor-pointer" onClick={() => handleSort('id')}>
                                                 <div className="flex items-center">
                                                     COO
                                                     {sorting.field === 'id' && (
-                                                        <span className="ml-1">
-                                                            {sorting.direction === 'asc' ? '↑' : '↓'}
-                                                        </span>
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
                                                 </div>
                                             </th>
-                                            <th
-                                                className="cursor-pointer"
-                                                onClick={() => handleSort('id_consignatario')}
-                                            >
+                                            <th className="cursor-pointer" onClick={() => handleSort('id_consignatario')}>
                                                 <div className="flex items-center">
                                                     Consignatario
                                                     {sorting.field === 'id_consignatario' && (
-                                                        <span className="ml-1">
-                                                            {sorting.direction === 'asc' ? '↑' : '↓'}
-                                                        </span>
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
                                                 </div>
                                             </th>
-                                            <th
-                                                className="cursor-pointer"
-                                                onClick={() => handleSort('id_producto')}
-                                            >
+                                            <th className="cursor-pointer" onClick={() => handleSort('id_producto')}>
                                                 <div className="flex items-center">
                                                     Producto
                                                     {sorting.field === 'id_producto' && (
-                                                        <span className="ml-1">
-                                                            {sorting.direction === 'asc' ? '↑' : '↓'}
-                                                        </span>
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
                                                 </div>
                                             </th>
-                                            <th
-                                                className="cursor-pointer"
-                                                onClick={() => handleSort('fecha_vuelo')}
-                                            >
+                                            <th className="cursor-pointer" onClick={() => handleSort('fecha_vuelo')}>
                                                 <div className="flex items-center">
                                                     Fecha Vuelo
                                                     {sorting.field === 'fecha_vuelo' && (
-                                                        <span className="ml-1">
-                                                            {sorting.direction === 'asc' ? '↑' : '↓'}
-                                                        </span>
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
                                                 </div>
                                             </th>
@@ -382,8 +334,8 @@ export default function GestionDocumentosCoordinacion() {
                             )}
                         </>
                     )}
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         );
     }
 
@@ -415,126 +367,49 @@ export default function GestionDocumentosCoordinacion() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Detalles del documento */}
-                    <div className="card bg-base-100 shadow-lg">
-                        <div className="card-body">
-                            <h3 className="card-title text-lg">Detalles del Documento de Coordinación</h3>
-
-                            <div className="grid grid-cols-2 gap-4 mt-4">
-                                <div>
-                                    <p className="text-sm opacity-70">Consignatario</p>
-                                    <p className="font-medium">{selectedDocumento.consignatarioNombre}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Producto</p>
-                                    <p className="font-medium">{selectedDocumento.productoNombre}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Fecha de Vuelo</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.fecha_vuelo
-                                            ? new Date(selectedDocumento.fecha_vuelo).toLocaleDateString()
-                                            : 'No definida'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Fecha de Asignación</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.fecha_asignacion
-                                            ? new Date(selectedDocumento.fecha_asignacion).toLocaleDateString()
-                                            : 'No definida'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Tipo de Pago</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.pago || 'No definido'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Estado</p>
-                                    <p className="font-medium">
-                                        <span className={`badge ${selectedDocumento.estadoLabel === 'Activo' ? 'badge-success' : 'badge-warning'}`}>
-                                            {selectedDocumento.estadoLabel}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Sección de tarifas y valores */}
-                            <div className="divider">Tarifas y Valores</div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div>
-                                    <p className="text-sm opacity-70">Costo Guía</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.costo_guia_valor
-                                            ? `$${selectedDocumento.costo_guia_valor.toFixed(2)}`
-                                            : '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Combustible</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.combustible_valor
-                                            ? `${selectedDocumento.combustible_valor.toFixed(2)}`
-                                            : '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Seguridad</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.seguridad_valor
-                                            ? `${selectedDocumento.seguridad_valor.toFixed(2)}`
-                                            : '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Tarifa Rate</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.tarifa_rate
-                                            ? `${selectedDocumento.tarifa_rate.toFixed(2)}`
-                                            : '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm opacity-70">Char Weight</p>
-                                    <p className="font-medium">
-                                        {selectedDocumento.char_weight
-                                            ? selectedDocumento.char_weight.toFixed(2)
-                                            : '-'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Acciones */}
-                            <div className="card-actions justify-end mt-6">
-                                <button
-                                    className="btn btn-error"
-                                    onClick={() => handleDeleteDocument(selectedDocumento.id)}
-                                >
-                                    <AppIcons.Delete className="w-4 h-4 mr-1" />
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <Card className="bg-base-100 shadow-lg">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Detalles del Documento</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <DocumentoCoordinacionDetailView documento={selectedDocumento} />
+                        </CardContent>
+                        <CardFooter className="justify-end space-x-2">
+                            <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=crear-documento&edit=${selectedDocumento.id}`)}
+                            >
+                                <AppIcons.Edit className="w-4 h-4 mr-1" />
+                                Editar
+                            </button>
+                            <button
+                                className="btn btn-error btn-sm"
+                                onClick={() => handleDeleteDocument(selectedDocumento.id)}
+                            >
+                                <AppIcons.Delete className="w-4 h-4 mr-1" />
+                                Eliminar
+                            </button>
+                        </CardFooter>
+                    </Card>
 
                     {/* Guías hijas asociadas */}
-                    <div className="card bg-base-100 shadow-lg">
-                        <div className="card-body">
-                            <h3 className="card-title text-lg">Guías Hijas Asignadas</h3>
+                    <Card className="bg-base-100 shadow-lg">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Guías Hijas Asignadas</CardTitle>
+                        </CardHeader>
+                        <CardContent>
                             <GuiasHijasList filtroGuiaMadre={selectedDocumento.id_guia_madre} showFilters={false} />
-
-                            <div className="card-actions justify-end mt-4">
-                                <button
-                                    className="btn btn-primary"
-                                    onClick={() => router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=asignacion-guias&documento=${selectedDocumento.id}`)}
-                                >
-                                    <AppIcons.Add className="w-4 h-4 mr-1" />
-                                    Asignar Guías Hijas
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                        <CardFooter className="justify-end">
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => onAssignGuides(selectedDocumento.id)}
+                            >
+                                <AppIcons.Add className="w-4 h-4 mr-1" />
+                                Asignar Guías Hijas
+                            </button>
+                        </CardFooter>
+                    </Card>
                 </div>
             </div>
         );

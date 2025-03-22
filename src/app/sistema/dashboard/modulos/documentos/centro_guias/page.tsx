@@ -2,113 +2,108 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import BreadcrumbDocumentos from '@/components/sistema/documentos_components/BreadcrumbDocumentos';
-import { FaNetworkWired } from "react-icons/fa";
+import { CentroGuiasProvider } from '@/contexts/CentroGuiasContext';
 import { AppIcons } from '@/utils/icons';
 
-// Componentes que se mantendrán o adaptarán 
-import GuiasHijasList from "@/components/sistema/centro_guias_components/GuiasHijasList";
-import DashboardGuias from "@/components/sistema/centro_guias_components/DashboardGuias";
-import CoordinacionesRapidas from "@/components/sistema/centro_guias_components/CoordinacionesRapidas";
-
-// Importación de los nuevos componentes mejorados
+// Componentes principales
 import CreacionDocumentoCoordinacion from '@/components/sistema/centro_guias_components/CreacionDocumentoCoordinacion';
-import GestionDocumentosCoordinacion from '@/components/sistema/centro_guias_components/GestionDocumentosCoordinacion';
-import AsignacionGuiasHijas from "@/components/sistema/centro_guias_components/AsignacionGuiasHijas";
+import GestorDocumentosCoordinacion from '@/components/sistema/centro_guias_components/GestorDocumentosCoordinacion';
+import AsignacionGuiasHijas from '@/components/sistema/centro_guias_components/AsignacionGuiasHijas';
+import CoordinacionMasiva from '@/components/sistema/centro_guias_components/CoordinacionMasiva';
 
-const CentroGuiasPage: React.FC = () => {
+// Disponible en repositorio existente
+import BreadcrumbDocumentos from '@/components/sistema/documentos_components/BreadcrumbDocumentos';
+import { FaNetworkWired } from "react-icons/fa";
+
+export default function CentroGuiasPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams?.get('tab');
+    const documentoId = searchParams?.get('documento');
 
     // Tabs disponibles
-    const tabs = {
-        DASHBOARD: 'dashboard',
+    const TABS = {
         CREAR_DOCUMENTO: 'crear-documento',
+        GESTOR_DOCUMENTOS: 'gestor-documentos',
         ASIGNACION_GUIAS: 'asignacion-guias',
-        GUIAS_HIJAS: 'guias-hijas',
-        GESTION_DOCUMENTOS: 'gestion-documentos',
-        COORDINACION_RAPIDA: 'coordinacion-rapida',
+        COORDINACION_MASIVA: 'coordinacion-masiva',
     };
 
-    const [activeTab, setActiveTab] = useState(tabs.DASHBOARD);
+    const [activeTab, setActiveTab] = useState(TABS.ASIGNACION_GUIAS);
 
     // Establecer la pestaña activa según los parámetros de URL
     useEffect(() => {
-        if (tabParam && Object.values(tabs).includes(tabParam)) {
+        if (tabParam && Object.values(TABS).includes(tabParam)) {
             setActiveTab(tabParam);
         }
-    }, [tabParam, tabs]);
+    }, [tabParam, TABS]);
 
     // Actualizar la URL cuando cambia la pestaña
-    const handleTabChange = (tab: string) => {
+    const handleTabChange = (tab: React.SetStateAction<string>) => {
         setActiveTab(tab);
-        router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}`, { scroll: false });
+
+        // Mantener el parámetro documento si está presente y se va a asignación de guías
+        if (tab === TABS.ASIGNACION_GUIAS && documentoId) {
+            router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}&documento=${documentoId}`, { scroll: false });
+        } else {
+            router.push(`/sistema/dashboard/modulos/documentos/centro_guias?tab=${tab}`, { scroll: false });
+        }
     };
 
     // Estructura de pestañas con sus nombres y opciones
     const tabOptions = [
-        { id: tabs.DASHBOARD, label: 'Dashboard', icon: <AppIcons.Dashboard className="w-4 h-4 mr-1" /> },
-        { id: tabs.CREAR_DOCUMENTO, label: 'Crear Documento COO', icon: <AppIcons.DocumentDuplicate className="w-4 h-4 mr-1" /> },
-        { id: tabs.ASIGNACION_GUIAS, label: 'Asignación de Guías', icon: <AppIcons.Link className="w-4 h-4 mr-1" /> },
-        { id: tabs.GUIAS_HIJAS, label: 'Guías Hijas', icon: <AppIcons.Document className="w-4 h-4 mr-1" /> },
-        { id: tabs.GESTION_DOCUMENTOS, label: 'Gestión de Documentos', icon: <AppIcons.ClipboardList className="w-4 h-4 mr-1" /> },
-        { id: tabs.COORDINACION_RAPIDA, label: 'Coordinación Rápida', icon: <AppIcons.Bolt className="w-4 h-4 mr-1" /> },
+        { id: TABS.CREAR_DOCUMENTO, label: 'Crear Documento', icon: <AppIcons.DocumentDuplicate className="w-4 h-4 mr-1" /> },
+        { id: TABS.GESTOR_DOCUMENTOS, label: 'Gestor de Documentos', icon: <AppIcons.ClipboardList className="w-4 h-4 mr-1" /> },
+        { id: TABS.ASIGNACION_GUIAS, label: 'Asignación de Guías', icon: <AppIcons.Link className="w-4 h-4 mr-1" /> },
+        { id: TABS.COORDINACION_MASIVA, label: 'Coordinación Masiva', icon: <AppIcons.Bolt className="w-4 h-4 mr-1" /> },
     ];
 
     return (
-        <div className="w-full p-6">
-            <BreadcrumbDocumentos
-                icon={<FaNetworkWired />}
-                titulo="Centro de Guías"
-            />
+        <CentroGuiasProvider>
+            <div className="w-full p-6">
+                <BreadcrumbDocumentos
+                    icon={<FaNetworkWired />}
+                    titulo="Centro de Guías"
+                />
 
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Centro de Guías</h1>
-                <div className="flex gap-2">
-                    {/* Botones de acción rápida podrían ir aquí si se necesitan */}
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold">Centro de Guías</h1>
+                </div>
+
+                {/* Tabs con íconos para mejor UX */}
+                <div className="tabs tabs-boxed mb-6">
+                    {tabOptions.map((tab) => (
+                        <a
+                            key={tab.id}
+                            className={`tab gap-1 ${activeTab === tab.id ? 'tab-active' : ''}`}
+                            onClick={() => handleTabChange(tab.id)}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </a>
+                    ))}
+                </div>
+
+                <div className="space-y-6">
+
+                    {activeTab === TABS.CREAR_DOCUMENTO && <CreacionDocumentoCoordinacion />}
+
+                    {activeTab === TABS.GESTOR_DOCUMENTOS &&
+                        <GestorDocumentosCoordinacion
+                            onAssignGuides={(docId: any) => handleTabChange(TABS.ASIGNACION_GUIAS, docId)}
+                        />
+                    }
+
+                    {activeTab === TABS.ASIGNACION_GUIAS &&
+                        <AsignacionGuiasHijas
+                            documentoId={documentoId}
+                            onComplete={() => handleTabChange(TABS.GESTOR_DOCUMENTOS)}
+                        />
+                    }
+
+                    {activeTab === TABS.COORDINACION_MASIVA && <CoordinacionMasiva />}
                 </div>
             </div>
-
-            {/* Tabs con íconos para mejor UX */}
-            <div className="tabs tabs-boxed mb-6">
-                {tabOptions.map((tab) => (
-                    <a
-                        key={tab.id}
-                        className={`tab gap-1 ${activeTab === tab.id ? 'tab-active' : ''}`}
-                        onClick={() => handleTabChange(tab.id)}
-                    >
-                        {tab.icon}
-                        {tab.label}
-                    </a>
-                ))}
-            </div>
-
-            <div className="space-y-6">
-                {/* Dashboard */}
-                {activeTab === tabs.DASHBOARD && <DashboardGuias />}
-
-                {/* Crear Documento de Coordinación */}
-                {activeTab === tabs.CREAR_DOCUMENTO && <CreacionDocumentoCoordinacion />}
-
-                {/* Asignación de Guías Hijas */}
-                {activeTab === tabs.ASIGNACION_GUIAS && <AsignacionGuiasHijas />}
-
-                {/* Lista de Guías Hijas */}
-                {activeTab === tabs.GUIAS_HIJAS && (
-                    <div className="grid grid-cols-1 gap-6">
-                        <GuiasHijasList showFilters={true} />
-                    </div>
-                )}
-
-                {/* Gestión de Documentos de Coordinación */}
-                {activeTab === tabs.GESTION_DOCUMENTOS && <GestionDocumentosCoordinacion />}
-
-                {/* Coordinación Rápida */}
-                {activeTab === tabs.COORDINACION_RAPIDA && <CoordinacionesRapidas />}
-            </div>
-        </div>
+        </CentroGuiasProvider>
     );
-};
-
-export default CentroGuiasPage;
+}
