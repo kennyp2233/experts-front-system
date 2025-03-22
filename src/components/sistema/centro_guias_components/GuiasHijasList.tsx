@@ -1,13 +1,10 @@
-// src/app/sistema/dashboard/modulos/documentos/centro_guias/components/GuiasHijasList.tsx
-import React, { useState, useEffect } from 'react';
-import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
-import { fincasService } from '@/api/services/mantenimiento/fincasService';
-import { productosService } from '@/api/services/mantenimiento/productosService';
-import { dispatchMenssage } from '@/utils/menssageDispatcher';
+// src/components/sistema/centro_guias_components/GuiasHijasList.tsx
+import React, { useState } from 'react';
+import { useGuiasHijas } from '@/components/sistema/centro_guias_components/hooks/useGuiasHijas';
 import { AppIcons } from '@/utils/icons';
-
-// Componentes UI
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
+import { Pagination } from './common/Pagination';
+import { DetalleGuiaHijaModal } from './modals/DetalleGuiaHijaModal';
 
 interface GuiasHijasListProps {
     filtroFinca?: number;
@@ -15,140 +12,44 @@ interface GuiasHijasListProps {
     showFilters?: boolean;
     compact?: boolean;
     maxItems?: number;
+    title?: string;
+    onViewDetails?: (guiaHija: any) => void;
 }
 
-interface GuiaHijaExtended extends GuiaHija {
-    fincaNombre?: string;
-    cooLabel?: string;
-    productoNombre?: string;
-}
-
-export default function GuiasHijasList({
+export const GuiasHijasList: React.FC<GuiasHijasListProps> = ({
     filtroFinca,
     filtroGuiaMadre,
     showFilters = true,
     compact = false,
-    maxItems = 0
-}: GuiasHijasListProps) {
-    const [guiasHijas, setGuiasHijas] = useState<GuiaHijaExtended[]>([]);
-    const [fincas, setFincas] = useState<any[]>([]);
-    const [productos, setProductos] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [totalPages, setTotalPages] = useState<number>(1);
-    const [fincaFilter, setFincaFilter] = useState<number | undefined>(filtroFinca);
-    const [guiaMadreFilter, setGuiaMadreFilter] = useState<number | undefined>(filtroGuiaMadre);
-    const [generating, setGenerating] = useState<boolean>(false);
-    const [selectedGuia, setSelectedGuia] = useState<number | null>(null);
-    const [showCantidades, setShowCantidades] = useState<boolean>(false);
-    const [selectedGuiaCantidades, setSelectedGuiaCantidades] = useState<GuiaHijaExtended | null>(null);
+    maxItems = 0,
+    title = "Guías Hijas",
+    onViewDetails
+}) => {
+    const {
+        guiasHijas,
+        loading,
+        error,
+        currentPage,
+        totalPages,
+        downloadPdf,
+        generating,
+        selectedGuia,
+        hasCantidades,
+        setCurrentPage,
+        clearFilters
+    } = useGuiasHijas({ filtroFinca, filtroGuiaMadre });
 
-    // Cargar datos iniciales y cada vez que cambia la página o filtros
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                // Cargar datos de fincas y productos para mostrar nombres
-                const [fincasData, productosData] = await Promise.all([
-                    fincasService.getFincas(),
-                    productosService.getProductos()
-                ]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedGuiaHija, setSelectedGuiaHija] = useState<any | null>(null);
 
-                setFincas(fincasData);
-                setProductos(productosData);
+    // Mostrar detalles de cantidades
+    const handleShowCantidades = (guia: any) => {
+        setSelectedGuiaHija(guia);
+        setShowModal(true);
 
-                // Cargar guías hijas
-                let guiasData: GuiaHija[] = [];
-                if (fincaFilter) {
-                    // Si hay filtro de finca, usamos endpoint específico
-                    guiasData = await guiasHijasService.getGuiasHijasByFinca(fincaFilter);
-                    setGuiasHijas(guiasData);
-                    setTotalPages(1); // No hay paginación en este endpoint
-                } else if (guiaMadreFilter) {
-                    // Si hay filtro de guía madre, usamos endpoint específico
-                    guiasData = await guiasHijasService.getGuiasHijasByGuiaMadre(guiaMadreFilter);
-                    setGuiasHijas(guiasData);
-                    setTotalPages(1); // No hay paginación en este endpoint
-                } else {
-                    // Si no hay filtros, usamos endpoint paginado
-                    const response = await guiasHijasService.getGuiasHijas(currentPage, 10);
-                    guiasData = response.data;
-                    setGuiasHijas(response.data);
-                    setTotalPages(response.totalPages);
-                }
-
-                // Enriquecer datos de guías con nombres de fincas y productos
-                if (guiasData?.length > 0) {
-                    const guiasEnriquecidas = guiasData.map((guia: GuiaHija) => {
-                        const finca = fincasData.find(f => f.id_finca === guia.id_finca);
-                        const producto = productosData.find(p => p.id_producto === guia.id_producto);
-                        return {
-                            ...guia,
-                            fincaNombre: finca?.nombre || 'Desconocida',
-                            productoNombre: producto?.nombre || 'No especificado',
-                            cooLabel: `COO-${guia.id_documento_coordinacion.toString().padStart(7, '0')}`
-                        };
-                    });
-
-                    // Si hay un límite máximo, aplicarlo
-                    if (maxItems > 0 && guiasEnriquecidas.length > maxItems) {
-                        setGuiasHijas(guiasEnriquecidas.slice(0, maxItems));
-                    } else {
-                        setGuiasHijas(guiasEnriquecidas);
-                    }
-                }
-            } catch (error) {
-                console.error('Error al cargar guías hijas:', error);
-                dispatchMenssage('error', 'Error al cargar guías hijas');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [currentPage, fincaFilter, guiaMadreFilter, filtroFinca, filtroGuiaMadre, maxItems]);
-
-    // Manejar descarga de PDF
-    const handleDownloadPdf = async (guiaId: number) => {
-        setSelectedGuia(guiaId);
-        setGenerating(true);
-
-        try {
-            const pdfBlob = await guiasHijasService.descargarPdfGuiaHija(guiaId);
-
-            // Crear URL para descarga
-            const url = window.URL.createObjectURL(pdfBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `guia-hija-${guiaId}.pdf`);
-            document.body.appendChild(link);
-            link.click();
-
-            // Limpiar
-            link.parentNode?.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-            dispatchMenssage('success', 'PDF generado correctamente');
-        } catch (error) {
-            console.error('Error al descargar PDF:', error);
-            dispatchMenssage('error', 'Error al generar el PDF');
-        } finally {
-            setGenerating(false);
-            setSelectedGuia(null);
+        if (onViewDetails) {
+            onViewDetails(guia);
         }
-    };
-
-    // Mostrar modal de cantidades
-    const handleShowCantidades = (guia: GuiaHijaExtended) => {
-        setSelectedGuiaCantidades(guia);
-        setShowCantidades(true);
-    };
-
-    // Limpiar filtros
-    const handleClearFilters = () => {
-        setFincaFilter(undefined);
-        setGuiaMadreFilter(undefined);
-        setCurrentPage(1);
     };
 
     // Renderizar tabla de guías hijas
@@ -161,11 +62,20 @@ export default function GuiasHijasList({
             );
         }
 
+        if (error) {
+            return (
+                <div className="alert alert-error">
+                    <AppIcons.Error className="w-6 h-6" />
+                    <span>{error}</span>
+                </div>
+            );
+        }
+
         if (guiasHijas.length === 0) {
             return (
                 <div className="alert alert-info">
                     <AppIcons.Info className="w-6 h-6" />
-                    <span>No se encontraron guías hijas{fincaFilter ? ' para esta finca' : ''}{guiaMadreFilter ? ' para esta guía madre' : ''}.</span>
+                    <span>No se encontraron guías hijas{filtroFinca ? ' para esta finca' : ''}{filtroGuiaMadre ? ' para esta guía madre' : ''}.</span>
                 </div>
             );
         }
@@ -209,7 +119,7 @@ export default function GuiasHijasList({
                                             )}
                                             <button
                                                 className="btn btn-sm btn-primary"
-                                                onClick={() => handleDownloadPdf(guia.id)}
+                                                onClick={() => downloadPdf(guia.id)}
                                                 disabled={generating && selectedGuia === guia.id}
                                             >
                                                 {generating && selectedGuia === guia.id ? (
@@ -228,28 +138,13 @@ export default function GuiasHijasList({
                 </div>
 
                 {/* Paginación (solo si no hay filtros) */}
-                {!fincaFilter && !guiaMadreFilter && totalPages > 1 && !compact && (
-                    <div className="flex justify-center mt-4">
-                        <div className="join">
-                            <button
-                                className="join-item btn"
-                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                disabled={currentPage === 1}
-                            >
-                                «
-                            </button>
-                            <button className="join-item btn">
-                                Página {currentPage} de {totalPages}
-                            </button>
-                            <button
-                                className="join-item btn"
-                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                disabled={currentPage === totalPages}
-                            >
-                                »
-                            </button>
-                        </div>
-                    </div>
+                {!filtroFinca && !filtroGuiaMadre && totalPages > 1 && !compact && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        disabled={loading}
+                    />
                 )}
 
                 {/* Ver más (en modo compacto) */}
@@ -269,29 +164,19 @@ export default function GuiasHijasList({
         );
     };
 
-    // Verificar si una guía tiene cantidades configuradas
-    const hasCantidades = (guia: GuiaHijaExtended): boolean => {
-        return (
-            (guia.fulls !== undefined && guia.fulls > 0) ||
-            (guia.pcs !== undefined && guia.pcs > 0) ||
-            (guia.kgs !== undefined && guia.kgs > 0) ||
-            (guia.stems !== undefined && guia.stems > 0)
-        );
-    };
-
     // Renderizar contenedor diferente según si es compacto o no
     if (compact) {
         return (
             <div className="space-y-2">
-                {showFilters && (fincaFilter || guiaMadreFilter) && (
+                {showFilters && (filtroFinca || filtroGuiaMadre) && (
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-sm">
-                            {fincaFilter && `Filtro: Finca #${fincaFilter}`}
-                            {guiaMadreFilter && `Filtro: Guía Madre #${guiaMadreFilter}`}
+                            {filtroFinca && `Filtro: Finca #${filtroFinca}`}
+                            {filtroGuiaMadre && `Filtro: Guía Madre #${filtroGuiaMadre}`}
                         </span>
                         <button
                             className="btn btn-xs btn-ghost"
-                            onClick={handleClearFilters}
+                            onClick={clearFilters}
                         >
                             <AppIcons.Close className="w-3 h-3 mr-1" />
                             Limpiar
@@ -301,85 +186,12 @@ export default function GuiasHijasList({
                 {renderGuiasTable()}
 
                 {/* Modal para mostrar cantidades */}
-                {showCantidades && selectedGuiaCantidades && (
-                    <dialog className="modal modal-open">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-lg">Detalles de la Guía Hija</h3>
-
-                            <div className="py-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <span className="font-semibold block">Número:</span>
-                                        <span>{selectedGuiaCantidades.anio}-{selectedGuiaCantidades.secuencial}</span>
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold block">Finca:</span>
-                                        <span>{selectedGuiaCantidades.fincaNombre}</span>
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold block">Producto:</span>
-                                        <span>{selectedGuiaCantidades.productoNombre}</span>
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold block">Documento COO:</span>
-                                        <span>{selectedGuiaCantidades.cooLabel}</span>
-                                    </div>
-                                </div>
-
-                                <div className="divider">Cantidades</div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    {selectedGuiaCantidades.fulls !== undefined && selectedGuiaCantidades.fulls > 0 && (
-                                        <div>
-                                            <span className="font-semibold block">Fulls:</span>
-                                            <span>{selectedGuiaCantidades.fulls}</span>
-                                        </div>
-                                    )}
-                                    {selectedGuiaCantidades.pcs !== undefined && selectedGuiaCantidades.pcs > 0 && (
-                                        <div>
-                                            <span className="font-semibold block">Piezas (Pcs):</span>
-                                            <span>{selectedGuiaCantidades.pcs}</span>
-                                        </div>
-                                    )}
-                                    {selectedGuiaCantidades.kgs !== undefined && selectedGuiaCantidades.kgs > 0 && (
-                                        <div>
-                                            <span className="font-semibold block">Peso (Kgs):</span>
-                                            <span>{selectedGuiaCantidades.kgs}</span>
-                                        </div>
-                                    )}
-                                    {selectedGuiaCantidades.stems !== undefined && selectedGuiaCantidades.stems > 0 && (
-                                        <div>
-                                            <span className="font-semibold block">Stems:</span>
-                                            <span>{selectedGuiaCantidades.stems}</span>
-                                        </div>
-                                    )}
-                                    {!selectedGuiaCantidades.fulls && !selectedGuiaCantidades.pcs &&
-                                        !selectedGuiaCantidades.kgs && !selectedGuiaCantidades.stems && (
-                                            <div className="col-span-2 text-center py-2">
-                                                <span className="text-sm opacity-70">No hay información de cantidades registrada</span>
-                                            </div>
-                                        )}
-                                </div>
-                            </div>
-
-                            <div className="modal-action">
-                                <button
-                                    className="btn"
-                                    onClick={() => {
-                                        setShowCantidades(false);
-                                        setSelectedGuiaCantidades(null);
-                                    }}
-                                >
-                                    Cerrar
-                                </button>
-                            </div>
-                        </div>
-                        <div className="modal-backdrop" onClick={() => {
-                            setShowCantidades(false);
-                            setSelectedGuiaCantidades(null);
-                        }}></div>
-                    </dialog>
-                )}
+                <DetalleGuiaHijaModal
+                    guiaHija={selectedGuiaHija}
+                    isOpen={showModal}
+                    onClose={() => setShowModal(false)}
+                    onPrint={selectedGuiaHija ? () => downloadPdf(selectedGuiaHija.id) : undefined}
+                />
             </div>
         );
     }
@@ -387,37 +199,18 @@ export default function GuiasHijasList({
     return (
         <Card className="bg-base-100 shadow-lg">
             <CardHeader>
-                <CardTitle>Guías Hijas{guiaMadreFilter ? ' - Guía Madre #' + guiaMadreFilter : ''}</CardTitle>
+                <CardTitle>{title}{filtroGuiaMadre ? ' - Guía Madre #' + filtroGuiaMadre : ''}</CardTitle>
             </CardHeader>
             <CardContent>
                 {showFilters && (
                     <div className="flex flex-wrap gap-2 mb-4">
-                        {/* Filtros */}
-                        <div className="flex-1 min-w-48">
-                            <select
-                                className="select select-bordered w-full"
-                                value={fincaFilter || ''}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    setFincaFilter(value ? parseInt(value) : undefined);
-                                    setGuiaMadreFilter(undefined); // Limpiar otro filtro
-                                    setCurrentPage(1);
-                                }}
-                            >
-                                <option value="">Todas las fincas</option>
-                                {fincas.map(finca => (
-                                    <option key={finca.id_finca} value={finca.id_finca}>
-                                        {finca.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        {/* Aquí podrían ir filtros adicionales si se necesitan */}
 
                         {/* Botón para limpiar filtros */}
-                        {(fincaFilter || guiaMadreFilter) && (
+                        {(filtroFinca || filtroGuiaMadre) && (
                             <button
                                 className="btn btn-outline btn-sm"
-                                onClick={handleClearFilters}
+                                onClick={clearFilters}
                             >
                                 <AppIcons.Close className="w-4 h-4 mr-1" />
                                 Limpiar filtros
@@ -428,6 +221,14 @@ export default function GuiasHijasList({
 
                 {renderGuiasTable()}
             </CardContent>
+
+            {/* Modal para mostrar cantidades */}
+            <DetalleGuiaHijaModal
+                guiaHija={selectedGuiaHija}
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                onPrint={selectedGuiaHija ? () => downloadPdf(selectedGuiaHija.id) : undefined}
+            />
         </Card>
     );
-}
+};
