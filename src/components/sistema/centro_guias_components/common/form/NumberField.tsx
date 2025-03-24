@@ -49,7 +49,7 @@ export const NumberField: React.FC<NumberFieldProps> = ({
                 control={control}
                 render={({ field }) => (
                     showCurrency ? (
-                        <label className="input-group">
+                        <label className="input-group flex flex-row items-center w-full gap-2">
                             <span className="font-mono">{currencySymbol}</span>
                             <input
                                 type="number"
@@ -60,11 +60,12 @@ export const NumberField: React.FC<NumberFieldProps> = ({
                                 max={max}
                                 step={step}
                                 className={`input input-bordered w-full ${errorMessage ? 'input-error' : ''} ${className}`}
-                                value={field.value === 0 && !field.value ? '' : field.value}
+                                value={String(field.value ?? 0)}
                                 onChange={(e) => {
-                                    const value = e.target.value === '' ? '' : Number(e.target.value);
-                                    field.onChange(value);
-                                    if (onChange && typeof value === 'number') onChange(value);
+                                    const inputVal = e.target.value;
+                                    const parsed = inputVal === '' ? 0 : Number(inputVal);
+                                    field.onChange(parsed);
+                                    if (onChange) onChange(parsed);
                                 }}
                             />
                         </label>
@@ -78,16 +79,18 @@ export const NumberField: React.FC<NumberFieldProps> = ({
                             max={max}
                             step={step}
                             className={`input input-bordered w-full ${errorMessage ? 'input-error' : ''} ${className}`}
-                            value={field.value === 0 && !field.value ? '' : field.value}
+                            value={String(field.value ?? 0)}
                             onChange={(e) => {
-                                const value = e.target.value === '' ? '' : Number(e.target.value);
-                                field.onChange(value);
-                                if (onChange && typeof value === 'number') onChange(value);
+                                const inputVal = e.target.value;
+                                const parsed = inputVal === '' ? 0 : Number(inputVal);
+                                field.onChange(parsed);
+                                if (onChange) onChange(parsed);
                             }}
                         />
                     )
                 )}
             />
+
 
             {helpText && !errorMessage && (
                 <label className="label">

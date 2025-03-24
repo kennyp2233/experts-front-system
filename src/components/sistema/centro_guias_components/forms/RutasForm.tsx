@@ -1,7 +1,7 @@
 // src/components/sistema/centro_guias_components/forms/RutasForm.tsx
 import React, { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { FormField } from '@/components/sistema/common/form';
+import { FormField } from '@/components/sistema/centro_guias_components/common/form';
 
 interface RutasFormProps {
     destinos: any[];

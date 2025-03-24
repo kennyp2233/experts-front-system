@@ -9,7 +9,7 @@ import { CantidadesConfiguration } from './common/CantidadesConfiguration';
 import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
 import { productosService } from '@/api/services/mantenimiento/productosService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
-import { Form, FormField } from '@/components/sistema/common/form';
+import { Form, FormField } from '@/components/sistema/centro_guias_components/common/form';
 
 // Schema para validación
 const schema = yup.object({

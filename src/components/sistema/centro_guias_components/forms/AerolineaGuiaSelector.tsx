@@ -6,7 +6,7 @@ import { aerolineasService } from '@/api/services/mantenimiento/aerolineasServic
 import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 import { AppIcons } from '@/utils/icons';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
-import { FormField } from '@/components/sistema/common/form';
+import { FormField } from '@/components/sistema/centro_guias_components/common/form';
 
 interface AerolineaGuiaSelectorProps {
     onGuiaSelected?: (guia: any, aerolineaData?: any) => void;
@@ -175,7 +175,6 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
         }
     };
 
-    // Cuando cambia la guía seleccionada
     useEffect(() => {
         if (!selectedGuiaId) {
             setSelectedGuia(null);
@@ -203,7 +202,8 @@ export const AerolineaGuiaSelector: React.FC<AerolineaGuiaSelectorProps> = ({
         if (!selectedGuia || selectedGuia.id !== selectedGuiaId) {
             cargarDetallesGuia();
         }
-    }, [selectedGuiaId, onGuiaSelected, selectedAerolineaData]);
+    }, [selectedGuiaId, selectedAerolineaData]);
+
 
     return (
         <div className="space-y-4">

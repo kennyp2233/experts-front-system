@@ -1,16 +1,18 @@
-// src/components/sistema/centro_guias_components/forms/ValoresComisionesForm.tsx
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { NumberField } from '@/components/sistema/common/form';
+import { NumberField } from '@/components/sistema/centro_guias_components/common/form';
 
 interface ValoresComisionesFormProps {
     disabled?: boolean;
     showCardLayout?: boolean;
+    // Prop para recibir los labels desde la aerolínea
+    labels?: any;
 }
 
 export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
     disabled = false,
-    showCardLayout = false
+    showCardLayout = false,
+    labels
 }) => {
     const { formState: { errors } } = useFormContext();
 
@@ -20,7 +22,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                 {/* Costo Guía */}
                 <NumberField
                     name="costo_guia_valor"
-                    label="Costo Guía"
+                    label={labels?.costo_guia || "Costo Guía"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
@@ -29,7 +31,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                 {/* Combustible */}
                 <NumberField
                     name="combustible_valor"
-                    label="Combustible"
+                    label={labels?.combustible || "Combustible"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
@@ -38,7 +40,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                 {/* Seguridad */}
                 <NumberField
                     name="seguridad_valor"
-                    label="Seguridad"
+                    label={labels?.seguridad || "Seguridad"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
@@ -65,7 +67,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                 {/* Otros */}
                 <NumberField
                     name="otros_valor"
-                    label="Otros Valores"
+                    label={labels?.otros || "Otros Valores"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
@@ -111,7 +113,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     min={0}
                 />
 
-                {/* Termografo */}
+                {/* Termógrafo */}
                 <NumberField
                     name="termografo"
                     label="Termógrafo"
@@ -138,28 +140,28 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     min={0}
                 />
 
-                {/* Auxiliary 1 Value */}
+                {/* Aux 1 */}
                 <NumberField
                     name="aux1_valor"
-                    label="Aux 1"
+                    label={labels?.aux1 || "Aux 1"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
                 />
 
-                {/* Auxiliary 2 Value */}
+                {/* Aux 2 */}
                 <NumberField
                     name="aux2_valor"
-                    label="Aux 2"
+                    label={labels?.aux2 || "Aux 2"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
                 />
 
-                {/* Auxiliary Calculation Value */}
+                {/* Aux Cálculo */}
                 <NumberField
                     name="aux_calculo_valor"
-                    label="Aux Cálculo"
+                    label={labels?.aux_calculo || "Aux Cálculo"}
                     disabled={disabled}
                     showCurrency={true}
                     min={0}
@@ -168,7 +170,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
         </>
     );
 
-    // Render with or without card layout
+    // Render con o sin card layout
     if (showCardLayout) {
         return (
             <div className="card bg-base-200 p-6">

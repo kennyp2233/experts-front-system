@@ -42,10 +42,7 @@ export const GuiaSearch: React.FC<GuiaSearchProps> = ({
             }
 
             // Buscar guías hijas (esto es un ejemplo, es posible que necesites adaptar la llamada API)
-            const response = await guiasHijasService.getGuiasHijas(1, 10, {
-                anio: Number(anio),
-                secuencial: Number(secuencial)
-            });
+            const response = await guiasHijasService.getGuiasHijas(1, 10);
 
             if (response.data && response.data.length > 0) {
                 const guiaHija = response.data[0];

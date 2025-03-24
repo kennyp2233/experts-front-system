@@ -5,12 +5,13 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
+import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 import { AppIcons } from '@/utils/icons';
 import { useCatalogosCoordinaciones } from '@/components/sistema/centro_guias_components/hooks/useCatalogosCoordinaciones';
 
 // Importamos los componentes de formulario refactorizados
-import { Form } from '@/components/sistema/common/form';
+import { Form } from '@/components/sistema/centro_guias_components/common/form';
 import { AerolineaGuiaSelector } from './forms/AerolineaGuiaSelector';
 import { DocumentoCoordinacionForm } from './forms/DocumentoCoordinacionForm';
 import { RutasForm } from './forms/RutasForm';
@@ -24,7 +25,7 @@ const schema = yup.object({
   id_agencia_iata: yup.number().required('Debe seleccionar una agencia IATA'),
   id_destino_awb: yup.number().required('Debe seleccionar un destino AWB'),
   id_destino_final_docs: yup.number().required('Debe seleccionar un destino final para documentos'),
-  pago: yup.string().required('Debe seleccionar un tipo de pago'),
+  pago: yup.string().required('Debe seleccionar un tipo de pago').default('PREPAID'),
   fecha_vuelo: yup.string().required('Debe ingresar una fecha de vuelo'),
   fecha_asignacion: yup.string().required('Debe ingresar una fecha de asignación'),
   // Campos opcionales con transformación de tipos
@@ -74,6 +75,17 @@ export default function CreacionDocumentoCoordinacion() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formReady, setFormReady] = useState(false);
+  const [aerolineaLabels, setAerolineaLabels] = useState<{
+    costo_guia?: string;
+    combustible?: string;
+    seguridad?: string;
+    aux_calculo?: string;
+    iva?: string;
+    otros?: string;
+    aux1?: string;
+    aux2?: string;
+  } | null>(null);
+
 
   // Configurar React Hook Form con validación Yup
   const methods = useForm<FormValues>({
@@ -101,16 +113,35 @@ export default function CreacionDocumentoCoordinacion() {
     }
   });
 
-  // Manejar la selección de una guía madre y cargar datos de la aerolínea
-  const handleGuiaSelected = (guia: any, aerolineaData: any) => {
+
+
+
+  const handleGuiaSelected = async (guia: any) => {
+    console.log('Guía seleccionada:', guia);
     if (!guia) {
       setFormReady(false);
       return;
     }
 
+    // Cargar datos de la aerolínea
+    const aerolineaData = await aerolineasService.findOneComplete(guia.documento_base.id_aerolinea);
+
+    // Almacena las abreviaturas en el estado
+    setAerolineaLabels({
+      costo_guia: aerolineaData.costo_guia_abrv,
+      combustible: aerolineaData.combustible_abrv,
+      seguridad: aerolineaData.seguridad_abrv,
+      aux_calculo: aerolineaData.aux_calculo_abrv,
+      iva: aerolineaData.iva_abrv,
+      otros: aerolineaData.otros_abrv,
+      aux1: aerolineaData.aux1_abrv,
+      aux2: aerolineaData.aux2_abrv,
+    });
+
     // Marcar que el formulario ya tiene los datos necesarios para el resto de secciones
     setFormReady(true);
   };
+
 
   // Manejar el envío del formulario
   const handleSubmit = async (data: FormValues) => {
@@ -219,7 +250,7 @@ export default function CreacionDocumentoCoordinacion() {
                   <p className="text-sm opacity-70 mb-4">
                     Los valores se pre-llenan de la plantilla de la aerolínea. Puede ajustarlos si es necesario.
                   </p>
-                  <ValoresComisionesForm />
+                  <ValoresComisionesForm labels={aerolineaLabels} />
                 </div>
               )}
 
