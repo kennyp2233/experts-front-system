@@ -33,34 +33,29 @@ export const DetalleDocumentoCoordinacion: React.FC<DetalleDocumentoCoordinacion
 
     // Cargar documento si no se proporciona uno inicial
     useEffect(() => {
-        if (!initialDocumento && documentoId) {
-            const fetchDocumento = async () => {
-                setLoading(true);
-                try {
-                    const response = await coordinacionesService.getDocuments(1, 1, { id: documentoId });
+        const fetchDocumento = async () => {
+            setLoading(true);
+            try {
+                const response = await coordinacionesService.findOne(documentoId);
+                if (response) {
+                    setDocumento({
+                        ...response,
+                        cooLabel: `COO-${response.id.toString().padStart(8, '0')}`,
+                    });
 
-                    if (response.data.length > 0) {
-                        const doc = response.data[0];
-
-                        // Añadir propiedades adicionales útiles
-                        setDocumento({
-                            ...doc,
-                            cooLabel: `COO-${doc.id.toString().padStart(7, '0')}`,
-                        });
-                    } else {
-                        setError("No se encontró el documento solicitado");
-                    }
-                } catch (error) {
-                    console.error("Error al cargar documento:", error);
-                    setError("Error al cargar el documento");
-                    dispatchMenssage('error', 'Error al cargar el documento');
-                } finally {
-                    setLoading(false);
+                } else {
+                    setError("No se encontró el documento solicitado");
                 }
-            };
+            } catch (error) {
+                console.error("Error al cargar documento:", error);
+                setError("Error al cargar el documento");
+                dispatchMenssage('error', 'Error al cargar el documento');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            fetchDocumento();
-        }
+        fetchDocumento();
     }, [documentoId, initialDocumento]);
 
     // Eliminar documento

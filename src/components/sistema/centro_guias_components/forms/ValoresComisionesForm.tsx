@@ -72,6 +72,33 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     showCurrency={true}
                     min={0}
                 />
+
+                {/* Aux 1 */}
+                <NumberField
+                    name="aux1_valor"
+                    label={labels?.aux1 || "Aux 1"}
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
+                />
+
+                {/* Aux 2 */}
+                <NumberField
+                    name="aux2_valor"
+                    label={labels?.aux2 || "Aux 2"}
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
+                />
+
+                {/* Aux Cálculo */}
+                <NumberField
+                    name="aux_calculo_valor"
+                    label={labels?.aux_calculo || "Aux Cálculo"}
+                    disabled={disabled}
+                    showCurrency={true}
+                    min={0}
+                />
             </div>
 
             <div className="divider text-sm opacity-70">Valores Adicionales</div>
@@ -140,32 +167,7 @@ export const ValoresComisionesForm: React.FC<ValoresComisionesFormProps> = ({
                     min={0}
                 />
 
-                {/* Aux 1 */}
-                <NumberField
-                    name="aux1_valor"
-                    label={labels?.aux1 || "Aux 1"}
-                    disabled={disabled}
-                    showCurrency={true}
-                    min={0}
-                />
 
-                {/* Aux 2 */}
-                <NumberField
-                    name="aux2_valor"
-                    label={labels?.aux2 || "Aux 2"}
-                    disabled={disabled}
-                    showCurrency={true}
-                    min={0}
-                />
-
-                {/* Aux Cálculo */}
-                <NumberField
-                    name="aux_calculo_valor"
-                    label={labels?.aux_calculo || "Aux Cálculo"}
-                    disabled={disabled}
-                    showCurrency={true}
-                    min={0}
-                />
             </div>
         </>
     );

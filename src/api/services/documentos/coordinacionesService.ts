@@ -67,6 +67,11 @@ class CoordinacionesService extends BaseService<CoordinationDocument> {
         return apiClient.get<PaginatedResponse<CoordinationDocument>>(this.endpoint, params);
     }
 
+    async findOne(id: number): Promise<CoordinationDocument> {
+
+        return apiClient.get<CoordinationDocument>(`${this.endpoint}/${id}`);
+    }
+
     /**
      * Crear un documento
      */

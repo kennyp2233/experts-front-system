@@ -96,23 +96,11 @@ export const useDocumentosCoordinacion = (initialId?: string) => {
     const fetchDocumentoById = async (id: number) => {
         setLoading(true);
         try {
-            const filters = { id };
-            const response = await coordinacionesService.getDocuments(1, 1, filters);
+            const response = await coordinacionesService.findOne(id);
 
-            if (response.data.length > 0) {
-                const documento = response.data[0];
-                const consignatario = consignatarios.find(c => c.id_consignatario === documento.id_consignatario);
-                const producto = productos.find(p => p.id_producto === documento.id_producto);
-
-                const documentoEnriquecido = {
-                    ...documento,
-                    consignatarioNombre: consignatario ? consignatario.nombre : 'No asignado',
-                    productoNombre: producto ? producto.nombre : 'No asignado',
-                    cooLabel: `COO-${documento.id.toString().padStart(7, '0')}`
-                };
-
-                setSelectedDocumento(documentoEnriquecido);
-                return documentoEnriquecido;
+            if (response) {
+                setSelectedDocumento(response);
+                return response;
             } else {
                 setError('No se encontró el documento especificado');
                 return null;

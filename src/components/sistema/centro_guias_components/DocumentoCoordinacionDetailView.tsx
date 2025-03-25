@@ -1,11 +1,6 @@
 // src/app/sistema/dashboard/modulos/documentos/centro_guias/components/DocumentoCoordinacionDetailView.tsx
 import React, { useEffect, useState } from 'react';
 import { AppIcons } from '@/utils/icons';
-import { consignatarioService } from '@/api/services/mantenimiento/consignatarioService';
-import { productosService } from '@/api/services/mantenimiento/productosService';
-import { agenciaIataService } from '@/api/services/mantenimiento/agenciasIataService';
-import { destinosService } from '@/api/services/mantenimiento/destinosSevice';
-import { origenesService } from '@/api/services/mantenimiento/origenesService';
 
 interface DocumentoData {
     id: number;
@@ -56,58 +51,10 @@ interface DocumentoCoordinacionDetailViewProps {
 }
 
 export default function DocumentoCoordinacionDetailView({ documento }: DocumentoCoordinacionDetailViewProps) {
-    const [catalogs, setCatalogs] = useState<{
-        consignatarios: any[];
-        productos: any[];
-        agenciasIata: any[];
-        destinos: any[];
-        origenes: any[];
-    }>({
-        consignatarios: [],
-        productos: [],
-        agenciasIata: [],
-        destinos: [],
-        origenes: []
-    });
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    // Cargar datos de catálogos para mostrar nombres en lugar de IDs
-    useEffect(() => {
-        const fetchCatalogs = async () => {
-            setLoading(true);
-            try {
-                const [consignatarios, productos, agenciasIata, destinos, origenes] = await Promise.all([
-                    consignatarioService.getConsignatarios(),
-                    productosService.getProductos(),
-                    agenciaIataService.getAgenciasIata(),
-                    destinosService.getDestinos(),
-                    origenesService.getOrigenes()
-                ]);
 
-                setCatalogs({
-                    consignatarios,
-                    productos,
-                    agenciasIata,
-                    destinos,
-                    origenes
-                });
-            } catch (error) {
-                console.error('Error al cargar catálogos:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCatalogs();
-    }, []);
-
-    // Función para obtener el nombre de un elemento de catálogo por ID
-    const getCatalogItemName = (catalog: any[], id?: number, nameField: string = 'nombre') => {
-        if (!id) return 'No especificado';
-        const item = catalog.find(c => c.id === id || c[`id_${nameField.split('_')[0]}`] === id);
-        return item ? item[nameField] : 'Desconocido';
-    };
 
     // Renderizado condicional mientras se cargan los catálogos
     if (loading) {
@@ -124,37 +71,37 @@ export default function DocumentoCoordinacionDetailView({ documento }: Documento
             <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <InfoItem
                     label="Consignatario"
-                    value={documento.consignatarioNombre || getCatalogItemName(catalogs.consignatarios, documento.id_consignatario, 'nombre')}
+                    value={documento.consignatario.nombre_consignatario}
                     icon={<AppIcons.Building className="w-4 h-4" />}
                 />
 
                 <InfoItem
                     label="Producto"
-                    value={documento.productoNombre || getCatalogItemName(catalogs.productos, documento.id_producto, 'nombre')}
+                    value={documento.producto.nombre}
                     icon={<AppIcons.Package className="w-4 h-4" />}
                 />
 
                 <InfoItem
                     label="Agencia IATA"
-                    value={getCatalogItemName(catalogs.agenciasIata, documento.id_agencia_iata, 'nombre')}
+                    value={documento.agencia_iata.alias_shipper}
                     icon={<AppIcons.Network className="w-4 h-4" />}
                 />
 
                 <InfoItem
                     label="Guía Madre"
-                    value={documento.id_guia_madre ? `#${documento.id_guia_madre}` : 'No disponible'}
+                    value={documento.id_guia_madre ? `${documento.guia_madre.prefijo}-${String(documento.guia_madre.secuencial).padStart(8, '0')}` : 'No disponible'}
                     icon={<AppIcons.Document className="w-4 h-4" />}
                 />
 
                 <InfoItem
                     label="Destino AWB"
-                    value={getCatalogItemName(catalogs.destinos, documento.id_destino_awb, 'nombre')}
+                    value={documento.destino_awb.codigo_destino}
                     icon={<AppIcons.Map className="w-4 h-4" />}
                 />
 
                 <InfoItem
                     label="Destino Final Docs"
-                    value={getCatalogItemName(catalogs.destinos, documento.id_destino_final_docs, 'nombre')}
+                    value={documento.destino_final_docs.codigo_destino}
                     icon={<AppIcons.Map className="w-4 h-4" />}
                 />
 
@@ -194,13 +141,13 @@ export default function DocumentoCoordinacionDetailView({ documento }: Documento
                                 <h4 className="font-medium mb-2">Ruta 1</h4>
                                 <div className="text-sm">
                                     {documento.from1 && (
-                                        <p><span className="font-medium">Origen:</span> {getCatalogItemName(catalogs.origenes, documento.from1, 'nombre')}</p>
+                                        <p><span className="font-medium">Origen:</span> {documento.origen_from1.codigo_origen}</p>
                                     )}
                                     {documento.to1 && (
-                                        <p><span className="font-medium">Destino:</span> {getCatalogItemName(catalogs.destinos, documento.to1, 'nombre')}</p>
+                                        <p><span className="font-medium">Destino:</span> {documento.destino_to1.codigo_destino}</p>
                                     )}
                                     {documento.by1 && (
-                                        <p><span className="font-medium">Aerolínea:</span> Aerolínea #{documento.by1}</p>
+                                        <p><span className="font-medium">Aerolínea:</span> {documento.aerolinea_by1.codigo}</p>
                                     )}
                                 </div>
                             </div>
@@ -211,11 +158,11 @@ export default function DocumentoCoordinacionDetailView({ documento }: Documento
                             <div className="card bg-base-200 p-3">
                                 <h4 className="font-medium mb-2">Ruta 2</h4>
                                 <div className="text-sm">
-                                    {documento.to2 && (
-                                        <p><span className="font-medium">Destino:</span> {getCatalogItemName(catalogs.destinos, documento.to2, 'nombre')}</p>
+                                    {documento.to1 && (
+                                        <p><span className="font-medium">Destino:</span> {documento.destino_to2.codigo_destino}</p>
                                     )}
-                                    {documento.by2 && (
-                                        <p><span className="font-medium">Aerolínea:</span> Aerolínea #{documento.by2}</p>
+                                    {documento.by1 && (
+                                        <p><span className="font-medium">Aerolínea:</span> {documento.aerolinea_by2.codigo}</p>
                                     )}
                                 </div>
                             </div>
@@ -226,11 +173,11 @@ export default function DocumentoCoordinacionDetailView({ documento }: Documento
                             <div className="card bg-base-200 p-3">
                                 <h4 className="font-medium mb-2">Ruta 3</h4>
                                 <div className="text-sm">
-                                    {documento.to3 && (
-                                        <p><span className="font-medium">Destino:</span> {getCatalogItemName(catalogs.destinos, documento.to3, 'nombre')}</p>
+                                    {documento.to1 && (
+                                        <p><span className="font-medium">Destino:</span> {documento.destino_to3.codigo_destino}</p>
                                     )}
-                                    {documento.by3 && (
-                                        <p><span className="font-medium">Aerolínea:</span> Aerolínea #{documento.by3}</p>
+                                    {documento.by1 && (
+                                        <p><span className="font-medium">Aerolínea:</span> {documento.aerolinea_by3.codigo}</p>
                                     )}
                                 </div>
                             </div>

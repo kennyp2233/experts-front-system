@@ -138,7 +138,7 @@ export const GestorDocumentosCoordinacion: React.FC<GestorDocumentosCoordinacion
                                             </th>
                                             <th className="cursor-pointer" onClick={() => handleSort('id_consignatario')}>
                                                 <div className="flex items-center">
-                                                    Consignatario
+                                                    Marcación
                                                     {sorting.field === 'id_consignatario' && (
                                                         <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
@@ -146,8 +146,25 @@ export const GestorDocumentosCoordinacion: React.FC<GestorDocumentosCoordinacion
                                             </th>
                                             <th className="cursor-pointer" onClick={() => handleSort('id_producto')}>
                                                 <div className="flex items-center">
-                                                    Producto
-                                                    {sorting.field === 'id_producto' && (
+                                                    Cliente
+                                                    {sorting.field === 'id_cliente' && (
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
+                                                    )}
+                                                </div>
+                                            </th>
+
+                                            <th className="cursor-pointer" onClick={() => handleSort('id_producto')}>
+                                                <div className="flex items-center">
+                                                    Aerolinea
+                                                    {sorting.field === 'id_aerolinea' && (
+                                                        <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
+                                                    )}
+                                                </div>
+                                            </th>
+                                            <th className="cursor-pointer" onClick={() => handleSort('fecha_vuelo')}>
+                                                <div className="flex items-center">
+                                                    Guía Madre
+                                                    {sorting.field === 'guia_madre' && (
                                                         <span className="ml-1">{sorting.direction === 'asc' ? '↑' : '↓'}</span>
                                                     )}
                                                 </div>
@@ -160,7 +177,6 @@ export const GestorDocumentosCoordinacion: React.FC<GestorDocumentosCoordinacion
                                                     )}
                                                 </div>
                                             </th>
-                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -168,18 +184,17 @@ export const GestorDocumentosCoordinacion: React.FC<GestorDocumentosCoordinacion
                                         {documentos.map((doc) => (
                                             <tr key={doc.id} className="hover">
                                                 <td>{doc.cooLabel}</td>
-                                                <td>{doc.consignatarioNombre}</td>
-                                                <td>{doc.productoNombre}</td>
+                                                <td>{doc.consignatario.nombre_consignatario}</td>
+                                                <td>{doc.consignatario.cliente.nombre}</td>
+                                                <td>{doc.guia_madre.documento_base.aerolinea.nombre}</td>
+                                                <td>{`${doc.guia_madre.prefijo}-${String(doc.guia_madre.secuencial).padStart(8, '0')}`}</td>
+
                                                 <td>
                                                     {doc.fecha_vuelo
                                                         ? new Date(doc.fecha_vuelo).toLocaleDateString()
                                                         : 'No definida'}
                                                 </td>
-                                                <td>
-                                                    <span className={`badge ${doc.estadoLabel === 'Activo' ? 'badge-success' : 'badge-warning'}`}>
-                                                        {doc.estadoLabel}
-                                                    </span>
-                                                </td>
+
                                                 <td>
                                                     <div className="flex space-x-2">
                                                         <button
