@@ -16,6 +16,7 @@ import { AerolineaGuiaSelector } from './forms/AerolineaGuiaSelector';
 import { DocumentoCoordinacionForm } from './forms/DocumentoCoordinacionForm';
 import { RutasForm } from './forms/RutasForm';
 import { ValoresComisionesForm } from './forms/ValoresComisionesForm';
+import { ClientSelector } from './common/ClientSelector';
 
 // Esquema de validación con Yup
 const schema = yup.object({
@@ -28,6 +29,8 @@ const schema = yup.object({
   pago: yup.string().required('Debe seleccionar un tipo de pago').default('PREPAID'),
   fecha_vuelo: yup.string().required('Debe ingresar una fecha de vuelo'),
   fecha_asignacion: yup.string().required('Debe ingresar una fecha de asignación'),
+  // Clientes
+  id_clientes: yup.array().of(yup.number()),
   // Campos opcionales con transformación de tipos
   from1: yup.mixed().transform((value: string) => value === '' ? undefined : Number(value)),
   to1: yup.mixed().transform((value: string) => value === '' ? undefined : Number(value)),
@@ -94,6 +97,7 @@ export default function CreacionDocumentoCoordinacion() {
       pago: 'PREPAID',
       fecha_vuelo: new Date().toISOString().split('T')[0],
       fecha_asignacion: new Date().toISOString().split('T')[0],
+      id_clientes: [],
       costo_guia_valor: 0,
       combustible_valor: 0,
       seguridad_valor: 0,
@@ -231,7 +235,18 @@ export default function CreacionDocumentoCoordinacion() {
                 </div>
               )}
 
-              {/* SECCIÓN 3: RUTAS */}
+              {/* SECCIÓN 3: SELECCIÓN DE CLIENTES */}
+              {methods.watch('id_guia_madre') && formReady && (
+                <div className="card bg-base-200 p-4 mb-6">
+                  <h3 className="font-bold mb-4">Selección de Clientes</h3>
+                  <p className="text-sm opacity-70 mb-4">
+                    Seleccione los clientes que estarán asociados a este documento de coordinación.
+                  </p>
+                  <ClientSelector />
+                </div>
+              )}
+
+              {/* SECCIÓN 4: RUTAS */}
               {methods.watch('id_guia_madre') && formReady && (
                 <div className="card bg-base-200 p-4 mb-6">
                   <h3 className="font-bold mb-4">Rutas</h3>
@@ -243,7 +258,7 @@ export default function CreacionDocumentoCoordinacion() {
                 </div>
               )}
 
-              {/* SECCIÓN 4: VALORES Y COMISIONES */}
+              {/* SECCIÓN 5: VALORES Y COMISIONES */}
               {methods.watch('id_guia_madre') && formReady && (
                 <div className="card bg-base-200 p-4 mb-6">
                   <h3 className="font-bold mb-4">Valores y Comisiones</h3>

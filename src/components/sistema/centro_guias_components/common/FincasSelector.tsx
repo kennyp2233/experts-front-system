@@ -94,8 +94,11 @@ export const FincasSelector: React.FC<FincasSelectorProps> = ({
                                     />
                                     <div>
                                         <p className="font-medium">{finca.nombre}</p>
+                                        <p className="text-xs opacity-70 font-bold">
+                                            {finca.nombre_finca || "Sin código"}
+                                        </p>
                                         <p className="text-xs opacity-70">
-                                            {finca.codigo || "Sin código"}
+                                            {finca.codigo_finca || "Sin código"}
                                         </p>
                                     </div>
                                 </div>
