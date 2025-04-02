@@ -1,8 +1,8 @@
 'use client';
 import BotonesMenu from "@/components/sistema/BotonesMenu";
 import { useRouter } from "next/navigation";
-import { Breadcrumb } from "@/components/sistema/breadcrumbs/Breadcrumb";
-import { useBreadcrumbPaths } from "@/components/sistema/breadcrumbs/useBreadcrumbPaths";
+import { Breadcrumb } from "@/components/sistema/common/breadcrumbs/Breadcrumb";
+import { useBreadcrumbPaths } from "@/components/sistema/common/breadcrumbs/useBreadcrumbPaths";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { MdOutlineAssessment, MdOutlineSettings } from "react-icons/md";
 

@@ -1,5 +1,6 @@
 // src/components/sistema/breadcrumbs/
 // Hook para crear rutas de breadcrumb comunes
+import { title } from "process";
 import { BreadcrumbItem } from "./Breadcrumb";
 import { AppIcons } from "@/utils/icons";
 
@@ -95,10 +96,37 @@ export const useBreadcrumbPaths = () => {
         return result;
     };
 
+    // get module path
+    const getModulePath = (
+        title: string,
+        icon: React.ReactNode,
+        from: "home" | "dashboard" | "modules" = "modules"
+    ): BreadcrumbItem[] => {
+        const result: BreadcrumbItem[] = [];
+        if (from === "home" || from === "dashboard") {
+            result.push(basePaths.home);
+        }
+        if (from === "home" || from === "dashboard") {
+            result.push(basePaths.dashboard);
+        }
+        if (from === "home" || from === "dashboard" || from === "modules") {
+            result.push(basePaths.modules);
+        }
+
+        result.push({
+            name: title,
+            path: "", // La página actual no tiene ruta navegable
+            icon
+        });
+
+        return result;
+    };
+
     return {
         basePaths,
         getMaintenancePath,
-        getDocumentPath
+        getDocumentPath,
+        getModulePath
     };
 };
 

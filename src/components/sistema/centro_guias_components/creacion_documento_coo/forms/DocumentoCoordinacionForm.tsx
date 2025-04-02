@@ -1,7 +1,7 @@
 // src/components/sistema/centro_guias_components/forms/DocumentoCoordinacionForm.tsx
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FormField } from '@/components/sistema/centro_guias_components/common/form';
+import { FormField } from '@/components/sistema/common/form';
 import { AppIcons } from '@/utils/icons';
 
 interface DocumentoCoordinacionFormProps {

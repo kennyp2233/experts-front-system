@@ -11,12 +11,12 @@ import { AppIcons } from '@/utils/icons';
 import { useCatalogosCoordinaciones } from '@/components/sistema/centro_guias_components/hooks/useCatalogosCoordinaciones';
 
 // Importamos los componentes de formulario refactorizados
-import { Form } from '@/components/sistema/centro_guias_components/common/form';
+import { Form } from '@/components/sistema/common/form';
 import { AerolineaGuiaSelector } from './forms/AerolineaGuiaSelector';
 import { DocumentoCoordinacionForm } from './forms/DocumentoCoordinacionForm';
 import { RutasForm } from './forms/RutasForm';
 import { ValoresComisionesForm } from './forms/ValoresComisionesForm';
-import { ClientSelector } from './common/ClientSelector';
+import { ClientSelector } from '../common/selectors/ClientSelector';
 
 // Esquema de validación con Yup
 const schema = yup.object({

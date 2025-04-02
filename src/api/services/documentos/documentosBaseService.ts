@@ -1,7 +1,7 @@
 // src/api/services/documentos/documentosBaseService.ts
 import { BaseService } from '../baseService';
 import { apiClient } from '@/api/httpClient';
-import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
+import { DocumentoBase, Guia } from '@/components/sistema/documentos_components/hooks/useDocumentosBase';
 
 interface DocBaseCreationParams {
     documento_base: Partial<DocumentoBase>;

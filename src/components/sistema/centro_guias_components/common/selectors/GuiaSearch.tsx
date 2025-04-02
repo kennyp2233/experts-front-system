@@ -1,7 +1,7 @@
 // src/components/sistema/centro_guias_components/GuiaSearch.tsx
 import React, { useState } from 'react';
 import { AppIcons } from '@/utils/icons';
-import { GuiaMadreSelector } from './common/GuiaMadreSelector';
+import { GuiaMadreSelector } from './common/selectors/GuiaMadreSelector';
 import { guiasHijasService } from '@/api/services/documentos/guiasHijasService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
 

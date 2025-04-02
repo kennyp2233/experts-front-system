@@ -4,15 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/sistema/common/ui/card';
 import { AppIcons } from '@/utils/icons';
 import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { fincasService } from '@/api/services/mantenimiento/fincasService';
 import { productosService } from '@/api/services/mantenimiento/productosService';
 import { guiasHijasService } from '@/api/services/documentos/guiasHijasService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
-import DocumentoCoordinacionDetailView from './DocumentoCoordinacionDetailView';
-import { FincasSelector } from './common/FincasSelector';
+import DocumentoCoordinacionDetailView from '../gestion_de_documentos/detail/DocumentoCoordinacionDetailView';
+import { FincasSelector } from '../common/selectors/FincasSelector';
 import { AsignacionesTable } from './tables/AsignacionesTable';
 
 // Schema para la validación

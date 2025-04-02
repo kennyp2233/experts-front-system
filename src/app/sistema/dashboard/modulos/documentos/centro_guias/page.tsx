@@ -2,23 +2,30 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CentroGuiasProvider } from '@/contexts/CentroGuiasContext';
+import { CentroGuiasProvider } from '@/components/sistema/centro_guias_components/contexts/CentroGuiasContext';
 import { AppIcons } from '@/utils/icons';
 
 // Componentes principales
-import CreacionDocumentoCoordinacion from '@/components/sistema/centro_guias_components/CreacionDocumentoCoordinacion';
-import { GestorDocumentosCoordinacion } from '@/components/sistema/centro_guias_components/GestorDocumentosCoordinacion';
-import { AsignacionGuiasHijas } from '@/components/sistema/centro_guias_components/AsignacionGuiasHijas';
+import CreacionDocumentoCoordinacion from '@/components/sistema/centro_guias_components/creacion_documento_coo/CreacionDocumentoCoordinacion';
+import { GestorDocumentosCoordinacion } from '@/components/sistema/centro_guias_components/gestion_de_documentos/GestorDocumentosCoordinacion';
+import { AsignacionGuiasHijas } from '@/components/sistema/centro_guias_components/asignacion/AsignacionGuiasHijas';
 
-// Disponible en repositorio existente
-import BreadcrumbDocumentos from '@/components/sistema/documentos_components/BreadcrumbDocumentos';
-import { FaNetworkWired } from "react-icons/fa";
+import { FaNetworkWired, FaFolder } from "react-icons/fa";
+import { Breadcrumb } from '@/components/sistema/common/breadcrumbs/Breadcrumb';
+import { useBreadcrumbPaths } from '@/components/sistema/common/breadcrumbs/useBreadcrumbPaths';
+
 
 export default function CentroGuiasPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams?.get('tab');
     const documentoId = searchParams?.get('documento');
+    const { getDocumentPath } = useBreadcrumbPaths();
+
+    const breadcrumbs = getDocumentPath(
+        "Centro de guias",
+        <FaFolder className="w-4 h-4 stroke-current" />,
+    );
 
     // Tabs disponibles
     const TABS = {
@@ -63,10 +70,7 @@ export default function CentroGuiasPage() {
     return (
         <CentroGuiasProvider>
             <div className="w-full p-6">
-                <BreadcrumbDocumentos
-                    icon={<FaNetworkWired />}
-                    titulo="Centro de Guías"
-                />
+                <Breadcrumb items={breadcrumbs} />
 
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Centro de Guías</h1>

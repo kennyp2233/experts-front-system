@@ -2,7 +2,7 @@
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { AppIcons } from '@/utils/icons';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/sistema/common/ui/card';
 import { FincasSelector } from '../common/FincasSelector';
 
 interface DocumentoSelectionStepProps {

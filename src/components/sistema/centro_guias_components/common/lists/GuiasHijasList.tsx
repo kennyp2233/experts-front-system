@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { useGuiasHijas } from '@/components/sistema/centro_guias_components/hooks/useGuiasHijas';
 import { AppIcons } from '@/utils/icons';
-import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
-import { Pagination } from './common/Pagination';
-import { DetalleGuiaHijaModal } from './modals/DetalleGuiaHijaModal';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/sistema/common/ui/card';
+import { Pagination } from '../Pagination';
+import { DetalleGuiaHijaModal } from '../modals/DetalleGuiaHijaModal';
 
 interface GuiasHijasListProps {
     filtroFinca?: number;

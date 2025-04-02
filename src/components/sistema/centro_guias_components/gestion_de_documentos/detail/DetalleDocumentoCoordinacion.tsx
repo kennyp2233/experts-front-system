@@ -1,10 +1,10 @@
 // src/components/sistema/centro_guias_components/DetalleDocumentoCoordinacion.tsx
 import React, { useState, useEffect } from 'react';
 import { AppIcons } from '@/utils/icons';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/sistema/common/ui/card';
 import DocumentoCoordinacionDetailView from './DocumentoCoordinacionDetailView';
-import { GuiasHijasList } from './GuiasHijasList';
-import { ConfirmModal } from './modals/ConfirmModal';
+import { GuiasHijasList } from '../../common/lists/GuiasHijasList';
+import { ConfirmModal } from '../../common/modals/ConfirmModal';
 import { coordinacionesService } from '@/api/services/documentos/coordinacionesService';
 import { useRouter } from 'next/navigation';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';

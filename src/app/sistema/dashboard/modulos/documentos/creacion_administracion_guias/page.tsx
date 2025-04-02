@@ -5,7 +5,7 @@ import { PlusCircleIcon } from '@heroicons/react/solid';
 import DocumentoBaseTable from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseTable';
 import DocumentoBaseDetail from '@/components/sistema/documentos_components/creacion_administracion_guias/DocumentoBaseDetail';
 import CrearDocumentoModal from '@/components/sistema/documentos_components/creacion_administracion_guias/CrearDocumentoModal';
-import { useDocumentosBase, DocumentoBase } from '@/hooks/useDocumentosBase';
+import { useDocumentosBase, DocumentoBase } from '@/components/sistema/documentos_components/hooks/useDocumentosBase';
 import { aerolineasService } from '@/api/services/mantenimiento/aerolineasService';
 import { agenciaIataService } from '@/api/services/mantenimiento/agenciasIataService';
 import { catalogosStockService } from '@/api/services/catalogos/catalogosStockService';

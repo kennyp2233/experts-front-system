@@ -3,13 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/sistema/common/ui/card';
 import { AppIcons } from '@/utils/icons';
-import { CantidadesConfiguration } from './common/CantidadesConfiguration';
 import { guiasHijasService, GuiaHija } from '@/api/services/documentos/guiasHijasService';
 import { productosService } from '@/api/services/mantenimiento/productosService';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
-import { Form, FormField } from '@/components/sistema/centro_guias_components/common/form';
+import { Form, FormField } from '@/components/sistema/common/form';
 
 // Schema para validación
 const schema = yup.object({

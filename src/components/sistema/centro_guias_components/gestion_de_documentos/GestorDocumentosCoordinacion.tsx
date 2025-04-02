@@ -1,13 +1,12 @@
 // src/components/sistema/centro_guias_components/RefactoredGestorDocumentosCoordinacion.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/sistema/common/ui/card';
 import { AppIcons } from '@/utils/icons';
-import { useDocumentosCoordinacion } from './hooks/useDocumentosCoordinacion';
+import { useDocumentosCoordinacion } from '../hooks/useDocumentosCoordinacion';
 import { DocumentosFilter } from './filters/DocumentosFilter';
-import { Pagination } from './common/Pagination';
-import { ConfirmModal } from './modals/ConfirmModal';
-import { DetalleDocumentoCoordinacion } from './DetalleDocumentoCoordinacion';
+import { Pagination } from '../common/Pagination';
+import { DetalleDocumentoCoordinacion } from './detail/DetalleDocumentoCoordinacion';
 
 interface GestorDocumentosCoordinacionProps {
     onAssignGuides: (documentId: number) => void;

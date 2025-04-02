@@ -1,7 +1,7 @@
 // src/components/sistema/centro_guias_components/steps/SuccessStep.tsx
 import React from 'react';
 import { AppIcons } from '@/utils/icons';
-import { Card, CardContent } from '@/ui/card';
+import { Card, CardContent } from '@/components/sistema/common/ui/card';
 
 interface SuccessStepProps {
     title?: string;

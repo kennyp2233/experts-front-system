@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { NumberField } from '@/components/sistema/centro_guias_components/common/form';
+import { NumberField } from '@/components/sistema/common/form';
 
 interface ValoresComisionesFormProps {
     disabled?: boolean;

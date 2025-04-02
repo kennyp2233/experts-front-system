@@ -2,8 +2,8 @@
 import BotonesMenu from "@/components/sistema/BotonesMenu";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { Breadcrumb } from "@/components/sistema/breadcrumbs/Breadcrumb";
-import { useBreadcrumbPaths } from "@/components/sistema/breadcrumbs/useBreadcrumbPaths";
+import { Breadcrumb } from "@/components/sistema/common/breadcrumbs/Breadcrumb";
+import { useBreadcrumbPaths } from "@/components/sistema/common/breadcrumbs/useBreadcrumbPaths";
 
 // Importamos los iconos desde react-icons
 import {

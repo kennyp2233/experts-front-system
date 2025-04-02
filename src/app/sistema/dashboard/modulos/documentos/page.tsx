@@ -2,8 +2,8 @@
 import BotonesMenu from "@/components/sistema/BotonesMenu";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { Breadcrumb } from "@/components/sistema/breadcrumbs/Breadcrumb";
-import { useBreadcrumbPaths } from "@/components/sistema/breadcrumbs/useBreadcrumbPaths";
+import { Breadcrumb } from "@/components/sistema/common/breadcrumbs/Breadcrumb";
+import { useBreadcrumbPaths } from "@/components/sistema/common/breadcrumbs/useBreadcrumbPaths";
 
 // Importamos los iconos desde react-icons
 import {
@@ -17,7 +17,7 @@ import {
 
 export default function DocumentosPage() {
     const router = useRouter();
-    const { getDocumentPath } = useBreadcrumbPaths();
+    const { getModulePath } = useBreadcrumbPaths();
 
     // Rutas principales
     const routes = {
@@ -28,7 +28,7 @@ export default function DocumentosPage() {
     };
 
     // Generar ruta para breadcrumb
-    const breadcrumbItems = getDocumentPath("Documentos", <HiOutlineDocumentText className="w-4 h-4" />);
+    const breadcrumbItems = getModulePath("Documentos", <HiOutlineDocumentText className="w-4 h-4" />);
 
     return (
         <>

@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import InputField from './InputField';
-import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
+import { DocumentoBase, Guia } from '@/components/sistema/documentos_components/hooks/useDocumentosBase';
 interface DocumentoBaseDetailProps {
     documento: DocumentoBase;
     aerolineas: any[];

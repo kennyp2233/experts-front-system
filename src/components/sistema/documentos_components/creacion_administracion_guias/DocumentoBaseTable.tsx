@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { DocumentoBase, Guia } from '@/hooks/useDocumentosBase';
+import { DocumentoBase, Guia } from '@/components/sistema/documentos_components/hooks/useDocumentosBase';
 interface DocumentoBaseTableProps {
     documentosBase: DocumentoBase[];
     onSelect: (documento: DocumentoBase) => void;

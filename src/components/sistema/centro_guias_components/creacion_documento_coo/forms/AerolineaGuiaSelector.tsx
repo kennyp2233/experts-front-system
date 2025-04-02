@@ -6,7 +6,7 @@ import { aerolineasService } from '@/api/services/mantenimiento/aerolineasServic
 import { guiasMadreService } from '@/api/services/documentos/guiasMadreService';
 import { AppIcons } from '@/utils/icons';
 import { dispatchMenssage } from '@/utils/menssageDispatcher';
-import { FormField } from '@/components/sistema/centro_guias_components/common/form';
+import { FormField } from '@/components/sistema/common/form';
 
 interface AerolineaGuiaSelectorProps {
     onGuiaSelected?: (guia: any, aerolineaData?: any) => void;
