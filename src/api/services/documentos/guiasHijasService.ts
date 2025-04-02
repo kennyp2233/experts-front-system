@@ -1,7 +1,6 @@
 // src/api/services/documentos/guiasHijasService.ts
 import { BaseService } from '../baseService';
 import { apiClient, baseUrl } from '@/api/httpClient';
-import { PaginatedResponse } from './coordinacionesService';
 
 // Interface para GuiaHija
 export interface GuiaHija {
@@ -25,16 +24,30 @@ export interface GuiaHija {
     producto?: any;
 }
 
+export interface PaginatedResponse<T> {
+    data: T[];
+    total: number;
+    currentPage: number;
+    totalPages: number;
+}
+
 // Interface para asignación de guía hija
 interface AsignacionGuiaHija {
     id_documento_coordinacion: number;
     id_finca: number;
-    id_guia_madre?: number;
     id_producto?: number;
     fulls?: number;
     pcs?: number;
     kgs?: number;
     stems?: number;
+}
+
+// Interface para respuesta de coordinación masiva
+interface CoordinacionMasivaResponse {
+    creadas: number;
+    actualizadas: number;
+    errores: number;
+    detalles: any[];
 }
 
 class GuiasHijasService extends BaseService<GuiaHija> {
@@ -92,14 +105,14 @@ class GuiasHijasService extends BaseService<GuiaHija> {
     }
 
     /**
-     * Prevalidar asignaciones masivas
+     * Prevalidar asignaciones
      */
     async prevalidarAsignaciones(asignaciones: AsignacionGuiaHija[]): Promise<any> {
         return apiClient.post<any>(`${this.endpoint}/prevalidar`, asignaciones);
     }
 
     /**
-     * Confirmar asignaciones masivas
+     * Confirmar asignaciones
      */
     async confirmarAsignaciones(asignaciones: any[]): Promise<any> {
         return apiClient.post<any>(`${this.endpoint}/confirmar`, asignaciones);
@@ -123,6 +136,30 @@ class GuiasHijasService extends BaseService<GuiaHija> {
         }
 
         return await response.blob();
+    }
+
+    /**
+     * Prevalidar asignaciones masivas (múltiples documentos)
+     * Este método es específicamente para la coordinación masiva
+     */
+    async prevalidarAsignacionesMasivas(asignaciones: AsignacionGuiaHija[]): Promise<any> {
+        return apiClient.post<any>(`${this.endpoint}/prevalidar-masivo`, asignaciones);
+    }
+
+    /**
+     * Confirmar asignaciones masivas (múltiples documentos)
+     * Este método es específicamente para la coordinación masiva
+     */
+    async confirmarAsignacionesMasivas(asignaciones: AsignacionGuiaHija[]): Promise<CoordinacionMasivaResponse> {
+        return apiClient.post<CoordinacionMasivaResponse>(`${this.endpoint}/confirmar-masivo`, asignaciones);
+    }
+
+    /**
+     * Obtener estadísticas de asignaciones
+     * Útil para el dashboard o reportes
+     */
+    async getEstadisticasAsignaciones(): Promise<any> {
+        return apiClient.get<any>(`${this.endpoint}/estadisticas`);
     }
 }
 
